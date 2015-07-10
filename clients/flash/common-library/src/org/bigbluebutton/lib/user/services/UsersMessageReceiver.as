@@ -1,11 +1,21 @@
 package org.bigbluebutton.lib.user.services {
+	import org.as3commons.logging.api.ILogger;
+	import org.as3commons.logging.api.getClassLogger;
 	import org.bigbluebutton.lib.common.models.IMessageListener;
 	import org.bigbluebutton.lib.main.commands.AuthenticationSignal;
 	import org.bigbluebutton.lib.main.models.IUserSession;
 	import org.bigbluebutton.lib.user.models.User;
+	import org.bigbluebutton.lib.video.services.VideoConnection;
 	
 	public class UsersMessageReceiver implements IMessageListener {
-		private const LOG:String = "UsersMessageReceiver::";
+		
+		//--------------------------------------------------------------------------
+		//
+		//  Class Constants
+		//
+		//--------------------------------------------------------------------------
+		
+		private static const LOGGER:ILogger = getClassLogger(VideoConnection);
 		
 		public var userSession:IUserSession;
 		
@@ -83,7 +93,7 @@ package org.bigbluebutton.lib.user.services {
 		
 		private function handleVoiceUserTalking(m:Object):void {
 			var msg:Object = JSON.parse(m.msg);
-			trace(LOG + "handleVoiceUserTalking() -- user [" + +msg.voiceUserId + "," + msg.talking + "] ");
+			LOGGER.info("handleVoiceUserTalking() -- user [{0}, {1}]", [msg.voiceUserId, msg.talking]);
 			userSession.userList.userTalkingChange(msg.voiceUserId, msg.talking);
 		}
 		
@@ -125,38 +135,38 @@ package org.bigbluebutton.lib.user.services {
 		
 		private function handleParticipantLeft(m:Object):void {
 			var msg:Object = JSON.parse(m.msg);
-			trace(LOG + "handleParticipantLeft() -- user [" + msg.user.userId + "] has left the meeting");
+			LOGGER.info("handleParticipantLeft() -- user [{0}] has left the meeting", [msg.user.userId]);
 			userSession.userList.removeUser(msg.user.userId);
 		}
 		
 		private function handleAssignPresenterCallback(m:Object):void {
 			var msg:Object = JSON.parse(m.msg);
-			trace(LOG + "handleAssignPresenterCallback() -- user [" + msg.newPresenterID + "] is now the presenter");
+			LOGGER.info("handleAssignPresenterCallback() -- user [{0}] is now the presenter", [msg.newPresenterID]);
 			userSession.userList.assignPresenter(msg.newPresenterID);
 		}
 		
 		private function handleUserJoinedVoice(m:Object):void {
 			var msg:Object = JSON.parse(m.msg);
 			var voiceUser:Object = msg.user.voiceUser;
-			trace(LOG + "handleUserJoinedVoice() -- user [" + msg.user.externUserID + "] has joined voice with voiceId [" + voiceUser.userId + "]");
+			LOGGER.info("handleUserJoinedVoice() -- user [{0}] has joined voice with voiceId [{1}]", [msg.user.externUserID, voiceUser.userId]);
 			userSession.userList.userJoinAudio(msg.user.userId, voiceUser.userId, voiceUser.muted, voiceUser.talking, voiceUser.locked);
 		}
 		
 		private function handleUserLeftVoice(m:Object):void {
 			var msg:Object = JSON.parse(m.msg);
-			trace(LOG + "handleUserLeftVoice() -- user [" + msg.user.userId + "] has left voice");
+			LOGGER.info("handleUserLeftVoice() -- user [{0}] has left voice", [msg.user.userId]);
 			userSession.userList.userLeaveAudio(msg.user.userId);
 		}
 		
 		private function handleUserSharedWebcam(m:Object):void {
 			var msg:Object = JSON.parse(m.msg);
-			trace(LOG + "handleUserSharedWebcam() -- user [" + msg.userId + "] has shared their webcam with stream [" + msg.webcamStream + "]");
+			LOGGER.info("handleUserSharedWebcam() -- user [{0}] has shared their webcam with stream [{1}]", [msg.userId, msg.webcamStream]);
 			userSession.userList.userStreamChange(msg.userId, true, msg.webcamStream);
 		}
 		
 		private function handleUserUnsharedWebcam(m:Object):void {
 			var msg:Object = JSON.parse(m.msg);
-			trace(LOG + "handleUserUnsharedWebcam() -- user [" + msg.userId + "] has unshared their webcam");
+			LOGGER.info("handleUserUnsharedWebcam() -- user [{0}] has unshared their webcam", [msg.userId]);
 			userSession.userList.userStreamChange(msg.userId, false, "");
 		}
 		
@@ -164,69 +174,69 @@ package org.bigbluebutton.lib.user.services {
 			var msg:Object = JSON.parse(m.msg);
 			//It seems that listenOnly keeps to be true
 			//Temp solution to set listenOnly to false when user drop listen only mode.
-			trace(LOG + "handleUserListeningOnly -- user [" + msg.userId + "] has listen only set to [" + msg.listenOnly + "]");
+			LOGGER.info("handleUserListeningOnly -- user [{0}] has listen only set to [{1}]", [msg.userId, msg.listenOnly]);
 			userSession.userList.listenOnlyChange(msg.userId, msg.listenOnly);
 		}
 		
 		private function handleVoiceUserMuted(m:Object):void {
 			var msg:Object = JSON.parse(m.msg);
-			trace(LOG + "handleVoiceUserMuted() -- user [" + msg.voiceUserId + ", muted: " + msg.muted + "]");
+			LOGGER.info("handleVoiceUserMuted() -- user [{0}, muted: {1}]", [msg.voiceUserId, msg.muted]);
 			userSession.userList.userMuteChange(msg.voiceUserId, msg.muted);
 		}
 		
 		private function handleUserRaisedHand(m:Object):void {
 			var msg:Object = JSON.parse(m.msg);
-			trace(LOG + "handleUserRaisedHand() -- user [" + msg.userId + "]'s hand was raised");
+			LOGGER.info("handleUserRaisedHand() -- user [{0}]'s hand was raised", [msg.userId]);
 			userSession.userList.raiseHandChange(msg.userId, true);
 		}
 		
 		private function handleUserLoweredHand(m:Object):void {
 			var msg:Object = JSON.parse(m.msg);
-			trace(LOG + "handleUserLoweredHand() -- user [" + msg.userId + "]'s hand was lowered");
+			LOGGER.info("handleUserLoweredHand() -- user [{0}]'s hand was lowered", [msg.userId]);
 			userSession.userList.raiseHandChange(msg.userId, false);
 		}
 		
 		private function handleMeetingHasEnded(m:Object):void {
 			var msg:Object = JSON.parse(m.msg);
-			trace(LOG + "handleMeetingHasEnded() -- meeting has ended");
+			LOGGER.info("handleMeetingHasEnded() -- meeting has ended");
 			userSession.logoutSignal.dispatch();
 		}
 		
 		private function handleLogout(m:Object):void {
 			var msg:Object = JSON.parse(m.msg);
-			trace(LOG + "handleLogout() -- logging out!");
+			LOGGER.info("handleLogout() -- logging out!");
 			userSession.logoutSignal.dispatch();
 		}
 		
 		private function handleJoinedMeeting(m:Object):void {
 			var msg:Object = JSON.parse(m.msg);
-			trace(LOG + "handleJoinedMeeting()");
+			LOGGER.info("handleJoinedMeeting()");
 			userSession.joinMeetingResponse(msg);
 		}
 		
 		private function handleRecordingStatusChanged(m:Object):void {
 			var msg:Object = JSON.parse(m.msg);
-			trace(LOG + "handleRecordingStatusChanged() -- recording status changed");
+			LOGGER.info("handleRecordingStatusChanged() -- recording status changed");
 			userSession.recordingStatusChanged(msg.recording);
 		}
 		
 		private function handleGetRecordingStatusReply(m:Object):void {
-			trace(LOG + "handleGetRecordingStatusReply() -- recording status");
+			LOGGER.info("handleGetRecordingStatusReply() -- recording status");
 			var msg:Object = JSON.parse(m.msg);
 			userSession.recordingStatusChanged(msg.recording);
 		}
 		
 		private function handleValidateAuthTokenTimedOut(msg:Object):void {
-			trace(LOG + "handleValidateAuthTokenTimedOut() " + msg.msg);
+			LOGGER.warn("handleValidateAuthTokenTimedOut() {0}", [msg.msg]);
 			authenticationSignal.dispatch("timedOut");
 		}
 		
 		private function handleValidateAuthTokenReply(msg:Object):void {
-			trace(LOG + "*** handleValidateAuthTokenReply " + msg.msg);
+			LOGGER.info("*** handleValidateAuthTokenReply {0}", [msg.msg]);
 			var map:Object = JSON.parse(msg.msg);
 			var tokenValid:Boolean = map.valid as Boolean;
 			var userId:String = map.userId as String;
-			trace(LOG + "handleValidateAuthTokenReply() valid=" + tokenValid);
+			LOGGER.info("handleValidateAuthTokenReply() valid={0}", [tokenValid])
 			if (!tokenValid) {
 				authenticationSignal.dispatch("invalid");
 			}

@@ -1,12 +1,24 @@
 package org.bigbluebutton.lib.user.models {
 	
 	import mx.collections.ArrayCollection;
-	import org.osflash.signals.ISignal;
-	import org.osflash.signals.Signal;
-	import robotlegs.bender.extensions.signalCommandMap.api.ISignalCommandMap;
+	
 	import spark.collections.Sort;
 	
+	import org.as3commons.logging.api.ILogger;
+	import org.as3commons.logging.api.getClassLogger;
+	import org.osflash.signals.ISignal;
+	import org.osflash.signals.Signal;
+	
 	public class UserList {
+		
+		//--------------------------------------------------------------------------
+		//
+		//  Class Constants
+		//
+		//--------------------------------------------------------------------------
+		
+		private static const LOGGER:ILogger = getClassLogger(UserList);
+		
 		public static const HAS_STREAM:int = 1;
 		
 		public static const PRESENTER:int = 2;
@@ -147,9 +159,9 @@ package org.bigbluebutton.lib.user.models {
 		}
 		
 		public function addUser(newuser:User):void {
-			trace("Adding new user [" + newuser.userID + "]");
+			LOGGER.info("Adding new user [{0}]", [newuser.userID]);
 			if (!hasUser(newuser.userID)) {
-				trace("Am I this new user [" + newuser.userID + ", " + _me.userID + "]");
+				LOGGER.info("Am I this new user [{0}, {1}]", [_me.userID]);
 				if (newuser.userID == _me.userID) {
 					newuser.me = true;
 					//TODO check if this is correct
@@ -207,7 +219,7 @@ package org.bigbluebutton.lib.user.models {
 			if (p != null) {
 				var user:User = p.participant as User;
 				user.isLeavingFlag = true;
-				trace("removing user[" + user.name + "," + user.userID + "]");
+				LOGGER.info("removing user[{0},{1}]", [user.name, user.userID]);
 				_users.removeItemAt(p.index);
 				_users.refresh();
 				userRemovedSignal.dispatch(userID);
@@ -287,7 +299,7 @@ package org.bigbluebutton.lib.user.models {
 				user.locked = locked;
 				userChangeSignal.dispatch(user, JOIN_AUDIO);
 			} else {
-				trace("UserList: User join audio failed - user not found");
+				LOGGER.error("UserList: User join audio failed - user not found");
 			}
 		}
 		
@@ -298,7 +310,7 @@ package org.bigbluebutton.lib.user.models {
 				user.voiceJoined = false;
 				userChangeSignal.dispatch(user, JOIN_AUDIO);
 			} else {
-				trace("UserList: User leave audio failed - user not found");
+				LOGGER.error("UserList: User leave audio failed - user not found");
 			}
 		}
 		

@@ -1,5 +1,7 @@
 package org.bigbluebutton.lib.voice.commands {
 	
+	import org.as3commons.logging.api.ILogger;
+	import org.as3commons.logging.api.getClassLogger;
 	import org.bigbluebutton.lib.main.models.IConferenceParameters;
 	import org.bigbluebutton.lib.main.models.IUserSession;
 	import org.bigbluebutton.lib.voice.services.IVoiceConnection;
@@ -8,7 +10,14 @@ package org.bigbluebutton.lib.voice.commands {
 	import robotlegs.bender.bundles.mvcs.Command;
 	
 	public class ShareMicrophoneCommand extends Command {
-		private const LOG:String = "ShareMicrophoneCommand::";
+		
+		//--------------------------------------------------------------------------
+		//
+		//  Class Constants
+		//
+		//--------------------------------------------------------------------------
+		
+		private static const LOGGER:ILogger = getClassLogger(ShareMicrophoneCommand);
 		
 		[Inject]
 		public var userSession:IUserSession;
@@ -64,7 +73,7 @@ package org.bigbluebutton.lib.voice.commands {
 		}
 		
 		private function mediaConnectionSuccess(publishName:String, playName:String, codec:String):void {
-			trace(LOG + "mediaConnectionSuccess()");
+			LOGGER.info("mediaConnectionSuccess()");
 			var manager:VoiceStreamManager = new VoiceStreamManager();
 			manager.play(voiceConnection.connection, playName);
 			if (publishName != null && publishName.length != 0) {
@@ -76,7 +85,7 @@ package org.bigbluebutton.lib.voice.commands {
 		}
 		
 		private function mediaConnectionFailure(reason:String):void {
-			trace(LOG + "mediaConnectionFailure()");
+			LOGGER.error("mediaConnectionFailure()")
 			voiceConnection.connectionSuccessSignal.remove(mediaConnectionSuccess);
 			voiceConnection.connectionFailureSignal.remove(mediaConnectionFailure);
 		}

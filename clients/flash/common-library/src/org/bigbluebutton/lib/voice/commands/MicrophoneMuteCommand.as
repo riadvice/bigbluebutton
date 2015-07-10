@@ -1,10 +1,21 @@
 package org.bigbluebutton.lib.voice.commands {
 	
-	import org.bigbluebutton.lib.user.services.IUsersService;
+	import org.as3commons.logging.api.ILogger;
+	import org.as3commons.logging.api.getClassLogger;
 	import org.bigbluebutton.lib.user.models.User;
+	import org.bigbluebutton.lib.user.services.IUsersService;
+	
 	import robotlegs.bender.bundles.mvcs.Command;
 	
 	public class MicrophoneMuteCommand extends Command {
+		
+		//--------------------------------------------------------------------------
+		//
+		//  Class Constants
+		//
+		//--------------------------------------------------------------------------
+		
+		private static const LOGGER:ILogger = getClassLogger(MicrophoneMuteCommand);
 		
 		[Inject]
 		public var user:User;
@@ -13,7 +24,7 @@ package org.bigbluebutton.lib.voice.commands {
 		public var userService:IUsersService;
 		
 		override public function execute():void {
-			trace("MicrophoneMuteCommand.execute() - user.muted = " + user.muted);
+			LOGGER.info("execute() - user.muted = {0}", [user.muted]);
 			if (user != null) {
 				if (user.muted) {
 					userService.unmute(user);

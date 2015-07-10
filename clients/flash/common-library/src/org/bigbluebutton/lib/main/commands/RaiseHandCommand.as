@@ -1,10 +1,21 @@
 package org.bigbluebutton.lib.main.commands {
 	
-	import org.bigbluebutton.lib.user.services.IUsersService;
+	import org.as3commons.logging.api.ILogger;
+	import org.as3commons.logging.api.getClassLogger;
 	import org.bigbluebutton.lib.main.models.IUserSession;
+	import org.bigbluebutton.lib.user.services.IUsersService;
+	
 	import robotlegs.bender.bundles.mvcs.Command;
 	
 	public class RaiseHandCommand extends Command {
+		
+		//--------------------------------------------------------------------------
+		//
+		//  Class Constants
+		//
+		//--------------------------------------------------------------------------
+		
+		private static const LOGGER:ILogger = getClassLogger(RaiseHandCommand);
 		
 		[Inject]
 		public var userSession:IUserSession;
@@ -20,10 +31,10 @@ package org.bigbluebutton.lib.main.commands {
 		
 		override public function execute():void {
 			if (raised) {
-				trace("RaiseHandCommand.execute() - handRaised");
+				LOGGER.info("RaiseHandCommand.execute() - handRaised");
 				userService.raiseHand();
 			} else {
-				trace("RaiseHandCommand.execute() - hand lowered for user " + userId + " by user " + userId);
+				LOGGER.info("RaiseHandCommand.execute() - hand lowered for user {0} by user {0}", [userId]);
 				userService.lowerHand(userId);
 			}
 		}

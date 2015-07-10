@@ -12,9 +12,22 @@ package org.bigbluebutton.lib.voice.services {
 	import flash.net.NetConnection;
 	import flash.net.NetStream;
 	import flash.utils.Timer;
+	
 	import mx.utils.ObjectUtil;
 	
+	import org.as3commons.logging.api.ILogger;
+	import org.as3commons.logging.api.getClassLogger;
+	
 	public class VoiceStreamManager {
+		
+		//--------------------------------------------------------------------------
+		//
+		//  Class Constants
+		//
+		//--------------------------------------------------------------------------
+		
+		private static const LOGGER:ILogger = getClassLogger(VoiceStreamManager);
+		
 		protected var _incomingStream:NetStream = null;
 		
 		protected var _outgoingStream:NetStream = null;
@@ -30,8 +43,8 @@ package org.bigbluebutton.lib.voice.services {
 		}
 		
 		protected function onHeartbeat(event:TimerEvent):void {
-			trace("+++ heartbeat +++");
-			trace(ObjectUtil.toString(_incomingStream.audioCodec));
+			LOGGER.debug("+++ heartbeat +++");
+			LOGGER.debug(ObjectUtil.toString(_incomingStream.audioCodec));
 		}
 		
 		public function play(connection:NetConnection, streamName:String):void {
@@ -72,8 +85,7 @@ package org.bigbluebutton.lib.voice.services {
 		}
 		
 		private function noMicrophone():Boolean {
-			return ((Microphone.getMicrophone() == null) || (Microphone.names.length == 0)
-				|| ((Microphone.names.length == 1) && (Microphone.names[0] == "Unknown Microphone")));
+			return ((Microphone.getMicrophone() == null) || (Microphone.names.length == 0) || ((Microphone.names.length == 1) && (Microphone.names[0] == "Unknown Microphone")));
 		}
 		
 		private function setupMicrophone(codec:String):void {
@@ -103,7 +115,7 @@ package org.bigbluebutton.lib.voice.services {
 				mic = Microphone.getMicrophone();
 			}
 			if (mic == null) {
-				trace("No microphone! <o>");
+				LOGGER.warn("No microphone! <o>");
 			} else {
 				mic.addEventListener(StatusEvent.STATUS, onMicStatusEvent);
 				mic.setLoopBack(false);
@@ -114,18 +126,18 @@ package org.bigbluebutton.lib.voice.services {
 					mic.codec = SoundCodec.SPEEX;
 					mic.framesPerPacket = 1;
 					mic.rate = 16;
-					trace("Using SPEEX wideband codec");
+					LOGGER.info("Using SPEEX wideband codec");
 				} else {
 					mic.codec = SoundCodec.NELLYMOSER;
 					mic.rate = 8;
-					trace("Using Nellymoser codec");
+					LOGGER.info("Using Nellymoser codec");
 				}
 			}
 			return mic;
 		}
 		
 		protected function onMicStatusEvent(event:StatusEvent):void {
-			trace("New microphone status event");
+			LOGGER.info("New microphone status event");
 			//trace(ObjectUtil.toString(event));
 			switch (event.code) {
 				case "Microphone.Muted":
@@ -155,7 +167,7 @@ package org.bigbluebutton.lib.voice.services {
 		}
 		
 		protected function onNetStatusEvent(event:NetStatusEvent):void {
-			trace("VoiceStreamManager: onNetStatusEvent - " + event.info.code);
+			LOGGER.info("VoiceStreamManager: onNetStatusEvent - {0}", [event.info.code]);
 			switch (event.info.code) {
 				case "NetStream.Play.Reset":
 					break;
@@ -177,19 +189,19 @@ package org.bigbluebutton.lib.voice.services {
 		}
 		
 		protected function onAsyncErrorEvent(event:AsyncErrorEvent):void {
-			trace(ObjectUtil.toString(event));
+			LOGGER.error(ObjectUtil.toString(event));
 		}
 		
 		public function onPlayStatus(... rest):void {
-			trace("onPlayStatus() " + ObjectUtil.toString(rest));
+			LOGGER.info("onPlayStatus() {0}", [ObjectUtil.toString(rest)]);
 		}
 		
 		public function onMetaData(... rest):void {
-			trace("onMetaData() " + ObjectUtil.toString(rest));
+			LOGGER.info("onMetaData() {0}", [ObjectUtil.toString(rest)]);
 		}
 		
 		public function onHeaderData(... rest):void {
-			trace("onHeaderData() " + ObjectUtil.toString(rest));
+			LOGGER.info("onHeaderData() {0}", [ObjectUtil.toString(rest)]);
 		}
 	}
 }

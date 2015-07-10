@@ -10,10 +10,21 @@ package org.bigbluebutton.lib.common.utils {
 	
 	import mx.utils.ObjectUtil;
 	
+	import org.as3commons.logging.api.ILogger;
+	import org.as3commons.logging.api.getClassLogger;
 	import org.osflash.signals.ISignal;
 	import org.osflash.signals.Signal;
 	
 	public class URLFetcher {
+		
+		//--------------------------------------------------------------------------
+		//
+		//  Class Constants
+		//
+		//--------------------------------------------------------------------------
+		
+		private static const LOGGER:ILogger = getClassLogger(URLFetcher);
+		
 		protected var _successSignal:Signal = new Signal();
 		
 		protected var _failureSignal:Signal = new Signal();
@@ -31,7 +42,7 @@ package org.bigbluebutton.lib.common.utils {
 		}
 		
 		public function fetch(url:String, urlRequest:URLRequest = null, dataFormat:String = URLLoaderDataFormat.TEXT):void {
-			trace("Fetching " + url);
+			LOGGER.debug("Fetching {0}", [url]);
 			_urlRequest = urlRequest;
 			if (_urlRequest == null) {
 				_urlRequest = new URLRequest();
@@ -53,7 +64,7 @@ package org.bigbluebutton.lib.common.utils {
 		
 		private function httpResponseStatusHandler(e:HTTPStatusEvent):void {
 			_responseURL = e.responseURL;
-			trace("Redirected to " + _responseURL);
+			LOGGER.debug("Redirected to {0}", [_responseURL])
 		}
 		
 		private function httpStatusHandler(e:HTTPStatusEvent):void {
@@ -65,7 +76,7 @@ package org.bigbluebutton.lib.common.utils {
 		}
 		
 		private function ioErrorHandler(e:IOErrorEvent):void {
-			trace(ObjectUtil.toString(e));
+			LOGGER.error(ObjectUtil.toString(e));
 			failureSignal.dispatch(e.text);
 		}
 	}

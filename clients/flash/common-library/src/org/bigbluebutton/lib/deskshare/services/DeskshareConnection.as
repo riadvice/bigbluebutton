@@ -4,6 +4,8 @@ package org.bigbluebutton.lib.deskshare.services {
 	import flash.net.Responder;
 	import flash.net.SharedObject;
 	
+	import org.as3commons.logging.api.ILogger;
+	import org.as3commons.logging.api.getClassLogger;
 	import org.bigbluebutton.lib.common.services.DefaultConnectionCallback;
 	import org.bigbluebutton.lib.common.services.IBaseConnection;
 	import org.bigbluebutton.lib.main.models.IConferenceParameters;
@@ -11,7 +13,14 @@ package org.bigbluebutton.lib.deskshare.services {
 	import org.osflash.signals.Signal;
 	
 	public class DeskshareConnection extends DefaultConnectionCallback implements IDeskshareConnection {
-		private const LOG:String = "DeskshareConnection::";
+		
+		//--------------------------------------------------------------------------
+		//
+		//  Class Constants
+		//
+		//--------------------------------------------------------------------------
+		
+		private static const LOGGER:ILogger = getClassLogger(DeskshareConnection);
 		
 		[Inject]
 		public var baseConnection:IBaseConnection;
@@ -60,27 +69,21 @@ package org.bigbluebutton.lib.deskshare.services {
 		}
 		
 		private function checkIfStreamIsPublishing():void {
-			baseConnection.connection.call("deskshare.checkIfStreamIsPublishing",
-										   new Responder(
-										   function(result:Object):void {
-											   if (result != null && (result.publishing as Boolean)) {
-												   streamHeight = result.height as Number;
-												   streamWidth = result.width as Number;
-												   
-												   trace("Deskshare stream is streaming [" + streamWidth + "," + streamHeight + "]");
-												   
-												   // if we receive result from the server, then somebody is sharing their desktop - dispatch the notification signal
-												   isStreaming = true;
-											   } else {
-												   trace("No deskshare stream being published");
-											   }
-										   },
-										   function(status:Object):void {
-											   trace("Error while trying to call remote method on the server");
-										   }
-										   ),
-										   _room
-										   );
+			baseConnection.connection.call("deskshare.checkIfStreamIsPublishing", new Responder(function(result:Object):void {
+				if (result != null && (result.publishing as Boolean)) {
+					streamHeight = result.height as Number;
+					streamWidth = result.width as Number;
+					
+					LOGGER.debug("Deskshare stream is streaming [{0},{1}]", [streamWidth, streamHeight]);
+					
+					// if we receive result from the server, then somebody is sharing their desktop - dispatch the notification signal
+					isStreaming = true;
+				} else {
+					LOGGER.info("No deskshare stream being published");
+				}
+			}, function(status:Object):void {
+				LOGGER.error("Error while trying to call remote method on the server");
+			}), _room);
 		}
 		
 		private function onConnectionFailure(reason:String):void {
@@ -153,7 +156,7 @@ package org.bigbluebutton.lib.deskshare.services {
 		}
 		
 		public function appletStarted(videoWidth:Number, videoHeight:Number):void {
-			trace(LOG + "appletStarted() sharing.");
+			LOGGER.info("appletStarted() sharing.");
 		}
 		
 		/**
@@ -162,7 +165,7 @@ package org.bigbluebutton.lib.deskshare.services {
 		 *
 		 */
 		public function startViewing(videoWidth:Number, videoHeight:Number):void {
-			trace(LOG + "startViewing()");
+			LOGGER.info("startViewing()");
 			streamWidth = videoWidth;
 			streamHeight = videoHeight;
 			isStreaming = true;
@@ -172,7 +175,7 @@ package org.bigbluebutton.lib.deskshare.services {
 		 * Called by the server to notify clients that the deskshare stream has stopped.
 		 */
 		public function deskshareStreamStopped():void {
-			trace(LOG + "deskshareStreamStopped()");
+			LOGGER.info("deskshareStreamStopped()");
 			isStreaming = false;
 		}
 		

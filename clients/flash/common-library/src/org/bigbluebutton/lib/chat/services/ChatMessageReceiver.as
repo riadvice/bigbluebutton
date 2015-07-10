@@ -1,12 +1,21 @@
 package org.bigbluebutton.lib.chat.services {
 	
+	import org.as3commons.logging.api.ILogger;
+	import org.as3commons.logging.api.getClassLogger;
 	import org.bigbluebutton.lib.chat.models.ChatMessageVO;
 	import org.bigbluebutton.lib.chat.models.IChatMessagesSession;
 	import org.bigbluebutton.lib.common.models.IMessageListener;
 	import org.bigbluebutton.lib.main.models.IUserSession;
 	
 	public class ChatMessageReceiver implements IMessageListener {
-		private const LOG:String = "ChatMessageReceiver::";
+		
+		//--------------------------------------------------------------------------
+		//
+		//  Class Constants
+		//
+		//--------------------------------------------------------------------------
+		
+		private static const LOGGER:ILogger = getClassLogger(ChatMessageReceiver);
 		
 		public var userSession:IUserSession;
 		
@@ -34,7 +43,7 @@ package org.bigbluebutton.lib.chat.services {
 		}
 		
 		private function handleChatRequestMessageHistoryReply(message:Object):void {
-			trace(LOG + "Handling chat history message [" + message.msg + "]");
+			LOGGER.debug("Handling chat history message [{0}]", [message.msg]);
 			var chats:Array = JSON.parse(message.msg) as Array;
 			
 			for (var i:int = 0; i < chats.length; i++) {
@@ -43,7 +52,7 @@ package org.bigbluebutton.lib.chat.services {
 		}
 		
 		private function handleChatReceivePublicMessageCommand(message:Object):void {
-			trace(LOG + "Handling public chat message [" + message.message + "]");
+			LOGGER.debug("Handling public chat message [{0}]", [message.message]);
 			var msg:ChatMessageVO = new ChatMessageVO();
 			msg.chatType = message.chatType;
 			msg.fromUserID = message.fromUserID;
@@ -59,7 +68,7 @@ package org.bigbluebutton.lib.chat.services {
 		}
 		
 		private function handleChatReceivePrivateMessageCommand(message:Object):void {
-			trace(LOG + "Handling private chat message");
+			LOGGER.debug("Handling private chat message");
 			var msg:ChatMessageVO = new ChatMessageVO();
 			msg.chatType = message.chatType;
 			msg.fromUserID = message.fromUserID;

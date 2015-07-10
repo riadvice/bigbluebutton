@@ -2,10 +2,19 @@ package org.bigbluebutton.lib.common.services {
 	
 	import mx.utils.ObjectUtil;
 	
+	import org.as3commons.logging.api.ILogger;
+	import org.as3commons.logging.api.getClassLogger;
 	import org.bigbluebutton.lib.common.models.IMessageListener;
 	
 	public class DefaultConnectionCallback {
-		private const LOG:String = "DefaultConnectionCallback::";
+		
+		//--------------------------------------------------------------------------
+		//
+		//  Class Constants
+		//
+		//--------------------------------------------------------------------------
+		
+		private static const LOGGER:ILogger = getClassLogger(DefaultConnectionCallback);
 		
 		private var _messageListeners:Array = new Array();
 		
@@ -14,17 +23,17 @@ package org.bigbluebutton.lib.common.services {
 		}
 		
 		public function onBWDone(... rest):void {
-			trace("onBWDone() " + ObjectUtil.toString(rest));
+			LOGGER.debug("onBWDone() {0}", [ObjectUtil.toString(rest)]);
 			var p_bw:Number;
 			if (rest.length > 0)
 				p_bw = rest[0];
 			// your application should do something here 
 			// when the bandwidth check is complete 
-			trace("bandwidth = " + p_bw + " Kbps.");
+			LOGGER.debug("bandwidth = {0} Kbps.", [p_bw]);
 		}
 		
 		public function onMessageFromServer(messageName:String, result:Object):void {
-			trace(LOG + "RECEIVED MESSAGE: [" + messageName + "]");
+			LOGGER.debug("RECEIVED MESSAGE: [{0}]", [messageName]);
 			notifyListeners(messageName, result);
 		}
 		
@@ -47,7 +56,7 @@ package org.bigbluebutton.lib.common.services {
 					_messageListeners[notify].onMessage(messageName, message);
 				}
 			} else {
-				trace(LOG + "Message name is undefined");
+				LOGGER.error("Message name is undefined");
 			}
 		}
 	}

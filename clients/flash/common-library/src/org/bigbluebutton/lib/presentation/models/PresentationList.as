@@ -2,11 +2,21 @@ package org.bigbluebutton.lib.presentation.models {
 	
 	import mx.collections.ArrayCollection;
 	
+	import org.as3commons.logging.api.ILogger;
+	import org.as3commons.logging.api.getClassLogger;
 	import org.bigbluebutton.lib.main.models.IConferenceParameters;
 	import org.osflash.signals.ISignal;
 	import org.osflash.signals.Signal;
 	
 	public class PresentationList {
+		
+		//--------------------------------------------------------------------------
+		//
+		//  Class Constants
+		//
+		//--------------------------------------------------------------------------
+		
+		private static const LOGGER:ILogger = getClassLogger(PresentationList);
 		
 		[Inject]
 		public var conferenceParameters:IConferenceParameters;
@@ -21,7 +31,7 @@ package org.bigbluebutton.lib.presentation.models {
 		}
 		
 		public function addPresentation(presentationName:String, numberOfSlides:int, current:Boolean):Presentation {
-			trace("Adding presentation " + presentationName);
+			LOGGER.info("Adding presentation {0}", [presentationName]);
 			for (var i:int = 0; i < _presentations.length; i++) {
 				var p:Presentation = _presentations[i] as Presentation;
 				if (p.fileName == presentationName) {
@@ -37,14 +47,14 @@ package org.bigbluebutton.lib.presentation.models {
 			for (var i:int = 0; i < _presentations.length; i++) {
 				var p:Presentation = _presentations[i] as Presentation;
 				if (p.fileName == presentationName) {
-					trace("Removing presentation " + presentationName);
+					LOGGER.info("Removing presentation {0}", [presentationName]);
 					_presentations.removeItemAt(i);
 				}
 			}
 		}
 		
 		public function getPresentation(presentationName:String):Presentation {
-			trace("PresentProxy::getPresentation: presentationName=" + presentationName);
+			LOGGER.info("PresentProxy::getPresentation: presentationName=", [presentationName]);
 			for (var i:int = 0; i < _presentations.length; i++) {
 				var p:Presentation = _presentations[i] as Presentation;
 				if (p.fileName == presentationName) {
@@ -63,7 +73,7 @@ package org.bigbluebutton.lib.presentation.models {
 		}
 		
 		public function set currentPresentation(p:Presentation):void {
-			trace("PresentationList changing current presentation");
+			LOGGER.info("PresentationList changing current presentation");
 			if (_currentPresentation != null) {
 				_currentPresentation.current = false;
 			}

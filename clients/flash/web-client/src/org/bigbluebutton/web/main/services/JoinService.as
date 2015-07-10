@@ -2,14 +2,21 @@ package org.bigbluebutton.web.main.services {
 	
 	import flash.net.URLRequest;
 	
+	import org.as3commons.logging.api.ILogger;
+	import org.as3commons.logging.api.getClassLogger;
 	import org.bigbluebutton.lib.common.utils.URLFetcher;
 	import org.osflash.signals.ISignal;
 	import org.osflash.signals.Signal;
 	
 	public class JoinService {
-		protected var _successSignal:Signal = new Signal();
 		
-		protected var _failureSignal:Signal = new Signal();
+		//--------------------------------------------------------------------------
+		//
+		//  Class Constants
+		//
+		//--------------------------------------------------------------------------
+		
+		private static const LOGGER:ILogger = getClassLogger(JoinService);
 		
 		private static const URL_REQUEST_ERROR_TYPE:String = "TypeError";
 		
@@ -21,6 +28,10 @@ package org.bigbluebutton.web.main.services {
 		
 		private static const JOIN_URL_EMPTY:String = "emptyJoinUrl";
 		
+		protected var _successSignal:Signal = new Signal();
+		
+		protected var _failureSignal:Signal = new Signal();
+		
 		public function get successSignal():ISignal {
 			return _successSignal;
 		}
@@ -30,7 +41,7 @@ package org.bigbluebutton.web.main.services {
 		}
 		
 		public function join(joinUrl:String):void {
-			trace("JOIN SERVICE - DONT LEAVE THIS IN");
+			LOGGER.fatal("JOIN SERVICE - DONT LEAVE THIS IN");
 			
 			if (joinUrl.length == 0) {
 				onFailure(JOIN_URL_EMPTY);
@@ -50,7 +61,7 @@ package org.bigbluebutton.web.main.services {
 					return;
 				}
 			} catch (e:Error) {
-				trace("The response is probably not a XML. " + e.message);
+				LOGGER.error("The response is probably not a XML. {0}", [e.message]);
 				successSignal.dispatch(urlRequest, responseUrl);
 				return;
 			}

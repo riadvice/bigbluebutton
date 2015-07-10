@@ -1,5 +1,7 @@
 package org.bigbluebutton.lib.main.commands {
 	
+	import org.as3commons.logging.api.ILogger;
+	import org.as3commons.logging.api.getClassLogger;
 	import org.bigbluebutton.lib.chat.services.IChatMessageService;
 	import org.bigbluebutton.lib.deskshare.services.IDeskshareConnection;
 	import org.bigbluebutton.lib.main.models.IConferenceParameters;
@@ -13,7 +15,14 @@ package org.bigbluebutton.lib.main.commands {
 	import robotlegs.bender.bundles.mvcs.Command;
 	
 	public class ConnectCommand extends Command {
-		private const LOG:String = "ConnectCommand::";
+		
+		//--------------------------------------------------------------------------
+		//
+		//  Class Constants
+		//
+		//--------------------------------------------------------------------------
+		
+		private static const LOGGER:ILogger = getClassLogger(ConnectCommand);
 		
 		[Inject]
 		public var userSession:IUserSession;
@@ -59,7 +68,7 @@ package org.bigbluebutton.lib.main.commands {
 		}
 		
 		private function successConnected():void {
-			trace(LOG + "successConnected()");
+			LOGGER.info("successConnected()");
 			userSession.mainConnection = connection;
 			userSession.userId = connection.userId;
 			// Set up users message sender in order to send the "joinMeeting" message:
@@ -102,7 +111,7 @@ package org.bigbluebutton.lib.main.commands {
 		}
 		
 		private function unsuccessJoiningMeeting():void {
-			trace(LOG + "unsuccessJoiningMeeting() -- Failed to join the meeting!!!");
+			LOGGER.error("unsuccessJoiningMeeting() -- Failed to join the meeting!!!");
 			userSession.successJoiningMeetingSignal.remove(successJoiningMeeting);
 			userSession.failureJoiningMeetingSignal.remove(unsuccessJoiningMeeting);
 		}
@@ -113,20 +122,20 @@ package org.bigbluebutton.lib.main.commands {
 		}
 		
 		private function unsuccessConnected(reason:String):void {
-			trace(LOG + "unsuccessConnected()");
+			LOGGER.error("unsuccessConnected()");
 			connectingFailedSignal.dispatch("connectionFailed");
 			connection.connectionSuccessSignal.remove(successConnected);
 			connection.connectionFailureSignal.remove(unsuccessConnected);
 		}
 		
 		private function successVideoConnected():void {
-			trace(LOG + "successVideoConnected()");
+			LOGGER.info("successVideoConnected()");
 			videoConnection.connectionSuccessSignal.remove(successVideoConnected);
 			videoConnection.connectionFailureSignal.remove(unsuccessVideoConnected);
 		}
 		
 		private function unsuccessVideoConnected(reason:String):void {
-			trace(LOG + "unsuccessVideoConnected()");
+			LOGGER.error("unsuccessVideoConnected()");
 			videoConnection.connectionFailureSignal.remove(unsuccessVideoConnected);
 			videoConnection.connectionSuccessSignal.remove(successVideoConnected);
 		}

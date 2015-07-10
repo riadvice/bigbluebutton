@@ -7,6 +7,8 @@ package org.bigbluebutton.lib.video.services {
 	import flash.net.NetConnection;
 	import flash.net.NetStream;
 	
+	import org.as3commons.logging.api.ILogger;
+	import org.as3commons.logging.api.getClassLogger;
 	import org.bigbluebutton.lib.common.services.DefaultConnectionCallback;
 	import org.bigbluebutton.lib.common.services.IBaseConnection;
 	import org.bigbluebutton.lib.main.models.IConferenceParameters;
@@ -14,7 +16,14 @@ package org.bigbluebutton.lib.video.services {
 	import org.osflash.signals.Signal;
 	
 	public class VideoConnection extends DefaultConnectionCallback implements IVideoConnection {
-		private const LOG:String = "VideoConnection::";
+		
+		//--------------------------------------------------------------------------
+		//
+		//  Class Constants
+		//
+		//--------------------------------------------------------------------------
+		
+		private static const LOGGER:ILogger = getClassLogger(VideoConnection);
 		
 		[Inject]
 		public var baseConnection:IBaseConnection;
@@ -83,10 +92,7 @@ package org.bigbluebutton.lib.video.services {
 		
 		public function connect():void {
 			var uri:String = _applicationURI + "/" + conferenceParameters.room;
-			var connectParams:Array = [
-				conferenceParameters.room,
-				conferenceParameters.internalUserID
-				];
+			var connectParams:Array = [conferenceParameters.room, conferenceParameters.internalUserID];
 			baseConnection.connect.apply(null, new Array(uri).concat(connectParams));
 		}
 		
@@ -152,15 +158,15 @@ package org.bigbluebutton.lib.video.services {
 		}
 		
 		private function onNetStatus(e:NetStatusEvent):void {
-			trace(LOG + "onNetStatus() " + e.info.code);
+			LOGGER.debug("onNetStatus() {0}", [e.info.code]);
 		}
 		
 		private function onIOError(e:IOErrorEvent):void {
-			trace(LOG + "onIOError() " + e.toString());
+			LOGGER.error("onIOError() {0}", [e.toString()]);
 		}
 		
 		private function onAsyncError(e:AsyncErrorEvent):void {
-			trace(LOG + "onAsyncError() " + e.toString());
+			LOGGER.error("onAsyncError() {0}", [e.toString()]);
 		}
 		
 		public function stopPublishing():void {

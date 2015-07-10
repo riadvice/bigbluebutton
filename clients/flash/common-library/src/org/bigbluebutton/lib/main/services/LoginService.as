@@ -2,12 +2,23 @@ package org.bigbluebutton.lib.main.services {
 	
 	import flash.net.URLRequest;
 	
+	import org.as3commons.logging.api.ILogger;
+	import org.as3commons.logging.api.getClassLogger;
 	import org.bigbluebutton.lib.common.utils.URLParser;
 	import org.bigbluebutton.lib.main.models.Config;
 	import org.osflash.signals.ISignal;
 	import org.osflash.signals.Signal;
 	
 	public class LoginService implements ILoginService {
+		
+		//--------------------------------------------------------------------------
+		//
+		//  Class Constants
+		//
+		//--------------------------------------------------------------------------
+		
+		private static const LOGGER:ILogger = getClassLogger(LoginService);
+		
 		protected var _urlRequest:URLRequest = null;
 		
 		protected var _loginSuccessSignal:Signal = new Signal();
@@ -29,7 +40,7 @@ package org.bigbluebutton.lib.main.services {
 		}
 		
 		protected function fail(reason:String):void {
-			trace("Login failed. " + reason);
+			LOGGER.error("Login failed. {0}", [reason]);
 			loginFailureSignal.dispatch(reason);
 			//TODO: show message to user saying that the meeting identifier is invalid 
 		}
@@ -58,38 +69,18 @@ package org.bigbluebutton.lib.main.services {
 		
 		protected function afterEnter(result:Object):void {
 			if (result.returncode == 'SUCCESS') {
-				trace("Join SUCCESS");
-				var user:Object = {
-						username: result.fullname,
-						conference: result.conference,
-						conferenceName: result.confname,
-						externMeetingID: result.externMeetingID,
-						meetingID: result.meetingID,
-						externUserID: result.externUserID,
-						internalUserId: result.internalUserID,
-						role: result.role,
-						room: result.room,
-						authToken: result.authToken,
-						record: result.record,
-						webvoiceconf: result.webvoiceconf,
-						dialnumber: result.dialnumber,
-						voicebridge: result.voicebridge,
-						mode: result.mode,
-						welcome: result.welcome,
-						logoutUrl: result.logoutUrl,
-						defaultLayout: result.defaultLayout,
-						avatarURL: result.avatarURL,
-						guest: result.guest};
+				LOGGER.info("Join SUCCESS");
+				var user:Object = {username: result.fullname, conference: result.conference, conferenceName: result.confname, externMeetingID: result.externMeetingID, meetingID: result.meetingID, externUserID: result.externUserID, internalUserId: result.internalUserID, role: result.role, room: result.room, authToken: result.authToken, record: result.record, webvoiceconf: result.webvoiceconf, dialnumber: result.dialnumber, voicebridge: result.voicebridge, mode: result.mode, welcome: result.welcome, logoutUrl: result.logoutUrl, defaultLayout: result.defaultLayout, avatarURL: result.avatarURL, guest: result.guest};
 				user.customdata = new Object();
 				if (result.customdata) {
 					for (var key:String in result.customdata) {
-						trace("checking user customdata: " + key + " = " + result.customdata[key]);
+						LOGGER.debug("checking user customdata: {0} = {1}", [key, result.customdata[key]]);
 						user.customdata[key] = result.customdata[key].toString();
 					}
 				}
 				loginSuccessSignal.dispatch(user);
 			} else {
-				trace("Join FAILED");
+				LOGGER.error("Join FAILED");
 				loginFailureSignal.dispatch("Add some reason here!");
 			}
 		}

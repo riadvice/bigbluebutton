@@ -5,6 +5,8 @@ package org.bigbluebutton.lib.voice.services {
 	
 	import mx.utils.ObjectUtil;
 	
+	import org.as3commons.logging.api.ILogger;
+	import org.as3commons.logging.api.getClassLogger;
 	import org.bigbluebutton.lib.common.services.DefaultConnectionCallback;
 	import org.bigbluebutton.lib.common.services.IBaseConnection;
 	import org.bigbluebutton.lib.main.models.IConferenceParameters;
@@ -13,7 +15,14 @@ package org.bigbluebutton.lib.voice.services {
 	import org.osflash.signals.Signal;
 	
 	public class VoiceConnection extends DefaultConnectionCallback implements IVoiceConnection {
-		public const LOG:String = "VoiceConnection::";
+		
+		//--------------------------------------------------------------------------
+		//
+		//  Class Constants
+		//
+		//--------------------------------------------------------------------------
+		
+		private static const LOGGER:ILogger = getClassLogger(VoiceConnection);
 		
 		[Inject]
 		public var baseConnection:IBaseConnection;
@@ -92,18 +101,18 @@ package org.bigbluebutton.lib.voice.services {
 		//												//
 		//**********************************************//
 		public function failedToJoinVoiceConferenceCallback(msg:String):* {
-			trace(LOG + "failedToJoinVoiceConferenceCallback(): " + msg);
+			LOGGER.error("failedToJoinVoiceConferenceCallback(): {0}", [msg]);
 			connectionFailureSignal.dispatch("Failed on failedToJoinVoiceConferenceCallback()");
 		}
 		
 		public function disconnectedFromJoinVoiceConferenceCallback(msg:String):* {
-			trace(LOG + "disconnectedFromJoinVoiceConferenceCallback(): " + msg);
+			LOGGER.info("disconnectedFromJoinVoiceConferenceCallback(): {0}", [msg]);
 			connectionFailureSignal.dispatch("Failed on disconnectedFromJoinVoiceConferenceCallback()");
 			//hangUp();
 		}
 		
 		public function successfullyJoinedVoiceConferenceCallback(publishName:String, playName:String, codec:String):* {
-			trace(LOG + "successfullyJoinedVoiceConferenceCallback()");
+			LOGGER.info("successfullyJoinedVoiceConferenceCallback()");
 			connectionSuccessSignal.dispatch(publishName, playName, codec);
 		}
 		
@@ -114,51 +123,40 @@ package org.bigbluebutton.lib.voice.services {
 		//**********************************************//
 		public function call(listenOnly:Boolean = false):void {
 			if (!callActive) {
-				trace(LOG + "call(): starting voice call");
-				baseConnection.connection.call(
-					"voiceconf.call",
-					new Responder(onCallSuccess, onCallFailure),
-					"default",
-					_username,
-					_conferenceParameters.webvoiceconf,
-					listenOnly.toString()
-					);
+				LOGGER.info("call(): starting voice call");
+				baseConnection.connection.call("voiceconf.call", new Responder(onCallSuccess, onCallFailure), "default", _username, _conferenceParameters.webvoiceconf, listenOnly.toString());
 			} else {
-				trace(LOG + "call(): voice call already active");
+				LOGGER.warn("call(): voice call already active");
 			}
 		}
 		
 		private function onCallSuccess(result:Object):void {
-			trace(LOG + "onCallSuccess(): " + ObjectUtil.toString(result));
+			LOGGER.info("onCallSuccess(): {0}", [ObjectUtil.toString(result)]);
 			_callActive = true;
 		}
 		
 		private function onCallFailure(status:Object):void {
-			trace(LOG + "onCallFailure(): " + ObjectUtil.toString(status));
+			LOGGER.error("onCallFailure(): {0}", [ObjectUtil.toString(status)]);
 			connectionFailureSignal.dispatch("Failed on call()");
 			_callActive = false;
 		}
 		
 		public function hangUp():void {
 			if (callActive) {
-				trace(LOG + "hangUp(): hanging up the voice call");
-				baseConnection.connection.call(
-					"voiceconf.hangup",
-					new Responder(onHangUpSuccess, onHangUpFailure),
-					"default"
-					);
+				LOGGER.info("hangUp(): hanging up the voice call");
+				baseConnection.connection.call("voiceconf.hangup", new Responder(onHangUpSuccess, onHangUpFailure), "default");
 			} else {
-				trace(LOG + "hangUp(): call already hung up");
+				LOGGER.warn("hangUp(): call already hung up");
 			}
 		}
 		
 		private function onHangUpSuccess(result:Object):void {
-			trace(LOG + "onHangUpSuccess(): " + ObjectUtil.toString(result));
+			LOGGER.info("onHangUpSuccess(): {0}", [ObjectUtil.toString(result)]);
 			_callActive = false;
 		}
 		
 		private function onHangUpFailure(status:Object):void {
-			trace(LOG + "onHangUpFailure: " + ObjectUtil.toString(status));
+			LOGGER.error("onHangUpFailure: {0}", [ObjectUtil.toString(status)])
 		}
 	}
 }

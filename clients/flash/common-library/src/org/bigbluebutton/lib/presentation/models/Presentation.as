@@ -1,14 +1,20 @@
 package org.bigbluebutton.lib.presentation.models {
 	
-	import flash.events.Event;
-	import flash.events.IOErrorEvent;
-	import flash.net.URLLoader;
-	import flash.net.URLRequest;
-	import mx.collections.ArrayCollection;
+	import org.as3commons.logging.api.ILogger;
+	import org.as3commons.logging.api.getClassLogger;
 	import org.osflash.signals.ISignal;
 	import org.osflash.signals.Signal;
 	
 	public class Presentation {
+		
+		//--------------------------------------------------------------------------
+		//
+		//  Class Constants
+		//
+		//--------------------------------------------------------------------------
+		
+		private static const LOGGER:ILogger = getClassLogger(Presentation);
+		
 		private var _fileName:String = "";
 		
 		private var _slides:Vector.<Slide> = new Vector.<Slide>();
@@ -40,7 +46,7 @@ package org.bigbluebutton.lib.presentation.models {
 			if (_slides.length > num) {
 				return _slides[num];
 			}
-			trace("getSlideAt failed: Slide index out of bounds");
+			LOGGER.warn("getSlideAt failed: Slide index out of bounds");
 			return null;
 		}
 		

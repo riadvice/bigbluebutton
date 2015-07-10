@@ -9,13 +9,22 @@ package org.bigbluebutton.lib.common.services {
 	
 	import mx.utils.ObjectUtil;
 	
+	import org.as3commons.logging.api.ILogger;
+	import org.as3commons.logging.api.getClassLogger;
 	import org.bigbluebutton.lib.main.commands.DisconnectUserSignal;
 	import org.bigbluebutton.lib.main.utils.DisconnectEnum;
 	import org.osflash.signals.ISignal;
 	import org.osflash.signals.Signal;
 	
 	public class BaseConnection implements IBaseConnection {
-		private const LOG:String = "BaseConnection::";
+		
+		//--------------------------------------------------------------------------
+		//
+		//  Class Constants
+		//
+		//--------------------------------------------------------------------------
+		
+		private static const LOGGER:ILogger = getClassLogger(BaseConnection);
 		
 		[Inject]
 		public var disconnectUserSignal:DisconnectUserSignal;
@@ -63,19 +72,19 @@ package org.bigbluebutton.lib.common.services {
 			parameters[7] = false;
 			parameters[8] = false;
 			try {
-				trace(LOG + "Trying to connect to [" + uri + "] ...");
+				LOGGER.info("Trying to connect to [{0]] ...", [uri]);
 				// passing an array to a method that expects a variable number of parameters
 				// http://stackoverflow.com/a/3852920
 				_netConnection.connect.apply(null, new Array(uri).concat(parameters));
 			} catch (e:ArgumentError) {
-				trace(ObjectUtil.toString(e));
+				LOGGER.error(ObjectUtil.toString(e));
 				// Invalid parameters.
 				switch (e.errorID) {
 					case 2004:
-						trace(LOG + "Error! Invalid server location: " + uri);
+						LOGGER.error("Error! Invalid server location: {0}", [uri]);
 						break;
 					default:
-						trace(LOG + "UNKNOWN Error! Invalid server location: " + uri);
+						LOGGER.error("UNKNOWN Error! Invalid server location: {0}", [uri]);
 						break;
 				}
 				sendDisconnectUserSignal();
@@ -92,34 +101,34 @@ package org.bigbluebutton.lib.common.services {
 			var statusCode:String = info.code;
 			switch (statusCode) {
 				case "NetConnection.Connect.Success":
-					trace(LOG + " Connection succeeded. Uri: " + _uri);
+					LOGGER.info("Connection succeeded. Uri: {0}", [_uri]);
 					sendConnectionSuccessSignal();
 					break;
 				case "NetConnection.Connect.Failed":
-					trace(LOG + " Connection failed. Uri: " + _uri);
+					LOGGER.error("Connection failed. Uri: {0}", [_uri]);
 					sendDisconnectUserSignal();
 					break;
 				case "NetConnection.Connect.Closed":
-					trace(LOG + " Connection closed. Uri: " + _uri);
+					LOGGER.error("Connection closed. Uri: {0}", [_uri]);
 					sendDisconnectUserSignal();
 					break;
 				case "NetConnection.Connect.InvalidApp":
-					trace(LOG + " application not found on server. Uri: " + _uri);
+					LOGGER.error("application not found on server. Uri: {0}", [_uri]);
 					sendDisconnectUserSignal();
 					break;
 				case "NetConnection.Connect.AppShutDown":
-					trace(LOG + " application has been shutdown. Uri: " + _uri);
+					LOGGER.info("application has been shutdown. Uri: {0}", [_uri]);
 					sendDisconnectUserSignal();
 					break;
 				case "NetConnection.Connect.Rejected":
-					trace(LOG + " Connection to the server rejected. Uri: " + _uri + ". Check if the red5 specified in the uri exists and is running");
+					LOGGER.warn("Connection to the server rejected. Uri: {0}. Check if the red5 specified in the uri exists and is running", [_uri]);
 					sendDisconnectUserSignal();
 					break;
 				case "NetConnection.Connect.NetworkChange":
-					trace("Detected network change. User might be on a wireless and temporarily dropped connection. Doing nothing. Just making a note.");
+					LOGGER.warn("Detected network change. User might be on a wireless and temporarily dropped connection. Doing nothing. Just making a note.");
 					break;
 				default:
-					trace(LOG + " Default status");
+					LOGGER.debug("Default status");
 					sendDisconnectUserSignal();
 					break;
 			}
@@ -134,34 +143,31 @@ package org.bigbluebutton.lib.common.services {
 		}
 		
 		protected function netSecurityError(event:SecurityErrorEvent):void {
-			trace(LOG + "Security error - " + event.text);
+			LOGGER.error("Security error - {0}", [event.text]);
 			sendDisconnectUserSignal();
 		}
 		
 		protected function netIOError(event:IOErrorEvent):void {
-			trace(LOG + "Input/output error - " + event.text);
+			LOGGER.error("Input/output error - {0}", [event.text]);
 			sendDisconnectUserSignal();
 		}
 		
 		protected function netASyncError(event:AsyncErrorEvent):void {
-			trace(LOG + "Asynchronous code error - " + event.error);
+			LOGGER.error("Asynchronous code error - {0}", [event.text]);
 			sendDisconnectUserSignal();
 		}
 		
 		public function sendMessage(service:String, onSuccess:Function, onFailure:Function, message:Object = null):void {
-			trace(LOG + "SENDING MESSAGE: [" + service + "]");
-			var responder:Responder = new Responder(
-				function(result:Object):void { // On successful result
-					onSuccess("SUCCESSFULLY SENT: [" + service + "].");
-				},
-				function(status:Object):void { // status - On error occurred
-					var errorReason:String = "FAILED TO SEND: [" + service + "]:";
-					for (var x:Object in status) {
-						errorReason += "\n - " + x + " : " + status[x];
-					}
-					onFailure(errorReason);
+			LOGGER.debug("SENDING MESSAGE: [{0]]", [service]);
+			var responder:Responder = new Responder(function(result:Object):void { // On successful result
+				onSuccess("SUCCESSFULLY SENT: [" + service + "].");
+			}, function(status:Object):void { // status - On error occurred
+				var errorReason:String = "FAILED TO SEND: [" + service + "]:";
+				for (var x:Object in status) {
+					errorReason += "\n - " + x + " : " + status[x];
 				}
-				);
+				onFailure(errorReason);
+			});
 			if (message == null) {
 				_netConnection.call(service, responder);
 			} else {

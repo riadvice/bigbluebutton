@@ -1,8 +1,6 @@
 package org.bigbluebutton.web.main.views {
 	import flash.net.URLRequest;
 	
-	import mx.core.FlexGlobals;
-	
 	import org.bigbluebutton.lib.main.commands.JoinMeetingSignal;
 	import org.bigbluebutton.web.main.models.IUISession;
 	import org.bigbluebutton.web.main.services.JoinService;

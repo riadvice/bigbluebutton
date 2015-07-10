@@ -2,6 +2,8 @@ package org.bigbluebutton.web.main.commands {
 	
 	import flash.net.URLRequest;
 	
+	import org.as3commons.logging.api.ILogger;
+	import org.as3commons.logging.api.getClassLogger;
 	import org.bigbluebutton.lib.main.commands.ConnectSignal;
 	import org.bigbluebutton.lib.main.commands.ConnectingFailedSignal;
 	import org.bigbluebutton.lib.main.models.Config;
@@ -12,7 +14,14 @@ package org.bigbluebutton.web.main.commands {
 	import robotlegs.bender.bundles.mvcs.Command;
 	
 	public class JoinMeetingCommandWeb extends Command {
-		private const LOG:String = "JoinMeetingCommandWeb::";
+		
+		//--------------------------------------------------------------------------
+		//
+		//  Class Constants
+		//
+		//--------------------------------------------------------------------------
+		
+		private static const LOGGER:ILogger = getClassLogger(JoinMeetingCommandWeb);
 		
 		[Inject]
 		public var loginService:ILoginService;
@@ -42,7 +51,7 @@ package org.bigbluebutton.web.main.commands {
 		}
 		
 		protected function loginSuccess(userObject:Object):void {
-			trace(LOG + "successJoined()");
+			LOGGER.info("successJoined()");
 			conferenceParameters.load(userObject);
 			connectSignal.dispatch(new String(userSession.config.application.uri));
 		}
@@ -52,7 +61,7 @@ package org.bigbluebutton.web.main.commands {
 		}
 		
 		protected function loginFailure(reason:String):void {
-			trace(LOG + "unsuccessJoined()");
+			LOGGER.error("unsuccessJoined()");
 			connectingFailedSignal.dispatch(reason);
 		}
 	}

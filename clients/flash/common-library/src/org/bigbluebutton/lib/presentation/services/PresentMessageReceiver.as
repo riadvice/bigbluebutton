@@ -1,11 +1,22 @@
 package org.bigbluebutton.lib.presentation.services {
 	
+	import org.as3commons.logging.api.ILogger;
+	import org.as3commons.logging.api.getClassLogger;
 	import org.bigbluebutton.lib.common.models.IMessageListener;
 	import org.bigbluebutton.lib.main.models.IUserSession;
 	import org.bigbluebutton.lib.presentation.models.Presentation;
 	import org.bigbluebutton.lib.presentation.models.Slide;
 	
 	public class PresentMessageReceiver implements IMessageListener {
+		
+		//--------------------------------------------------------------------------
+		//
+		//  Class Constants
+		//
+		//--------------------------------------------------------------------------
+		
+		private static const LOGGER:ILogger = getClassLogger(PresentMessageReceiver);
+		
 		private static const SO_NAME:String = "presentationSO";
 		
 		private static const PRESENTER:String = "presenter";
@@ -88,13 +99,13 @@ package org.bigbluebutton.lib.presentation.services {
 		
 		private function handleGoToSlideCallback(m:Object):void {
 			var msg:Object = JSON.parse(m.msg);
-			trace("PresentMessageReceiver::handleGoToSlideCallback() -- going to slide number [" + msg.num + "]");
+			LOGGER.info("handleGoToSlideCallback() -- going to slide number [{0}]", [msg.num]);
 			userSession.presentationList.currentPresentation.currentSlideNum = int(msg.num);
 		}
 		
 		private function handleMoveCallback(m:Object):void {
 			var msg:Object = JSON.parse(m.msg);
-			trace("PresentMessageReceiver::handleMoveCallback()");
+			LOGGER.info("handleMoveCallback()");
 		/* Properties of msg:
 		   current
 		   heightRatio
@@ -121,7 +132,7 @@ package org.bigbluebutton.lib.presentation.services {
 		
 		private function handlePresentationCursorUpdateCommand(m:Object):void {
 			var msg:Object = JSON.parse(m.msg);
-			trace("PresentMessageReceiver::handlePresentationCursorUpdateCommand() -- cursor moving [" + msg.xPercent + ", " + msg.yPercent + "]");
+			LOGGER.info("handlePresentationCursorUpdateCommand() -- cursor moving [{0}, {1}]", [msg.xPercent, msg.yPercent]);
 		/* Properties of msg:
 		   xPercent
 		   yPercent
@@ -137,13 +148,13 @@ package org.bigbluebutton.lib.presentation.services {
 		
 		private function handleRemovePresentationCallback(m:Object):void {
 			var msg:Object = JSON.parse(m.msg);
-			trace("PresentMessageReceiver::handleRemovePresentationCallback() -- removing presentation  [" + msg.name + "]");
+			LOGGER.info("PresentMessageReceiver::handleRemovePresentationCallback() -- removing presentation  [{0}]", [msg.name]);
 			userSession.presentationList.removePresentation(msg.name);
 		}
 		
 		private function handleSharePresentationCallback(m:Object):void {
 			var msg:Object = JSON.parse(m.msg);
-			trace("PresentMessageReceiver::handleSharePresentationCallback() -- now showing presentation [" + msg.presentation.name + "]");
+			LOGGER.info("PresentMessageReceiver::handleSharePresentationCallback() -- now showing presentation [{0}]", [msg.presentation.name]);
 			var presentation:Presentation = userSession.presentationList.getPresentation(msg.presentation.name);
 			if (presentation != null) {
 				presentation.show();
@@ -151,7 +162,7 @@ package org.bigbluebutton.lib.presentation.services {
 		}
 		
 		public function handlePageCountExceededUpdateMessageCallback(m:Object):void {
-			trace("PresentMessageReceiver::handlePageCountExceededUpdateMessageCallback()");
+			LOGGER.warn("PresentMessageReceiver::handlePageCountExceededUpdateMessageCallback()");
 		/*
 		   var uploadEvent:UploadEvent = new UploadEvent(UploadEvent.PAGE_COUNT_EXCEEDED);
 		   uploadEvent.maximumSupportedNumberOfSlides = maxNumberOfPages;
@@ -160,7 +171,7 @@ package org.bigbluebutton.lib.presentation.services {
 		}
 		
 		public function handleGeneratedSlideUpdateMessageCallback(m:Object):void {
-			trace("PresentMessageReceiver::handleGeneratedSlideUpdateMessageCallback()");
+			LOGGER.info("PresentMessageReceiver::handleGeneratedSlideUpdateMessageCallback()");
 		/*
 		   var uploadEvent:UploadEvent = new UploadEvent(UploadEvent.CONVERT_UPDATE);
 		   uploadEvent.totalSlides = numberOfPages;
@@ -171,13 +182,13 @@ package org.bigbluebutton.lib.presentation.services {
 		
 		public function handleConversionCompletedUpdateMessageCallback(m:Object):void {
 			var msg:Object = JSON.parse(m.msg);
-			trace("PresentMessageReceiver::handleConversionCompletedUpdateMessageCallback() -- new presentation [" + msg.presentation.name + "] uploaded");
+			LOGGER.info("PresentMessageReceiver::handleConversionCompletedUpdateMessageCallback() -- new presentation [{0}] uploaded", [msg.presentation.name]);
 			addPresentation(msg.presentation);
 		}
 		
 		private function addPresentation(presentationObject:Object):void {
 			var length:int = presentationObject.pages.length;
-			trace("PresentMessageReceiver::handleGetPresentationInfoReply() -- adding presentation [" + presentationObject.name + "] to the presentation list");
+			LOGGER.info("PresentMessageReceiver::handleGetPresentationInfoReply() -- adding presentation [{0}] to the presentation list", [presentationObject.name]);
 			var presentation:Presentation = userSession.presentationList.addPresentation(presentationObject.name, length, presentationObject.current);
 			// Add all the slides to the presentation:
 			for (var i:int = 0; i < length; i++) {
@@ -191,42 +202,42 @@ package org.bigbluebutton.lib.presentation.services {
 		
 		public function handleConversionUpdateMessageCallback(m:Object):void {
 			var msg:Object = JSON.parse(m.msg);
-			trace("PresentMessageReceiver::handleConversionUpdateMessageCallback()");
+			LOGGER.info("PresentMessageReceiver::handleConversionUpdateMessageCallback()");
 			switch (m.messageKey) {
 				case OFFICE_DOC_CONVERSION_SUCCESS_KEY:
-					trace("received Office Doc Conversion Success");
+					LOGGER.info("received Office Doc Conversion Success");
 					//uploadEvent = new UploadEvent(UploadEvent.OFFICE_DOC_CONVERSION_SUCCESS);
 					//dispatcher.dispatchEvent(uploadEvent);
 					break;
 				case OFFICE_DOC_CONVERSION_FAILED_KEY:
-					trace("received Office Doc Conversion Failed");
+					LOGGER.warn("received Office Doc Conversion Failed");
 					//uploadEvent = new UploadEvent(UploadEvent.OFFICE_DOC_CONVERSION_FAILED);
 					//dispatcher.dispatchEvent(uploadEvent);
 					break;
 				case SUPPORTED_DOCUMENT_KEY:
-					trace("received Supported Document");
+					LOGGER.info("received Supported Document");
 					//uploadEvent = new UploadEvent(UploadEvent.SUPPORTED_DOCUMENT);
 					//dispatcher.dispatchEvent(uploadEvent);
 					break;
 				case UNSUPPORTED_DOCUMENT_KEY:
-					trace("received Unsupported Document");
+					LOGGER.warn("received Unsupported Document");
 					//uploadEvent = new UploadEvent(UploadEvent.UNSUPPORTED_DOCUMENT);
 					//dispatcher.dispatchEvent(uploadEvent);
 					break;
 				case GENERATING_THUMBNAIL_KEY:
-					trace("received Generating Thumbnail");
+					LOGGER.info("received Generating Thumbnail");
 					//dispatcher.dispatchEvent(new UploadEvent(UploadEvent.THUMBNAILS_UPDATE));
 					break;
 				case PAGE_COUNT_FAILED_KEY:
-					trace("received Page Count Failed");
+					LOGGER.warn("received Page Count Failed");
 					//uploadEvent = new UploadEvent(UploadEvent.PAGE_COUNT_FAILED);
 					//dispatcher.dispatchEvent(uploadEvent);
 					break;
 				case GENERATED_THUMBNAIL_KEY:
-					trace("conversionUpdateMessageCallback:GENERATED_THUMBNAIL_KEY " + m.messageKey);
+					LOGGER.info("conversionUpdateMessageCallback:GENERATED_THUMBNAIL_KEY ", [m.messageKey]);
 					break;
 				default:
-					trace("conversionUpdateMessageCallback:Unknown message " + m.messageKey);
+					LOGGER.warn("conversionUpdateMessageCallback:Unknown message ", [m.messageKey]);
 					break;
 			}
 		}
