@@ -23,7 +23,6 @@ package org.bigbluebutton.modules.present.managers
 	import flash.net.URLLoaderDataFormat;
 	import flash.net.URLRequest;
 	
-	[Bindable]
 	public class Slide
 	{
 		private var _loader:URLLoader;
@@ -83,7 +82,6 @@ package org.bigbluebutton.modules.present.managers
 		public function get slideNumber():Number {
 			return _slideNum;
 		}
-				
-		
+
 	}
 }
