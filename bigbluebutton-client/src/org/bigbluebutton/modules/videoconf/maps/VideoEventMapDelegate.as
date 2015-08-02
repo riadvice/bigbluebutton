@@ -165,7 +165,7 @@ package org.bigbluebutton.modules.videoconf.maps
       } else {
         var dp:Object = [];
         for(var i:int = 0; i < Camera.names.length; i++) {
-          dp.push({label: Camera.names[i], status: button.OFF_STATE});
+          dp.push({label: Camera.names[i], status: ToolbarPopupButton.OFF_STATE});
         }
         button.enabled = false;
         var shareCameraRequestEvent:ShareCameraRequestEvent = new ShareCameraRequestEvent();
@@ -307,7 +307,7 @@ package org.bigbluebutton.modules.videoconf.maps
 
       _dispatcher.dispatchEvent(broadcastEvent);
 	  if (proxy.videoOptions.showButton) {
-		  button.publishingStatus(button.START_PUBLISHING);
+		  button.publishingStatus(ToolbarPopupButton.START_PUBLISHING);
 	  }
     }
 
@@ -342,7 +342,7 @@ package org.bigbluebutton.modules.videoconf.maps
 
         if (proxy.videoOptions.showButton) {
           //Make toolbar button enabled again
-          button.publishingStatus(button.STOP_PUBLISHING, camId);
+          button.publishingStatus(ToolbarPopupButton.STOP_PUBLISHING, camId);
         }
       } else {
         closePublishWindow();

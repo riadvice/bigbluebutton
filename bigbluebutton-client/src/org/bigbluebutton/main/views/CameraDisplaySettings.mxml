@@ -58,8 +58,8 @@ with BigBlueButton; if not, see <http://www.gnu.org/licenses/>.
 		public var camerasArray:Object;
 		[Bindable] private var camerasAvailable:ArrayList = new ArrayList();
 		public var chromePermissionDenied:Boolean = false;
-		public const OFF_STATE:Number = 0;
-		public const ON_STATE:Number = 1;
+		public static const OFF_STATE:int = 0;
+		public static const ON_STATE:int = 1;
 
 		private var selectedCam:int;
 		private var aspectRatio:Number = 1;

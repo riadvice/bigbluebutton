@@ -45,11 +45,11 @@ with BigBlueButton; if not, see <http://www.gnu.org/licenses/>.
 			import org.bigbluebutton.modules.deskshare.events.StopSharingButtonEvent;
 			import org.bigbluebutton.util.i18n.ResourceUtil;
 
-			public const OFF_STATE:Number = 0;
-			public const ON_STATE:Number = 1;
+			public static const OFF_STATE:int = 0;
+			public static const ON_STATE:int = 1;
 			
-			public const STOP_SHARING:Number = 0;
-			public const START_SHARING:Number = 1;
+			public static const STOP_SHARING:int = 0;
+			public static const START_SHARING:int = 1;
 			
 			
 			private var _currentState:Number = OFF_STATE;

@@ -75,11 +75,11 @@ package org.bigbluebutton.modules.deskshare.managers
 		}
 
 		public function startedSharing():void {
-			button.deskshareStatus(button.START_SHARING);
+			button.deskshareStatus(ToolbarButton.START_SHARING);
 		}
 
 		public function stopedSharing():void {
-			button.deskshareStatus(button.STOP_SHARING);
+			button.deskshareStatus(ToolbarButton.STOP_SHARING);
 		}
 	}
 }

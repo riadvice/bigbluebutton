@@ -45,8 +45,8 @@
 			private var dispatcher:Dispatcher = new Dispatcher();
 			private var talking:Boolean = false;
 
-			public const MUTE_STATE:Number = 0;
-			public const LISTENING_STATE:Number = 1;
+			public static const MUTE_STATE:int = 0;
+			public static const LISTENING_STATE:int = 1;
 			private var _currentState:Number = LISTENING_STATE;
 
 			[Bindable] public var phoneIcon:Class = images.speakerActiveIcon;

@@ -61,11 +61,11 @@ with BigBlueButton; if not, see <http://www.gnu.org/licenses/>.
 
 			private static const LOGGER:ILogger = getClassLogger(ToolbarPopupButton);      
 
-			public const OFF_STATE:Number = 0;
-			public const ON_STATE:Number = 1;
+			public static const OFF_STATE:int = 0;
+			public static const ON_STATE:int = 1;
 			
-			public const STOP_PUBLISHING:Number = 0;
-			public const START_PUBLISHING:Number = 1;
+			public static const STOP_PUBLISHING:int = 0;
+			public static const START_PUBLISHING:int = 1;
 
 			private var _currentState:Number = OFF_STATE;
 
