@@ -60,10 +60,6 @@ with BigBlueButton; if not, see <http://www.gnu.org/licenses/>.
 			
 			private static const MIN_HEIGHT:int = 768;
 			
-			private function determineWindowSizes():void{
-				
-			}
-			
 			public function addWindow(window:IBbbModuleWindow):void{
 				windowManager.add(window as MDIWindow);
 				positionWindow(window);
@@ -177,7 +173,7 @@ with BigBlueButton; if not, see <http://www.gnu.org/licenses/>.
 							win.height = (this.height/3) - 15;							
 						} else {
 							x = this.width - rightWindowWidth - 10;
-							y = rightWindowHeight + 10;;
+							y = rightWindowHeight + 10;
 							win.width = rightWindowWidth;
 							win.height = this.height - rightWindowHeight - 10;							
 						}

@@ -70,7 +70,7 @@ with BigBlueButton; if not, see <http://www.gnu.org/licenses/>.
 			}
 			
 			private function onKeyDown(event:KeyboardEvent):void{
-				if(event.ctrlKey == true && event.keyCode == Keyboard.C){
+				if(event.ctrlKey && event.keyCode == Keyboard.C){
 					System.setClipboard(UITextField(txtMessage.mx_internal::getTextField()).selectedText);
 				}
 			}

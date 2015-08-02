@@ -51,7 +51,7 @@ with BigBlueButton; if not, see <http://www.gnu.org/licenses/>.
 
 			private var videoHolder:UIComponent;
 
-			private var cursor:Shape = new Shape();;
+			private var cursor:Shape = new Shape();
 						
 			private var images:Images = new Images();
 			[Bindable] public var bbbLogo:Class = images.bbb_logo;

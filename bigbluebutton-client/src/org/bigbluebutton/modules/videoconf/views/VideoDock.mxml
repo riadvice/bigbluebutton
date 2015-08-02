@@ -22,7 +22,6 @@ with BigBlueButton; if not, see <http://www.gnu.org/licenses/>.
 
 <MDIWindow xmlns="flexlib.mdi.containers.*" 
 		xmlns:mx="http://www.adobe.com/2006/mxml" 
-		initialize="init()" 
 		horizontalScrollPolicy="off"
 		verticalScrollPolicy="off"
 		creationComplete="onCreationComplete()" 
@@ -37,10 +36,6 @@ with BigBlueButton; if not, see <http://www.gnu.org/licenses/>.
 		<![CDATA[
 			import org.bigbluebutton.main.views.MainCanvas;
 			import org.bigbluebutton.util.i18n.ResourceUtil;
-
-			private function init():void {
-
-			}
 
 			private function onCreationComplete():void {
 				this.showCloseButton = false;

@@ -19,7 +19,6 @@ with BigBlueButton; if not, see <http://www.gnu.org/licenses/>.
 
 -->
 <views:LayoutButton xmlns:mx="http://www.adobe.com/2006/mxml" 
-		   creationComplete="init()" 
 		   xmlns:mate="http://mate.asfusion.com/"
 		   xmlns:views="org.bigbluebutton.modules.layout.views.*"
 		   toolTip="{ResourceUtil.getInstance().getString('bbb.layout.addButton.toolTip')}"
@@ -41,9 +40,6 @@ with BigBlueButton; if not, see <http://www.gnu.org/licenses/>.
 			private var _dispatcher:Dispatcher = new Dispatcher();
 			private var _images:Images = new Images();
 			[Bindable] private var icon_add:Class = _images.add;
-			
-			private function init():void {
-			}
 			
 			private function onClick(e:Event):void {
 				_dispatcher.dispatchEvent(new LayoutEvent(LayoutEvent.ADD_CURRENT_LAYOUT_EVENT));

@@ -138,7 +138,7 @@ package org.bigbluebutton.modules.whiteboard.business.shapes
           //rowText.y = ry-rowText.height/2;
           
           // add percentage
-          percentText = _textFields[currTFIdx++];;// new TextField();
+          percentText = _textFields[currTFIdx++];// new TextField();
           var percentNum:Number = (totalCount == 0 ? 0 : ((_data[j].v/totalCount)*100));
           percentText.text = Math.round(percentNum).toString() + "%";
           percentText.width = percentStartWidth;

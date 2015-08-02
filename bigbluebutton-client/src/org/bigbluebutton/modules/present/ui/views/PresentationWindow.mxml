@@ -145,7 +145,7 @@ with BigBlueButton; if not, see <http://www.gnu.org/licenses/>.
 			
 			private function init():void{
 				presentOptions = new PresentOptions();
-				baseIndex = presentOptions.baseTabIndex;;
+				baseIndex = presentOptions.baseTabIndex;
 			}
 			
 			private function onCreationComplete():void{

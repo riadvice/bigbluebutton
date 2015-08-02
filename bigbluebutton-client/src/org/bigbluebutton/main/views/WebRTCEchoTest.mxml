@@ -24,8 +24,7 @@ with BigBlueButton; if not, see <http://www.gnu.org/licenses/>.
 				creationComplete="onCreationComplete()" 
 				styleName="micSettingsWindowStyle"
 				showCloseButton="false" 
-				close="onCancelClicked()" 
-				keyDown="handleKeyDown(event)">
+				close="onCancelClicked()">
 	
 	<mate:Listener type="{WebRTCEchoTestStartedEvent.WEBRTC_ECHO_TEST_STARTED}" method="handleWebRTCEchoTestStartedEvent" />
 	<mate:Listener type="{WebRTCEchoTestEvent.WEBRTC_ECHO_TEST_ENDED}" method="handleWebRTCEchoTestEndedEvent" />
@@ -70,10 +69,6 @@ with BigBlueButton; if not, see <http://www.gnu.org/licenses/>.
 
 				if (dotTimer) dotTimer.stop();
 				PopUpManager.removePopUp(this);
-			}
-			
-			private function handleKeyDown(event:KeyboardEvent):void {
-				
 			}
 			
 			private function onCreationComplete():void {

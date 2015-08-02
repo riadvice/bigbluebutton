@@ -53,7 +53,7 @@ package org.bigbluebutton.core.model.users
         user = _users.getItemAt(i) as User;
         
         if (user.id == userId) {
-          return {index:i, user:user};;
+          return {index:i, user:user};
         }
       }
       

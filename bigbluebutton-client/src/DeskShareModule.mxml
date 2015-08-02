@@ -41,7 +41,7 @@ with BigBlueButton; if not, see <http://www.gnu.org/licenses/>.
 			private var _moduleName:String = "Desk Share";
 			private var _attributes:Object;
 			
-			private var globalDispatcher:Dispatcher = new Dispatcher();;
+			private var globalDispatcher:Dispatcher = new Dispatcher();
 			
 			private function onCreationComplete():void{
 				LOGGER.debug("DeskShareModule initialized");

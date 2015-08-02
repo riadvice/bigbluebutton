@@ -129,7 +129,7 @@ package org.bigbluebutton.modules.deskshare.services.red5
       nc.close();
       nc = null;
       
-      var ce:ConnectionEvent = new ConnectionEvent();;
+      var ce:ConnectionEvent = new ConnectionEvent();
       
       retryCount++;
       if (retryCount < MAX_RETRIES) {

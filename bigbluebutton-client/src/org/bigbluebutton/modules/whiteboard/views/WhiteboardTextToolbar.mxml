@@ -50,10 +50,10 @@ with BigBlueButton; if not, see <http://www.gnu.org/licenses/>.
 			
 			private static const LOGGER:ILogger = getClassLogger(WhiteboardTextToolbar);      
 			public var canvas:WhiteboardCanvas;
-			public var textColor:uint;
-			public var bgColor:uint;
-			public var textSize:Number;
-			public var backgroundVisible:Boolean;
+			private var textColor:uint;
+			private var bgColor:uint;
+			private var textSize:Number;
+			private var backgroundVisible:Boolean;
 			
 			private var images:Images = new Images();
 			[Bindable] private var toggle_text_background_icon:Class = images.toggle_text_background_icon;

@@ -41,8 +41,8 @@ with BigBlueButton; if not, see <http://www.gnu.org/licenses/>.
 		import org.bigbluebutton.main.events.BBBEvent;
 		import org.bigbluebutton.util.i18n.ResourceUtil;
 		
-		static public var PADDING_HORIZONTAL:Number = 6;
-		static public var PADDING_VERTICAL:Number = 29;
+		static public const PADDING_HORIZONTAL:Number = 6;
+		static public const PADDING_VERTICAL:Number = 29;
 		
 		private var images:Images = new Images();
 		
