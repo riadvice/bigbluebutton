@@ -1,42 +1,40 @@
-package org.bigbluebutton.modules.videoconf.views
-{
+package org.bigbluebutton.modules.videoconf.views {
     import flash.display.Loader;
     import flash.events.Event;
     import flash.net.URLRequest;
-    import mx.events.FlexEvent;
-    import mx.utils.ObjectUtil;
 
     public class UserAvatar extends UserGraphic {
 
-      private var _imageLoader:Loader = null;
-      private var _completed:Boolean;
+        private var _imageLoader:Loader = null;
 
-      public function UserAvatar() {
-          super();
-      }
+        private var _completed:Boolean;
 
-      public function load(avatarUrl:String):void {
-          _imageLoader = new Loader;
-          _completed = false;
+        public function UserAvatar() {
+            super();
+        }
 
-          _imageLoader.contentLoaderInfo.addEventListener(Event.COMPLETE, onLoadingComplete);
-          addChild(_imageLoader);
-          var request:URLRequest = new URLRequest(avatarUrl);
-          _imageLoader.load(request);
-      }
+        public function load(avatarUrl:String):void {
+            _imageLoader = new Loader;
+            _completed = false;
 
-      private function onLoadingComplete(event:Event):void {
-          _completed = true;
-          setOriginalDimensions(_imageLoader.width, _imageLoader.height);
-      }
+            _imageLoader.contentLoaderInfo.addEventListener(Event.COMPLETE, onLoadingComplete);
+            addChild(_imageLoader);
+            var request:URLRequest = new URLRequest(avatarUrl);
+            _imageLoader.load(request);
+        }
 
-      override protected function updateDisplayList(unscaledWidth:Number, unscaledHeight:Number):void {
-          super.updateDisplayList(unscaledWidth, unscaledHeight);
+        private function onLoadingComplete(event:Event):void {
+            _completed = true;
+            setOriginalDimensions(_imageLoader.width, _imageLoader.height);
+        }
 
-          if (_completed) {
-              updateDisplayListHelper(unscaledWidth, unscaledHeight, _imageLoader);
-          }
-      }
+        override protected function updateDisplayList(unscaledWidth:Number, unscaledHeight:Number):void {
+            super.updateDisplayList(unscaledWidth, unscaledHeight);
+
+            if (_completed) {
+                updateDisplayListHelper(unscaledWidth, unscaledHeight, _imageLoader);
+            }
+        }
 
     }
 }

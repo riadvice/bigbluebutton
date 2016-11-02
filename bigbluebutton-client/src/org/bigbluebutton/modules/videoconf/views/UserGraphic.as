@@ -1,5 +1,4 @@
-package org.bigbluebutton.modules.videoconf.views
-{
+package org.bigbluebutton.modules.videoconf.views {
     import flash.display.DisplayObject;
     import mx.containers.Canvas;
     import mx.core.UIComponent;
@@ -9,9 +8,13 @@ package org.bigbluebutton.modules.videoconf.views
 
     public class UserGraphic extends UIComponent {
         protected var _user:BBBUser = null;
+
         protected var _options:VideoConfOptions;
+
         protected var _origWidth:Number = 320;
+
         protected var _origHeight:Number = 240;
+
         protected var _background:Canvas;
 
         protected const BORDER_THICKNESS:int = 0;

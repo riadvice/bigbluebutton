@@ -1,12 +1,11 @@
-package org.bigbluebutton.modules.videoconf.views
-{
+package org.bigbluebutton.modules.videoconf.views {
     import flash.display.DisplayObject;
     import flash.events.MouseEvent;
     import flash.net.NetConnection;
-    
+
     import mx.containers.Canvas;
     import mx.events.FlexEvent;
-    
+
     import org.as3commons.logging.api.ILogger;
     import org.as3commons.logging.api.getClassLogger;
     import org.bigbluebutton.core.UsersUtil;
@@ -17,13 +16,17 @@ package org.bigbluebutton.modules.videoconf.views
 
     public class GraphicsWrapper extends Canvas {
 
-		private static const LOGGER:ILogger = getClassLogger(GraphicsWrapper);      
+        private static const LOGGER:ILogger = getClassLogger(GraphicsWrapper);
 
-		private var _options:VideoConfOptions = new VideoConfOptions();
+        private var _options:VideoConfOptions = new VideoConfOptions();
+
         private var priorityWeight:Number = _options.priorityRatio;
+
         private var priorityMode:Boolean = false;
+
         private var priorityItem:DisplayObject = null;
-        private var _minContentAspectRatio:Number=4/3;
+
+        private var _minContentAspectRatio:Number = 4 / 3;
 
         public function GraphicsWrapper() {
             percentWidth = percentHeight = 100;
@@ -46,10 +49,7 @@ package org.bigbluebutton.modules.videoconf.views
         }
 
         private function calculateCellDimensions(canvasWidth:int, canvasHeight:int, numColumns:int, numRows:int):Object {
-            var obj:Object = {
-                width: Math.floor(canvasWidth / numColumns)-5,
-                height: Math.floor(canvasHeight / numRows)-5
-            }
+            var obj:Object = {width: Math.floor(canvasWidth / numColumns) - 5, height: Math.floor(canvasHeight / numRows) - 5}
             if (obj.width / obj.height > _minContentAspectRatio) {
                 obj.width = Math.floor(obj.height * _minContentAspectRatio);
             } else {
@@ -68,9 +68,7 @@ package org.bigbluebutton.modules.videoconf.views
         }
 
         private function findBestConfiguration(canvasWidth:int, canvasHeight:int, numChildrenInCanvas:int):Object {
-            var bestConfiguration:Object = {
-                occupiedArea: 0
-            }
+            var bestConfiguration:Object = {occupiedArea: 0}
 
             for (var numColumns:int = 1; numColumns <= numChildrenInCanvas; ++numColumns) {
                 var numRows:int = Math.ceil(numChildrenInCanvas / numColumns);
@@ -96,10 +94,7 @@ package org.bigbluebutton.modules.videoconf.views
 
             var blockX:int = Math.floor((unscaledWidth - cellWidth * numColumns) / 2);
             var blockY:int = Math.floor((unscaledHeight - cellHeight * numRows) / 2);
-            var itemX:int,
-                itemY:int,
-                itemWidth:int,
-                itemHeight:int;
+            var itemX:int, itemY:int, itemWidth:int, itemHeight:int;
 
             for (var i:int = 0; i < numChildren; ++i) {
                 var item:UserGraphicHolder = getChildAt(i) as UserGraphicHolder;
@@ -120,30 +115,25 @@ package org.bigbluebutton.modules.videoconf.views
                 item.setActualSize(itemWidth, itemHeight);
                 item.move(itemX, itemY);
             }
-        }    
+        }
 
-        private function findPriorityConfiguration(unscaledWidth:Number, unscaledHeight:Number):Object{
-            var pBestConf:Object = {
-                numRows: 0,
-                numColumns: 0,
-                width: 0,
-                height: 0
-            };
+        private function findPriorityConfiguration(unscaledWidth:Number, unscaledHeight:Number):Object {
+            var pBestConf:Object = {numRows: 0, numColumns: 0, width: 0, height: 0};
             var oBestConf:Object = pBestConf;
             var isVertSplit:Boolean = false;
-            if (numChildren > 1){
+            if (numChildren > 1) {
                 var pBestConfVer:Object = findBestConfiguration(Math.floor(unscaledWidth * priorityWeight), unscaledHeight, 1);
                 var pBestConfHor:Object = findBestConfiguration(unscaledWidth, Math.floor(unscaledHeight * priorityWeight), 1);
                 isVertSplit = (pBestConfVer.occupiedArea > pBestConfHor.occupiedArea);
                 if (isVertSplit) {
                     pBestConf = pBestConfVer;
-                    oBestConf = findBestConfiguration(unscaledWidth - pBestConf.width, unscaledHeight, numChildren-1);
+                    oBestConf = findBestConfiguration(unscaledWidth - pBestConf.width, unscaledHeight, numChildren - 1);
                 } else {
                     pBestConf = pBestConfHor;
-                    oBestConf = findBestConfiguration(unscaledWidth, unscaledHeight - pBestConf.height, numChildren-1);
+                    oBestConf = findBestConfiguration(unscaledWidth, unscaledHeight - pBestConf.height, numChildren - 1);
                 }
             } else {
-                pBestConf = findBestConfiguration(unscaledWidth,unscaledHeight,1);
+                pBestConf = findBestConfiguration(unscaledWidth, unscaledHeight, 1);
             }
             return {isVertSplit: isVertSplit, priorConf: pBestConf, otherConf: oBestConf};
         }
@@ -166,10 +156,7 @@ package org.bigbluebutton.modules.videoconf.views
             var blockY:int = 0;
             var cellOffsetX:int = 0;
             var cellOffsetY:int = 0;
-            var itemX:int,
-                itemY:int,
-                itemWidth:int,
-                itemHeight:int;
+            var itemX:int, itemY:int, itemWidth:int, itemHeight:int;
 
             var item:UserGraphicHolder = priorityItem as UserGraphicHolder;
 
@@ -183,21 +170,21 @@ package org.bigbluebutton.modules.videoconf.views
             }
 
             if (bestConf.isVertSplit) {
-                blockX = Math.floor((3*(unscaledWidth - oWidth*numColumns) + itemWidth)/4);
-                blockY = Math.floor((unscaledHeight - oHeight*numRows)/2);
-                itemX = Math.floor((unscaledWidth - itemWidth - oWidth*numColumns)/2);
-                itemY = Math.floor((unscaledHeight - itemHeight)/2);
+                blockX = Math.floor((3 * (unscaledWidth - oWidth * numColumns) + itemWidth) / 4);
+                blockY = Math.floor((unscaledHeight - oHeight * numRows) / 2);
+                itemX = Math.floor((unscaledWidth - itemWidth - oWidth * numColumns) / 2);
+                itemY = Math.floor((unscaledHeight - itemHeight) / 2);
             } else {
-                blockX = Math.floor((unscaledWidth - oWidth*numColumns)/2);
-                blockY = Math.floor((3*(unscaledHeight - oHeight*numRows) + itemHeight)/4);
-                itemX = Math.floor((unscaledWidth - itemWidth)/2);
-                itemY = Math.floor((unscaledHeight - itemHeight - oHeight*numRows)/2);
+                blockX = Math.floor((unscaledWidth - oWidth * numColumns) / 2);
+                blockY = Math.floor((3 * (unscaledHeight - oHeight * numRows) + itemHeight) / 4);
+                itemX = Math.floor((unscaledWidth - itemWidth) / 2);
+                itemY = Math.floor((unscaledHeight - itemHeight - oHeight * numRows) / 2);
             }
             item.setActualSize(itemWidth, itemHeight);
             item.move(itemX, itemY);
 
             // set size and position of the other videos
-            var nonPriorityIndex:int=0;
+            var nonPriorityIndex:int = 0;
             for (var curItemIndex:int = 0; curItemIndex < numChildren; ++curItemIndex) {
                 item = getChildAt(curItemIndex) as UserGraphicHolder;
                 if (item != priorityItem) {
@@ -209,8 +196,8 @@ package org.bigbluebutton.modules.videoconf.views
                         itemHeight = oHeight;
                         itemWidth = Math.floor(oHeight * item.contentAspectRatio);
                     }
-                    cellOffsetX = (oWidth - itemWidth)/2;
-                    cellOffsetY = (oHeight - itemHeight)/2;
+                    cellOffsetX = (oWidth - itemWidth) / 2;
+                    cellOffsetY = (oHeight - itemHeight) / 2;
 
                     itemX = (nonPriorityIndex % numColumns) * oWidth + blockX + cellOffsetX;
                     itemY = Math.floor(nonPriorityIndex / numColumns) * oHeight + blockY + cellOffsetY;
@@ -234,7 +221,8 @@ package org.bigbluebutton.modules.videoconf.views
         }
 
         public function addAvatarFor(userId:String):void {
-            if (! UsersUtil.hasUser(userId)) return;
+            if (!UsersUtil.hasUser(userId))
+                return;
 
             var graphic:UserGraphicHolder = new UserGraphicHolder();
             graphic.userId = userId;
@@ -249,7 +237,7 @@ package org.bigbluebutton.modules.videoconf.views
         }
 
         private function addVideoForHelper(userId:String, connection:NetConnection, streamName:String):void {
-			LOGGER.debug("[GraphicsWrapper:addVideoForHelper] streamName {0}", [streamName]);
+            LOGGER.debug("[GraphicsWrapper:addVideoForHelper] streamName {0}", [streamName]);
             var graphic:UserGraphicHolder = new UserGraphicHolder();
             graphic.userId = userId;
             graphic.streamName = streamName;
@@ -265,7 +253,8 @@ package org.bigbluebutton.modules.videoconf.views
 
         public function addVideoFor(userId:String, connection:NetConnection):void {
             var user:BBBUser = UsersUtil.getUser(userId);
-            if (user == null) return;
+            if (user == null)
+                return;
 
             var streamNames:Array = user.streamNames;
 
@@ -318,7 +307,8 @@ package org.bigbluebutton.modules.videoconf.views
         }
 
         public function addCameraFor(userId:String, camIndex:int, videoProfile:VideoProfile):void {
-            if (! UsersUtil.hasUser(userId)) return;
+            if (!UsersUtil.hasUser(userId))
+                return;
 
             var alreadyPublishing:Boolean = false;
             for (var i:int = 0; i < numChildren; ++i) {
@@ -335,7 +325,7 @@ package org.bigbluebutton.modules.videoconf.views
         }
 
         private function removeChildHelper(child:UserGraphicHolder):void {
-            child.shutdown(); 
+            child.shutdown();
 
             if (contains(child)) {
                 removeChild(child);
@@ -343,11 +333,11 @@ package org.bigbluebutton.modules.videoconf.views
         }
 
         public function removeAvatarFor(userId:String):void {
-			LOGGER.debug("[GraphicsWrapper:removeAvatarFor] userId {0}", [userId]);
+            LOGGER.debug("[GraphicsWrapper:removeAvatarFor] userId {0}", [userId]);
             for (var i:int = 0; i < numChildren; ++i) {
                 var item:UserGraphicHolder = getChildAt(i) as UserGraphicHolder;
                 if (item.user && item.user.userID == userId && item.visibleComponent is UserAvatar) {
-					LOGGER.debug("[GraphicsWrapper:removeAvatarFor] removing graphic");
+                    LOGGER.debug("[GraphicsWrapper:removeAvatarFor] removing graphic");
                     removeChildHelper(item);
                     // recursive call to remove all avatars for userId
                     removeAvatarFor(userId);
@@ -357,7 +347,7 @@ package org.bigbluebutton.modules.videoconf.views
         }
 
         public function removeVideoByCamIndex(userId:String, camIndex:int):String {
-			LOGGER.debug("[GraphicsWrapper:removeVideoByCamIndex] userId {0} camIndex {1}", [userId, camIndex]);
+            LOGGER.debug("[GraphicsWrapper:removeVideoByCamIndex] userId {0} camIndex {1}", [userId, camIndex]);
             var streamName:String = "";
 
             for (var i:int = 0; i < numChildren; ++i) {
@@ -386,11 +376,11 @@ package org.bigbluebutton.modules.videoconf.views
         }
 
         public function removeGraphicsFor(userId:String):void {
-			LOGGER.debug("[GraphicsWrapper:removeGraphicsFor] userId {0}", [userId]);
+            LOGGER.debug("[GraphicsWrapper:removeGraphicsFor] userId {0}", [userId]);
             for (var i:int = 0; i < numChildren; ++i) {
                 var item:UserGraphicHolder = getChildAt(i) as UserGraphicHolder;
                 if (item.user && item.user.userID == userId) {
-					LOGGER.debug("[GraphicsWrapper:removeGraphicsFor] removing graphic");
+                    LOGGER.debug("[GraphicsWrapper:removeGraphicsFor] removing graphic");
                     removeChildHelper(item);
                     // recursive call to remove all graphics for userId
                     removeGraphicsFor(userId);
