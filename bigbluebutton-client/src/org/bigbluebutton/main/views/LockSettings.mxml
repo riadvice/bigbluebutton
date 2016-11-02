@@ -21,8 +21,7 @@ with BigBlueButton; if not, see <http://www.gnu.org/licenses/>.
 <mx:TitleWindow xmlns:mx="http://www.adobe.com/2006/mxml" 
 				xmlns:mate="http://mate.asfusion.com/" 
 				xmlns:common="org.bigbluebutton.common.*"
-				width="300" height="400" 
-				creationComplete="creationCompleteHandler(event)" 
+				width="320" height="430" 
 				styleName="lockSettingsWindowStyle"
 				showCloseButton="false" 
 				close="onCancelClicked()" 
@@ -30,18 +29,12 @@ with BigBlueButton; if not, see <http://www.gnu.org/licenses/>.
 	
 	<mx:Script>
 		<![CDATA[
-			import com.asfusion.mate.events.Dispatcher;
-			
 			import mx.events.CloseEvent;
-			import mx.events.FlexEvent;
 			import mx.managers.PopUpManager;
 			
 			import org.bigbluebutton.common.Images;
 			import org.bigbluebutton.core.events.LockControlEvent;
-			import org.bigbluebutton.core.managers.UserManager;
 			import org.bigbluebutton.core.vo.LockSettingsVO;
-			import org.bigbluebutton.main.model.ConferenceParameters;
-			import org.bigbluebutton.main.model.users.Conference;
 			import org.bigbluebutton.util.i18n.ResourceUtil;
 			
 			private var images:Images = new Images();
@@ -55,6 +48,7 @@ with BigBlueButton; if not, see <http://www.gnu.org/licenses/>.
 			[Bindable] public var lockedLayout:Boolean = false;
 			[Bindable] public var lockOnJoin:Boolean = false;
 			[Bindable] public var lockOnJoinConfigurable:Boolean = false;
+			[Bindable] public var moderatorControlWebcams:Boolean = false;
 			  
 			override public function move(x:Number, y:Number):void {
 				return;
@@ -69,21 +63,21 @@ with BigBlueButton; if not, see <http://www.gnu.org/licenses/>.
 			
 			private function onSaveClicked():void {
 				var event:LockControlEvent = new LockControlEvent(LockControlEvent.SAVE_LOCK_SETTINGS);
-				var lockSettings:LockSettingsVO = new LockSettingsVO(chkDisableWebcam.selected, chkDisableMicrophone.selected, chkDisablePrivateChat.selected, chkDisablePublicChat.selected, chkDisableLayout.selected, chkLockOnJoin.selected, lockOnJoinConfigurable);
+				var lockSettings:LockSettingsVO = new LockSettingsVO(chkDisableWebcam.selected, chkDisableMicrophone.selected,
+																	 chkDisablePrivateChat.selected, chkDisablePublicChat.selected,
+																	 chkDisableLayout.selected, chkLockOnJoin.selected,
+																	 lockOnJoinConfigurable, chkModeratorControlWebcams.selected);
+
 				event.payload = lockSettings.toMap();
 				dispatchEvent(event);
-				
+
 				PopUpManager.removePopUp(this);
 			}	
 			
 			private function onCancelClicked():void {
 				PopUpManager.removePopUp(this);
 			}
-			
-			protected function creationCompleteHandler(event:FlexEvent):void
-			{
-			
-			}
+
 		]]>
 	</mx:Script>
 	
@@ -141,6 +135,16 @@ with BigBlueButton; if not, see <http://www.gnu.org/licenses/>.
 			<mx:HBox width="30%">
 				<mx:Spacer width="50%" />
 				<mx:CheckBox id="chkDisableLayout" selected="{lockedLayout}"/>
+				<mx:Spacer width="50%" />
+			</mx:HBox>
+		</mx:HBox>
+		
+		<mx:HBox verticalAlign="top" width="100%">
+			<mx:Label width="70%" styleName="lockSettingsDefaultLabelStyle"
+					  text="{ResourceUtil.getInstance().getString('bbb.lockSettings.moderatorControlWebcams')}" />
+			<mx:HBox width="30%">
+				<mx:Spacer width="50%" />
+				<mx:CheckBox id="chkModeratorControlWebcams" selected="{moderatorControlWebcams}"/>
 				<mx:Spacer width="50%" />
 			</mx:HBox>
 		</mx:HBox>

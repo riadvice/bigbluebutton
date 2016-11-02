@@ -104,6 +104,7 @@ public class Constants {
   public static final String PRESENTATION_BASE_URL           = "presentation_base_url";
   public static final String DISABLE_CAMERA                  = "disable_camera";
   public static final String LOCK_ON_JOIN_CONFIGURABLE       = "lock_on_join_configurable";
+  public static final String MODERATOR_CONTROL_WEBCAMS       = "moderator_control_webcams";
   public static final String DISABLE_MICROPHONE              = "disable_microphone";
   public static final String DISABLE_PRIVATE_CHAT            = "disable_private_chat";
   public static final String DISABLE_PUBLIC_CHAT             = "disable_public_chat";
@@ -124,11 +125,12 @@ public class Constants {
   public static final String PERM_LOCKED_LAYOUT              = "lockedLayout";
   public static final String PERM_LOCK_ON_JOIN               = "lockOnJoin";
   public static final String PERM_LOCK_ON_JOIN_CONFIG        = "lockOnJoinConfigurable";
+  public static final String PERM_MODERATOR_CONTROL_WEBCAMS  = "moderatorControlWebcams";
   public static final String ENABLED                         = "enabled";
   public static final String START_INDEX                     = "start_index";
   public static final String END_INDEX                       = "end_index";
   public static final String LOCALE                          = "locale";
-  public static final String LOCALE_CODE                      = "locale_code";
+  public static final String LOCALE_CODE                     = "locale_code";
   public static final String TEXT                            = "text";
   public static final String OWNER_ID                        = "owner_id";
   public static final String CAPTION_HISTORY                 = "caption_history";

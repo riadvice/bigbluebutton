@@ -156,6 +156,7 @@ class BigBlueButtonInGW(
     val lockedLayout = s.getOrElse("lockedLayout", false)
     var lockOnJoin = s.getOrElse("lockOnJoin", false)
     var lockOnJoinConfigurable = s.getOrElse("lockOnJoinConfigurable", false)
+    var moderatorControlWebcams = s.getOrElse("moderatorControlWebcams", false)
 
     val permissions = new Permissions(disableCam = disableCam,
       disableMic = disableMic,
@@ -163,7 +164,8 @@ class BigBlueButtonInGW(
       disablePubChat = disablePubChat,
       lockedLayout = lockedLayout,
       lockOnJoin = lockOnJoin,
-      lockOnJoinConfigurable = lockOnJoinConfigurable)
+      lockOnJoinConfigurable = lockOnJoinConfigurable,
+      moderatorControlWebcams = moderatorControlWebcams)
 
     eventBus.publish(BigBlueButtonEvent(meetingID, new SetLockSettings(meetingID, userId, permissions)))
   }

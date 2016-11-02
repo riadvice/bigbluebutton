@@ -61,6 +61,7 @@ object UsersMessageToJsonConverter {
     args.put("lockedLayout", perms.lockedLayout: java.lang.Boolean);
     args.put("lockOnJoin", perms.lockOnJoin: java.lang.Boolean);
     args.put("lockOnJoinConfigurable", perms.lockOnJoinConfigurable: java.lang.Boolean);
+    args.put("moderatorControlWebcams", perms.moderatorControlWebcams: java.lang.Boolean);
     args
   }
 

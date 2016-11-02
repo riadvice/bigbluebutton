@@ -33,6 +33,7 @@ public class SendLockSettingsMessage implements IBigBlueButtonMessage {
 		settingsMap.put(Constants.LOCKED_LAYOUT, newSettings.get("lockedLayout"));
 		settingsMap.put(Constants.LOCK_ON_JOIN, newSettings.get("lockOnJoin"));
 		settingsMap.put(Constants.LOCK_ON_JOIN_CONFIGURABLE, newSettings.get("lockOnJoinConfigurable"));
+		settingsMap.put(Constants.MODERATOR_CONTROL_WEBCAMS, newSettings.get("moderatorControlWebcams"));
 
 		payload.put(Constants.MEETING_ID, meetingId);
 		payload.put(Constants.USER_ID, userId);
@@ -65,7 +66,8 @@ public class SendLockSettingsMessage implements IBigBlueButtonMessage {
 								&& settingsObj.has(Constants.DISABLE_PUBLIC_CHAT)
 								&& settingsObj.has(Constants.LOCKED_LAYOUT)
 								&& settingsObj.has(Constants.LOCK_ON_JOIN)
-								&& settingsObj.has(Constants.LOCK_ON_JOIN_CONFIGURABLE)) {
+								&& settingsObj.has(Constants.LOCK_ON_JOIN_CONFIGURABLE)
+								&& settingsObj.has(Constants.MODERATOR_CONTROL_WEBCAMS)) {
 
 							Map<String, Boolean> settingsMap = new HashMap<String, Boolean>();
 
@@ -75,7 +77,8 @@ public class SendLockSettingsMessage implements IBigBlueButtonMessage {
 							settingsMap.put("disablePublicChat", settingsObj.get(Constants.DISABLE_PUBLIC_CHAT).getAsBoolean());
 							settingsMap.put("lockedLayout", settingsObj.get(Constants.LOCKED_LAYOUT).getAsBoolean());
 							settingsMap.put("lockOnJoin", settingsObj.get(Constants.LOCK_ON_JOIN).getAsBoolean());
-							settingsMap.put("lockOnJoinConfigurable", settingsObj.get(Constants.LOCK_ON_JOIN_CONFIGURABLE).getAsBoolean());
+                            settingsMap.put("lockOnJoinConfigurable", settingsObj.get(Constants.LOCK_ON_JOIN_CONFIGURABLE).getAsBoolean());
+                            settingsMap.put("moderatorControlWebcams", settingsObj.get(Constants.MODERATOR_CONTROL_WEBCAMS).getAsBoolean());
 
 							String meetingId = payload.get(Constants.MEETING_ID).getAsString();
 							String userId = payload.get(Constants.USER_ID).getAsString();

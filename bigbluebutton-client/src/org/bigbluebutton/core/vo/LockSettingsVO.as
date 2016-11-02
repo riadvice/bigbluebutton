@@ -18,9 +18,6 @@
  */
 package org.bigbluebutton.core.vo
 {
-	import org.bigbluebutton.core.UsersUtil;
-	import org.bigbluebutton.main.model.users.BBBUser;
-
 	public class LockSettingsVO
 	{
 		private var lockOnJoinConfigurable:Boolean;
@@ -30,14 +27,16 @@ package org.bigbluebutton.core.vo
 		private var disablePublicChat:Boolean;
 		private var lockedLayout:Boolean;
 		private var lockOnJoin:Boolean;
+		private var moderatorControlWebcams:Boolean;
 
 		public function LockSettingsVO(pDisableCam:Boolean, 
 									   pDisableMic:Boolean, 
 									   pDisablePrivateChat:Boolean, 
 									   pDisablePublicChat:Boolean, 
 									   pLockLayout: Boolean, 
-									   pLockOnJoin:Boolean, 
-									   pLockOnJoinConfigurable:Boolean)
+									   pLockOnJoin:Boolean,
+									   pLockOnJoinConfigurable:Boolean,
+									   pModeratorControlWebcams:Boolean)
 		{
 			this.disableCam = pDisableCam;
 			this.disableMic = pDisableMic;
@@ -46,6 +45,7 @@ package org.bigbluebutton.core.vo
 			this.lockedLayout = pLockLayout;
 			this.lockOnJoin = pLockOnJoin;
 			this.lockOnJoinConfigurable = pLockOnJoinConfigurable;
+			this.moderatorControlWebcams = pModeratorControlWebcams;
 		}
 		
 		public function toMap():Object {
@@ -56,7 +56,8 @@ package org.bigbluebutton.core.vo
 				disablePublicChat: this.disablePublicChat,
 				lockedLayout: this.lockedLayout,
 				lockOnJoin: this.lockOnJoin,
-				lockOnJoinConfigurable:  this.lockOnJoinConfigurable
+				lockOnJoinConfigurable:  this.lockOnJoinConfigurable,
+				moderatorControlWebcams:  this.moderatorControlWebcams
 			};
 			
 			return map;
@@ -89,9 +90,13 @@ package org.bigbluebutton.core.vo
 		public function getLockOnJoinConfigurable():Boolean {
 			return lockOnJoinConfigurable;
 		}
-		
+
+		public function getModeratorControlWebcams():Boolean {
+			return moderatorControlWebcams;
+		}
+
 		public function isAnythingLocked():Boolean {
-			return ( lockedLayout || disableCam || disableMic || disablePrivateChat || disablePublicChat );
+			return (lockedLayout || disableCam || disableMic || disablePrivateChat || disablePublicChat || moderatorControlWebcams);
 		}
 	}
 }

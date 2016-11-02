@@ -62,7 +62,8 @@ case class Permissions(
   disablePubChat: Boolean = false,
   lockedLayout: Boolean = false,
   lockOnJoin: Boolean = false,
-  lockOnJoinConfigurable: Boolean = false)
+  lockOnJoinConfigurable: Boolean = false,
+  moderatorControlWebcams: Boolean = false)
 
 case class RegisteredUser(
   id: String,

@@ -205,7 +205,8 @@ package org.bigbluebutton.modules.users.services
 	  														map.disablePublicChat,
 	  														map.lockedLayout,
 	  														map.lockOnJoin,
-	  														map.lockOnJoinConfigurable);
+															map.lockOnJoinConfigurable,
+															map.moderatorControlWebcams);
       UserManager.getInstance().getConference().setLockSettings(lockSettings);
     }
     
@@ -249,7 +250,7 @@ package org.bigbluebutton.modules.users.services
       var perm:Object = map.permissions;
       
       var lockSettings:LockSettingsVO = new LockSettingsVO(perm.disableCam, perm.disableMic,
-                                                 perm.disablePrivateChat, perm.disablePublicChat, perm.lockedLayout, perm.lockOnJoin, perm.lockOnJoinConfigurable);
+                                                 perm.disablePrivateChat, perm.disablePublicChat, perm.lockedLayout, perm.lockOnJoin, perm.lockOnJoinConfigurable, perm.moderatorControlWebcams);
       UserManager.getInstance().getConference().setLockSettings(lockSettings);
       MeetingModel.getInstance().meetingMuted = map.meetingMuted;
       
@@ -534,9 +535,14 @@ package org.bigbluebutton.modules.users.services
       UserManager.getInstance().getConference().emojiStatus(map.userId, map.emojiStatus);
     }
 
-    private function handleUserSharedWebcam(msg: Object):void {   
-      var map:Object = JSON.parse(msg.msg);
-      UserManager.getInstance().getConference().sharedWebcam(map.userId, map.webcamStream);
+    private function handleUserSharedWebcam(msg: Object):void {
+		if (!UserManager.getInstance().getConference().getLockSettings().getModeratorControlWebcams()
+			|| UserManager.getInstance().getConference().amIModerator()) {
+			var map:Object = JSON.parse(msg.msg);
+			UserManager.getInstance().getConference().sharedWebcam(map.userId, map.webcamStream);	
+		} else {
+			// To be implemented
+		}
     }
 
     private function handleUserUnsharedWebcam(msg: Object):void {  

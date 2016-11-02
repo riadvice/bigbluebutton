@@ -14,7 +14,7 @@ public class Util {
 		if (vu.has(Constants.PERM_DISABLE_CAM) && vu.has(Constants.PERM_DISABLE_MIC)
 				&& vu.has(Constants.PERM_DISABLE_PRIVCHAT) && vu.has(Constants.PERM_DISABLE_PUBCHAT)
 				&& vu.has(Constants.PERM_LOCKED_LAYOUT) && vu.has(Constants.PERM_LOCK_ON_JOIN)
-				&& vu.has(Constants.PERM_LOCK_ON_JOIN_CONFIG)){
+				&& vu.has(Constants.PERM_LOCK_ON_JOIN_CONFIG) && vu.has(Constants.PERM_MODERATOR_CONTROL_WEBCAMS)){
 			
 			Map<String, Boolean> vuMap = new HashMap<String, Boolean>();
 			Boolean disableCam = vu.get(Constants.PERM_DISABLE_CAM).getAsBoolean();
@@ -23,7 +23,8 @@ public class Util {
 			Boolean disablePubChat = vu.get(Constants.PERM_DISABLE_PUBCHAT).getAsBoolean();
 			Boolean lockedLayout = vu.get(Constants.PERM_LOCKED_LAYOUT).getAsBoolean();
 			Boolean lockOnJoin = vu.get(Constants.PERM_LOCK_ON_JOIN).getAsBoolean();
-			Boolean lockOnJoinConfig = vu.get(Constants.PERM_LOCK_ON_JOIN_CONFIG).getAsBoolean();
+            Boolean lockOnJoinConfig = vu.get(Constants.PERM_LOCK_ON_JOIN_CONFIG).getAsBoolean();
+            Boolean moderatorControlWebcams = vu.get(Constants.PERM_MODERATOR_CONTROL_WEBCAMS).getAsBoolean();
 			
 			vuMap.put(Constants.PERM_DISABLE_CAM, disableCam);
 			vuMap.put(Constants.PERM_DISABLE_MIC, disableMic);
@@ -32,6 +33,7 @@ public class Util {
 			vuMap.put(Constants.PERM_LOCKED_LAYOUT, lockedLayout);
 			vuMap.put(Constants.PERM_LOCK_ON_JOIN, lockOnJoin);
 			vuMap.put(Constants.PERM_LOCK_ON_JOIN_CONFIG, lockOnJoinConfig);
+	        vuMap.put(Constants.PERM_MODERATOR_CONTROL_WEBCAMS, moderatorControlWebcams);
 			
 			return vuMap;
 		}

@@ -294,7 +294,13 @@ with BigBlueButton; if not, see <http://www.gnu.org/licenses/>.
                 _hideMuteBtnTimer.reset();
                 muteBtnWrapper.visible = true;
             }
-        ]]>
+
+			protected function shareBtn_clickHandler(event:MouseEvent):void
+			{
+				// TODO Auto-generated method stub
+			}
+			
+		]]>
     </mx:Script>
 
     <mx:Fade id="fadeOut" duration="200" alphaFrom="1.0" alphaTo="0.0" />
@@ -342,6 +348,9 @@ with BigBlueButton; if not, see <http://www.gnu.org/licenses/>.
                         mouseOver="onMuteBtnMouseOver()"
                         mouseOut="onMuteBtnMouseOut()" />
             </mx:Box>
+			<mx:Button label="Share/Unshare Webcam"
+					   id="shareBtn"
+					   click="shareBtn_clickHandler(event)"/>
         </mx:VBox>
     </mx:Canvas>
 </mx:VBox>

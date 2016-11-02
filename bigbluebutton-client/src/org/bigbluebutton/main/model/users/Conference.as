@@ -449,62 +449,69 @@ package org.bigbluebutton.main.model.users {
 				uids.addItem(u.userID);
 			}
 			return uids;
-		}
-		
-		/**
-		 * Read default lock settings from config.xml
-		 * */
-		public function configLockSettings():void {
-			var config:Config = BBB.getConfigManager().config;
-			var disableCam:Boolean,
+        }
+
+        /**
+         * Read default lock settings from config.xml
+         * */
+        public function configLockSettings():void {
+            var config:Config = BBB.getConfigManager().config;
+            var disableCam:Boolean,
 				disableMic:Boolean,
 				disablePrivateChat:Boolean,
 				disablePublicChat:Boolean,
 				lockedLayout:Boolean,
 				lockOnJoin:Boolean,
-				lockOnJoinConfigurable:Boolean;
-			var lockConfig:XML;
-			if (config != null) {
-				lockConfig = config.lock;
-			}
+				lockOnJoinConfigurable:Boolean,
+	            moderatorControlWebcams: Boolean;
+
+            var lockConfig:XML;
+            if (config != null) {
+                lockConfig = config.lock;
+            }
+            try {
+                disableCam = (lockConfig.@disableCamForLockedUsers.toUpperCase() == "TRUE");
+            } catch (e:Error) {
+                disableCam = false; //If not set, default to false
+            }
+            try {
+                disableMic = (lockConfig.@disableMicForLockedUsers.toUpperCase() == "TRUE");
+            } catch (e:Error) {
+                disableMic = false; //If not set, default to false
+            }
+            try {
+                disablePrivateChat = (lockConfig.@disablePrivateChatForLockedUsers.toUpperCase() == "TRUE");
+            } catch (e:Error) {
+                disablePrivateChat = false; //If not set, default to false
+            }
+            try {
+                disablePublicChat = (lockConfig.@disablePublicChatForLockedUsers.toUpperCase() == "TRUE");
+            } catch (e:Error) {
+                disablePublicChat = false; //If not set, default to false
+            }
+            try {
+                lockedLayout = (lockConfig.@lockLayoutForLockedUsers.toUpperCase() == "TRUE");
+            } catch (e:Error) {
+                lockedLayout = false; //If not set, default to false
+            }
+            try {
+                lockOnJoin = (lockConfig.@lockOnJoin.toUpperCase() == "TRUE");
+            } catch (e:Error) {
+                lockOnJoin = true; //If not set, default to true
+            }
+            try {
+                lockOnJoinConfigurable = (lockConfig.@lockOnJoinConfigurable.toUpperCase() == "TRUE");
+            } catch (e:Error) {
+                lockOnJoinConfigurable = false; //If not set, default to false
+            }
 			try {
-				disableCam = (lockConfig.@disableCamForLockedUsers.toUpperCase() == "TRUE");
+				moderatorControlWebcams = (lockConfig.@moderatorControlWebcams.toUpperCase() == "TRUE");
 			} catch (e:Error) {
-				disableCam = false; //If not set, default to false
+				moderatorControlWebcams = false; //If not set, default to false
 			}
-			try {
-				disableMic = (lockConfig.@disableMicForLockedUsers.toUpperCase() == "TRUE");
-			} catch (e:Error) {
-				disableMic = false; //If not set, default to false
-			}
-			try {
-				disablePrivateChat = (lockConfig.@disablePrivateChatForLockedUsers.toUpperCase() == "TRUE");
-			} catch (e:Error) {
-				disablePrivateChat = false; //If not set, default to false
-			}
-			try {
-				disablePublicChat = (lockConfig.@disablePublicChatForLockedUsers.toUpperCase() == "TRUE");
-			} catch (e:Error) {
-				disablePublicChat = false; //If not set, default to false
-			}
-			try {
-				lockedLayout = (lockConfig.@lockLayoutForLockedUsers.toUpperCase() == "TRUE");
-			} catch (e:Error) {
-				lockedLayout = false; //If not set, default to false
-			}
-			try {
-				lockOnJoin = (lockConfig.@lockOnJoin.toUpperCase() == "TRUE");
-			} catch (e:Error) {
-				lockOnJoin = true; //If not set, default to true
-			}
-			try {
-				lockOnJoinConfigurable = (lockConfig.@lockOnJoinConfigurable.toUpperCase() == "TRUE");
-			} catch (e:Error) {
-				lockOnJoinConfigurable = false; //If not set, default to false
-			}
-			lockSettings = new LockSettingsVO(disableCam, disableMic, disablePrivateChat, disablePublicChat, lockedLayout, lockOnJoin, lockOnJoinConfigurable);
-			setLockSettings(lockSettings);
-		}
+            lockSettings = new LockSettingsVO(disableCam, disableMic, disablePrivateChat, disablePublicChat, lockedLayout, lockOnJoin, lockOnJoinConfigurable, moderatorControlWebcams);
+            setLockSettings(lockSettings);
+        }
 		
 		public function getMyUser():BBBUser {
 			var eachUser:BBBUser;
