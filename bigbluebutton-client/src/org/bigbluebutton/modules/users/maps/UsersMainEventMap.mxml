@@ -38,6 +38,7 @@ with BigBlueButton; if not, see <http://www.gnu.org/licenses/>.
 			import org.bigbluebutton.main.model.users.events.KickUserEvent;
 			import org.bigbluebutton.main.model.users.events.RoleChangeEvent;
 			import org.bigbluebutton.main.model.users.events.UsersConnectionEvent;
+			import org.bigbluebutton.modules.users.events.StreamPermissionEvent;
 		]]>
 	</mx:Script>
 	
@@ -152,6 +153,10 @@ with BigBlueButton; if not, see <http://www.gnu.org/licenses/>.
     <MethodInvoker generator="{UserService}" method="saveLockSettings" arguments="{event}" />
   </EventHandlers>
   
+  <EventHandlers type="{StreamPermissionEvent.MODERATOR_ALLOW_WEBCAM_DISPLAY}">
+    <MethodInvoker generator="{UserService}" method="shareStreamPermission" arguments="{event}"/>
+  </EventHandlers>
+	
   <EventHandlers type="{RoleChangeEvent.ASSIGN_PRESENTER}">
     <MethodInvoker generator="{UserService}" method="assignPresenter" arguments="{event}" />
   </EventHandlers>

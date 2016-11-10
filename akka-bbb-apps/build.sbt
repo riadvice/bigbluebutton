@@ -6,7 +6,7 @@ organization := "org.bigbluebutton"
 
 version := "0.0.2"
 
-scalaVersion  := "2.11.7"
+scalaVersion  := "2.11.8"
 
 scalacOptions ++= Seq(
   "-unchecked",
@@ -38,7 +38,7 @@ testOptions in Test += Tests.Argument(TestFrameworks.Specs2, "html", "console", 
 testOptions in Test += Tests.Argument(TestFrameworks.ScalaTest, "-h", "target/scalatest-reports")
 
 libraryDependencies ++= {
-  val akkaVersion  = "2.3.14"
+  val akkaVersion = "2.3.14"
   val akkaStreamV = "1.0"
   val scalaTestV  = "2.2.4"
   Seq(
@@ -50,10 +50,10 @@ libraryDependencies ++= {
     "com.typesafe.akka"        %%  "akka-http-experimental"               % akkaStreamV,
     "com.typesafe.akka"        %%  "akka-http-spray-json-experimental"    % akkaStreamV,
     "com.typesafe.akka"        %%  "akka-http-testkit-experimental"       % akkaStreamV,
-    "org.scalatest"            %   "scalatest_2.11"                       % scalaTestV     % "test",
-    "ch.qos.logback"           %   "logback-classic"                      % "1.0.13"       % "runtime",
-    "org.pegdown"              %   "pegdown"                              % "1.4.0",
-    "junit"                    %   "junit"                                % "4.11",
+    "org.scalatest"             %   "scalatest_2.11"                      % scalaTestV     % "test",
+    "ch.qos.logback"            %   "logback-classic"                     % "1.0.13"       % "runtime",
+    "org.pegdown"               %   "pegdown"                             % "1.4.0",
+    "junit"                     %   "junit"                               % "4.11",
     "com.etaty.rediscala"      %%  "rediscala"                            % "1.4.0",
     "commons-codec"             %  "commons-codec"                        % "1.10",
     "joda-time"                 %  "joda-time"                            % "2.3",

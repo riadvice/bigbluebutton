@@ -100,6 +100,7 @@ class MessageSenderActor(val service: MessageSender)
     case msg: UserJoined => handleUserJoined(msg)
     case msg: UserChangedEmojiStatus => handleChangedUserEmojiStatus(msg)
     case msg: UserSharedWebcam => handleUserSharedWebcam(msg)
+    case msg: StreamPermissionChange => handleStreamPermissionChange(msg)
     case msg: UserUnsharedWebcam => handleUserUnsharedWebcam(msg)
     case msg: UserStatusChange => handleUserStatusChange(msg)
     case msg: UserVoiceMuted => handleUserVoiceMuted(msg)
@@ -583,6 +584,11 @@ class MessageSenderActor(val service: MessageSender)
 
   private def handleUserSharedWebcam(msg: UserSharedWebcam) {
     val json = UsersMessageToJsonConverter.userSharedWebcamToJson(msg)
+    service.send(MessagingConstants.FROM_USERS_CHANNEL, json)
+  }
+
+  private def handleStreamPermissionChange(msg: StreamPermissionChange) {
+    val json = UsersMessageToJsonConverter.streamPermissionChangeToJson(msg)
     service.send(MessagingConstants.FROM_USERS_CHANNEL, json)
   }
 

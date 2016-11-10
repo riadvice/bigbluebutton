@@ -67,6 +67,19 @@ public class LockService {
 		String userId = getMyUserId();
 		red5BBBInGW.sendLockSettings(meetingId, userId, newSettings);
 	}
+	
+	/**
+	 * Called from client to lock show/hide camera display on other clients.
+	 */
+    public void setStreamPermission(Map<String, Object> msg) {
+        String meetingId = Red5.getConnectionLocal().getScope().getName();
+
+        String userId = (String) msg.get("userId");
+        String streamId = (String) msg.get("streamId");
+        Boolean allowed = (Boolean) msg.get("allowed");
+
+        red5BBBInGW.setStreamPermission(meetingId, userId, streamId, allowed);
+    }
 
 	/**
 	 * This method locks (or unlocks), based on lock parameter  
@@ -74,7 +87,6 @@ public class LockService {
 	 * */
 	public void setAllUsersLock(Boolean lock, ArrayList<String> dontLockTheseUsers){
 		log.debug("setAllUsersLock ({}, {})", new Object[] { lock, dontLockTheseUsers });
-	
 	}
 
 	/**

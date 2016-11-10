@@ -1,7 +1,7 @@
 package org.bigbluebutton.core.apps
 
 import org.bigbluebutton.core.api._
-import scala.collection.mutable.HashMap
+import scala.collection.immutable.HashMap
 import java.util.ArrayList
 import scala.collection.mutable.ArrayBuffer
 import scala.collection.immutable.ListSet
@@ -106,7 +106,7 @@ trait UsersApp {
       }
     }
 
-    /**
+    /*
      * Send a reply to BigBlueButtonActor to let it know this MeetingActor hasn't hung!
      * Sometimes, the actor seems to hang and doesn't anymore accept messages. This is a simple
      * audit to check whether the actor is still alive. (ralam feb 25, 2015)
@@ -180,13 +180,24 @@ trait UsersApp {
     }
   }
 
+  def handleStreamPermission(msg: StreamPermission) {
+    usersModel.getUser(msg.userId) foreach { user =>
+      val streams: HashMap[String, Boolean] = user.webcamStreams + (msg.stream -> msg.allowed)
+      val uvo = user.copy(hasStream = true, webcamStreams = streams)
+      usersModel.addUser(uvo)
+      log.info("User shared webcam. meetingId=" + mProps.meetingID + " userId=" + uvo.userID
+        + " stream=" + msg.stream + " streams=" + streams)
+      outGW.send(new StreamPermissionChange(mProps.meetingID, mProps.recorded, uvo.userID, msg.stream, uvo.webcamStreams.get(msg.stream).get))
+    }
+  }
+
   def handleLockUserRequest(msg: LockUserRequest) {
     usersModel.getUser(msg.userID) match {
       case Some(u) => {
         val uvo = u.copy(locked = msg.lock)
         usersModel.addUser(uvo)
 
-        log.info("Lock user.  meetingId=" + mProps.meetingID + " userId=" + u.userID + " lock=" + msg.lock)
+        log.info("Lock user. meetingId=" + mProps.meetingID + " userId=" + u.userID + " lock=" + msg.lock)
         outGW.send(new UserLocked(mProps.meetingID, u.userID, msg.lock))
       }
       case None => {
@@ -283,26 +294,25 @@ trait UsersApp {
 
   def handleUserShareWebcam(msg: UserShareWebcam) {
     usersModel.getUser(msg.userId) foreach { user =>
-      val streams = user.webcamStreams + msg.stream
+      val streams: HashMap[String, Boolean] = user.webcamStreams + (msg.stream -> !meetingModel.getPermissions().moderatorControlWebcams)
       val uvo = user.copy(hasStream = true, webcamStreams = streams)
       usersModel.addUser(uvo)
       log.info("User shared webcam.  meetingId=" + mProps.meetingID + " userId=" + uvo.userID
         + " stream=" + msg.stream + " streams=" + streams)
-      outGW.send(new UserSharedWebcam(mProps.meetingID, mProps.recorded, uvo.userID, msg.stream))
+      outGW.send(new UserSharedWebcam(mProps.meetingID, mProps.recorded, uvo.userID, msg.stream, uvo.webcamStreams.get(msg.stream).get))
     }
   }
 
   def handleUserunshareWebcam(msg: UserUnshareWebcam) {
     usersModel.getUser(msg.userId) foreach { user =>
       val streamName = user.webcamStreams find (w => w == msg.stream) foreach { streamName =>
-        val streams = user.webcamStreams - streamName
+        val streams: HashMap[String, Boolean] = user.webcamStreams - streamName._1
         val uvo = user.copy(hasStream = (!streams.isEmpty), webcamStreams = streams)
         usersModel.addUser(uvo)
         log.info("User unshared webcam.  meetingId=" + mProps.meetingID + " userId=" + uvo.userID
           + " stream=" + msg.stream + " streams=" + streams)
         outGW.send(new UserUnsharedWebcam(mProps.meetingID, mProps.recorded, uvo.userID, msg.stream))
       }
-
     }
   }
 
@@ -374,7 +384,7 @@ trait UsersApp {
       val uvo = new UserVO(msg.userID, ru.externId, ru.name,
         ru.role, emojiStatus = "none", presenter = false,
         hasStream = false, locked = getInitialLockStatus(ru.role),
-        webcamStreams = new ListSet[String](), phoneUser = false, vu,
+        webcamStreams = HashMap(), phoneUser = false, vu,
         listenOnly = vu.listenOnly, avatarURL = vu.avatarURL, joinedWeb = true)
 
       usersModel.addUser(uvo)
@@ -459,7 +469,7 @@ trait UsersApp {
         val uvo = new UserVO(webUserId, msg.externUserId, msg.callerIdName,
           Role.VIEWER, emojiStatus = "none", presenter = false,
           hasStream = false, locked = getInitialLockStatus(Role.VIEWER),
-          webcamStreams = new ListSet[String](),
+          webcamStreams = HashMap(),
           phoneUser = !msg.listenOnly, vu, listenOnly = msg.listenOnly, avatarURL = msg.avatarURL, joinedWeb = false)
 
         usersModel.addUser(uvo)

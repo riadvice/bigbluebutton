@@ -2,10 +2,10 @@ package org.bigbluebutton.modules.videoconf.views {
     import flash.display.DisplayObject;
     import flash.events.MouseEvent;
     import flash.net.NetConnection;
-
+    
     import mx.containers.Canvas;
     import mx.events.FlexEvent;
-
+    
     import org.as3commons.logging.api.ILogger;
     import org.as3commons.logging.api.getClassLogger;
     import org.bigbluebutton.core.UsersUtil;
@@ -250,13 +250,13 @@ package org.bigbluebutton.modules.videoconf.views {
 
             super.addChild(graphic);
         }
-
+		
         public function addVideoFor(userId:String, connection:NetConnection):void {
             var user:BBBUser = UsersUtil.getUser(userId);
             if (user == null)
                 return;
 
-            var streamNames:Array = user.streamNames;
+            var streamNames:Array = user.streamableWebcams;
 
             for each (var streamName:String in streamNames) {
                 if (user.viewingStream.indexOf(streamName) == -1) {

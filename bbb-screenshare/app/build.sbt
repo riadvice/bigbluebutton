@@ -33,31 +33,31 @@ publishTo := Some(Resolver.file("file",  new File(Path.userHome.absolutePath+"/d
 retrieveManaged := true
 
 libraryDependencies ++= {
-    val akkaVersion  = "2.4.2"
+    val akkaVersion   = "2.4.2"
     val springVersion = "4.2.5.RELEASE"
   Seq(
-    "com.typesafe.akka"        %%  "akka-actor"        % akkaVersion,
-    "com.typesafe.akka"        %%  "akka-testkit"      % akkaVersion    % "test",
-    "com.typesafe.akka"        %%  "akka-slf4j"        % akkaVersion,
-    "com.typesafe"              %  "config"            % "1.3.0",
-    "ch.qos.logback"            %  "logback-classic"   % "1.1.6" % "runtime",
-    //    "org.pegdown"               %  "pegdown"           % "1.4.0",
-    //    "junit"                     %  "junit"             % "4.11",
-    //    "com.etaty.rediscala"      %%  "rediscala"         % "1.4.0",
-    "commons-codec"             %  "commons-codec"     % "1.10",
-        "redis.clients"             %  "jedis"             % "2.7.2",
-    //    "org.apache.commons"        %  "commons-lang3"     % "3.2",
-    "org.apache.commons"        %  "commons-pool2"     % "2.3",
-    "org.red5"                  %  "red5-server"       % "1.0.7-M10",
-    "com.google.code.gson"      %  "gson"              % "2.5",
-    "org.springframework"       %  "spring-web"        % springVersion,
-    "org.springframework"       %  "spring-beans"      % springVersion,
-    "org.springframework"       %  "spring-context"    % springVersion,
-    "org.springframework"       %  "spring-core"       % springVersion,
-    "org.springframework"       %  "spring-webmvc"     % springVersion,
-    "org.springframework"       %  "spring-aop"        % springVersion,
-    "org.bigbluebutton"         %  "bbb-common-message"% "0.0.18-SNAPSHOT",
-    "javax.servlet"             %  "servlet-api"       % "2.5"
+    "com.typesafe.akka"        %%  "akka-actor"         % akkaVersion,
+    "com.typesafe.akka"        %%  "akka-testkit"       % akkaVersion    % "test",
+    "com.typesafe.akka"        %%  "akka-slf4j"         % akkaVersion,
+    "com.typesafe"              %  "config"             % "1.3.0",
+    "ch.qos.logback"            %  "logback-classic"    % "1.1.6" % "runtime",
+    // "org.pegdown"            %  "pegdown"            % "1.4.0",
+    // "junit"                  %  "junit"              % "4.11",
+    // "com.etaty.rediscala"   %%  "rediscala"          % "1.4.0",
+    "commons-codec"             %  "commons-codec"      % "1.10",
+    "redis.clients"             %  "jedis"              % "2.7.2",
+    // "org.apache.commons"     %  "commons-lang3"      % "3.2",
+    "org.apache.commons"        %  "commons-pool2"      % "2.3",
+    "org.red5"                  %  "red5-server"        % "1.0.7-M10",
+    "com.google.code.gson"      %  "gson"               % "2.5",
+    "org.springframework"       %  "spring-web"         % springVersion,
+    "org.springframework"       %  "spring-beans"       % springVersion,
+    "org.springframework"       %  "spring-context"     % springVersion,
+    "org.springframework"       %  "spring-core"        % springVersion,
+    "org.springframework"       %  "spring-webmvc"      % springVersion,
+    "org.springframework"       %  "spring-aop"         % springVersion,
+    "org.bigbluebutton"         %  "bbb-common-message" % "0.0.18-SNAPSHOT",
+    "javax.servlet"             %  "servlet-api"        % "2.5"
 
 
   )}

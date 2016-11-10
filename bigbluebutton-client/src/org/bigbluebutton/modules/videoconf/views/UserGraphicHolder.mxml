@@ -35,20 +35,22 @@ with BigBlueButton; if not, see <http://www.gnu.org/licenses/>.
 
     <mx:Script>
         <![CDATA[
-            import com.asfusion.mate.events.Dispatcher;
-            
-            import org.bigbluebutton.common.Images;
-            import org.bigbluebutton.core.EventConstants;
-            import org.bigbluebutton.core.UsersUtil;
-            import org.bigbluebutton.core.events.CoreEvent;
-            import org.bigbluebutton.core.events.VoiceConfEvent;
-            import org.bigbluebutton.core.managers.UserManager;
-            import org.bigbluebutton.core.model.VideoProfile;
-            import org.bigbluebutton.main.events.BBBEvent;
-            import org.bigbluebutton.main.events.PresenterStatusEvent;
-            import org.bigbluebutton.main.model.users.BBBUser;
-            import org.bigbluebutton.modules.videoconf.model.VideoConfOptions;
-            import org.bigbluebutton.util.i18n.ResourceUtil;
+			import com.asfusion.mate.events.Dispatcher;
+			
+			import org.bigbluebutton.common.Images;
+			import org.bigbluebutton.core.EventConstants;
+			import org.bigbluebutton.core.UsersUtil;
+			import org.bigbluebutton.core.events.CoreEvent;
+			import org.bigbluebutton.core.events.VoiceConfEvent;
+			import org.bigbluebutton.core.managers.UserManager;
+			import org.bigbluebutton.core.model.VideoProfile;
+			import org.bigbluebutton.main.events.BBBEvent;
+			import org.bigbluebutton.main.events.PresenterStatusEvent;
+			import org.bigbluebutton.main.model.users.BBBUser;
+			import org.bigbluebutton.modules.users.events.StreamPermissionEvent;
+			import org.bigbluebutton.modules.videoconf.model.VideoConfOptions;
+			import org.bigbluebutton.util.i18n.ResourceUtil;
+			
 
             private var videoOptions:VideoConfOptions = new VideoConfOptions();
 
@@ -295,11 +297,14 @@ with BigBlueButton; if not, see <http://www.gnu.org/licenses/>.
                 muteBtnWrapper.visible = true;
             }
 
-			protected function shareBtn_clickHandler(event:MouseEvent):void
-			{
-				// TODO Auto-generated method stub
-			}
-			
+            protected function shareBtn_clickHandler(event:MouseEvent):void {
+                var streamPermissionEvent:StreamPermissionEvent = new StreamPermissionEvent();
+                streamPermissionEvent.allowed = !user.webcamStreams[streamName];
+                streamPermissionEvent.userId = _userId;
+                streamPermissionEvent.streamName = _streamName;
+
+                _dispatcher.dispatchEvent(streamPermissionEvent);
+            }
 		]]>
     </mx:Script>
 

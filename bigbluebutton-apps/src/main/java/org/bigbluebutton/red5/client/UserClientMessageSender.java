@@ -13,6 +13,8 @@ import org.bigbluebutton.common.messages.GetUsersReplyMessage;
 import org.bigbluebutton.common.messages.LockLayoutMessage;
 import org.bigbluebutton.common.messages.PresenterAssignedMessage;
 import org.bigbluebutton.common.messages.RecordingStatusChangedMessage;
+import org.bigbluebutton.common.messages.StreamPermissionChangeMessage;
+import org.bigbluebutton.common.messages.UserEjectedFromMeetingMessage;
 import org.bigbluebutton.common.messages.UserEmojiStatusMessage;
 import org.bigbluebutton.common.messages.UserJoinedMessage;
 import org.bigbluebutton.common.messages.UserJoinedVoiceMessage;
@@ -26,7 +28,6 @@ import org.bigbluebutton.common.messages.UserVoiceMutedMessage;
 import org.bigbluebutton.common.messages.UserVoiceTalkingMessage;
 import org.bigbluebutton.common.messages.ValidateAuthTokenReplyMessage;
 import org.bigbluebutton.common.messages.ValidateAuthTokenTimeoutMessage;
-import org.bigbluebutton.common.messages.UserEjectedFromMeetingMessage;
 import org.bigbluebutton.messages.BreakoutRoomClosed;
 import org.bigbluebutton.messages.BreakoutRoomJoinURL;
 import org.bigbluebutton.messages.BreakoutRoomStarted;
@@ -126,6 +127,12 @@ public class UserClientMessageSender {
               processUserUnsharedWebcamMessage(uuwm);
             }
             break;
+          case StreamPermissionChangeMessage.STREAM_PERMISSION_CHANGE:
+            StreamPermissionChangeMessage spcm = StreamPermissionChangeMessage.fromJson(message);
+            if (spcm != null) {
+              processStreamPermissionChangeMessage(spcm);
+            }
+            break;  
           case UserJoinedVoiceMessage.USER_JOINED_VOICE:
             UserJoinedVoiceMessage ujvm = UserJoinedVoiceMessage.fromJson(message);
             if (ujvm != null) {
@@ -324,7 +331,7 @@ public class UserClientMessageSender {
     service.sendMessage(m); 
   }
 
-  private void processUserJoinedMessage(UserJoinedMessage msg) {	  	
+  private void processUserJoinedMessage(UserJoinedMessage msg) {
     Map<String, Object> args = new HashMap<String, Object>();	
     args.put("user", msg.user);
 
@@ -400,6 +407,7 @@ public class UserClientMessageSender {
     Map<String, Object> args = new HashMap<String, Object>();	
     args.put("userId", msg.userId);
     args.put("webcamStream", msg.stream);
+    args.put("allowed", msg.allowed);
 
     Map<String, Object> message = new HashMap<String, Object>();
     Gson gson = new Gson();
@@ -423,6 +431,20 @@ public class UserClientMessageSender {
 
     BroadcastClientMessage m = new BroadcastClientMessage(msg.meetingId, "userUnsharedWebcam", message);
     service.sendMessage(m);
+  }
+  
+  private void processStreamPermissionChangeMessage(StreamPermissionChangeMessage msg) {
+      Map<String, Object> args = new HashMap<String, Object>(); 
+      args.put("userId", msg.userId);
+      args.put("webcamStream", msg.stream);
+      args.put("allowed", msg.allowed);
+
+      Map<String, Object> message = new HashMap<String, Object>();
+      Gson gson = new Gson();
+      message.put("msg", gson.toJson(args));
+
+      BroadcastClientMessage m = new BroadcastClientMessage(msg.meetingId, "streamPermissionChange", message);  
+      service.sendMessage(m);
   }
   
   private void processUserJoinedVoiceMessage(UserJoinedVoiceMessage msg) {	  	

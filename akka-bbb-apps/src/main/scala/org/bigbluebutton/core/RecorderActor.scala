@@ -47,36 +47,37 @@ class RecorderActor(val recorder: RecorderApplication)
     extends Actor with ActorLogging {
 
   def receive = {
-    case msg: SendPublicMessageEvent => handleSendPublicMessageEvent(msg)
-    case msg: ClearPresentationOutMsg => handleClearPresentationOutMsg(msg)
-    case msg: RemovePresentationOutMsg => handleRemovePresentationOutMsg(msg)
-    case msg: SendCursorUpdateOutMsg => handleSendCursorUpdateOutMsg(msg)
-    case msg: ResizeAndMoveSlideOutMsg => handleResizeAndMoveSlideOutMsg(msg)
-    case msg: GotoSlideOutMsg => handleGotoSlideOutMsg(msg)
-    case msg: SharePresentationOutMsg => handleSharePresentationOutMsg(msg)
-    case msg: EndAndKickAll => handleEndAndKickAll(msg)
-    case msg: PresenterAssigned => handleAssignPresenter(msg)
-    case msg: UserJoined => handleUserJoined(msg)
-    case msg: UserLeft => handleUserLeft(msg)
-    case msg: UserStatusChange => handleUserStatusChange(msg)
-    case msg: UserVoiceMuted => handleUserVoiceMuted(msg)
-    case msg: UserVoiceTalking => handleUserVoiceTalking(msg)
-    case msg: UserJoinedVoice => handleUserJoinedVoice(msg)
-    case msg: UserLeftVoice => handleUserLeftVoice(msg)
-    case msg: RecordingStatusChanged => handleRecordingStatusChanged(msg)
-    case msg: UserChangedEmojiStatus => handleChangedUserEmojiStatus(msg)
-    case msg: UserSharedWebcam => handleUserSharedWebcam(msg)
-    case msg: UserUnsharedWebcam => handleUserUnsharedWebcam(msg)
-    case msg: VoiceRecordingStarted => handleVoiceRecordingStarted(msg)
-    case msg: VoiceRecordingStopped => handleVoiceRecordingStopped(msg)
+    case msg: SendPublicMessageEvent        => handleSendPublicMessageEvent(msg)
+    case msg: ClearPresentationOutMsg       => handleClearPresentationOutMsg(msg)
+    case msg: RemovePresentationOutMsg      => handleRemovePresentationOutMsg(msg)
+    case msg: SendCursorUpdateOutMsg        => handleSendCursorUpdateOutMsg(msg)
+    case msg: ResizeAndMoveSlideOutMsg      => handleResizeAndMoveSlideOutMsg(msg)
+    case msg: GotoSlideOutMsg               => handleGotoSlideOutMsg(msg)
+    case msg: SharePresentationOutMsg       => handleSharePresentationOutMsg(msg)
+    case msg: EndAndKickAll                 => handleEndAndKickAll(msg)
+    case msg: PresenterAssigned             => handleAssignPresenter(msg)
+    case msg: UserJoined                    => handleUserJoined(msg)
+    case msg: UserLeft                      => handleUserLeft(msg)
+    case msg: UserStatusChange              => handleUserStatusChange(msg)
+    case msg: UserVoiceMuted                => handleUserVoiceMuted(msg)
+    case msg: UserVoiceTalking              => handleUserVoiceTalking(msg)
+    case msg: UserJoinedVoice               => handleUserJoinedVoice(msg)
+    case msg: UserLeftVoice                 => handleUserLeftVoice(msg)
+    case msg: RecordingStatusChanged        => handleRecordingStatusChanged(msg)
+    case msg: UserChangedEmojiStatus        => handleChangedUserEmojiStatus(msg)
+    case msg: UserSharedWebcam              => handleUserSharedWebcam(msg)
+    case msg: UserUnsharedWebcam            => handleUserUnsharedWebcam(msg)
+    case msg: StreamPermissionChange        => handleStreamPermissionChange(msg)
+    case msg: VoiceRecordingStarted         => handleVoiceRecordingStarted(msg)
+    case msg: VoiceRecordingStopped         => handleVoiceRecordingStopped(msg)
     case msg: SendWhiteboardAnnotationEvent => handleSendWhiteboardAnnotationEvent(msg)
-    case msg: ClearWhiteboardEvent => handleClearWhiteboardEvent(msg)
-    case msg: UndoWhiteboardEvent => handleUndoWhiteboardEvent(msg)
-    case msg: EditCaptionHistoryReply => handleEditCaptionHistoryReply(msg)
-    case msg: DeskShareStartRTMPBroadcast => handleDeskShareStartRTMPBroadcast(msg)
-    case msg: DeskShareStopRTMPBroadcast => handleDeskShareStopRTMPBroadcast(msg)
-    case msg: DeskShareNotifyViewersRTMP => handleDeskShareNotifyViewersRTMP(msg)
-    case _ => // do nothing
+    case msg: ClearWhiteboardEvent          => handleClearWhiteboardEvent(msg)
+    case msg: UndoWhiteboardEvent           => handleUndoWhiteboardEvent(msg)
+    case msg: EditCaptionHistoryReply       => handleEditCaptionHistoryReply(msg)
+    case msg: DeskShareStartRTMPBroadcast   => handleDeskShareStartRTMPBroadcast(msg)
+    case msg: DeskShareStopRTMPBroadcast    => handleDeskShareStopRTMPBroadcast(msg)
+    case msg: DeskShareNotifyViewersRTMP    => handleDeskShareNotifyViewersRTMP(msg)
+    case _                                  => // do nothing
   }
 
   private def handleSendPublicMessageEvent(msg: SendPublicMessageEvent) {
@@ -319,19 +320,25 @@ class RecorderActor(val recorder: RecorderApplication)
   private def handleUserSharedWebcam(msg: UserSharedWebcam) {
     if (msg.recorded) {
       val status = UserStatusChange(msg.meetingID, msg.recorded,
-        msg.userID, "hasStream", "true,stream=" + msg.stream)
+        msg.userID, "hasStream", s"true,{stream:${msg.stream}%s, allowed:${msg.allowed}%s")
       handleUserStatusChange(status)
     }
-
   }
 
   private def handleUserUnsharedWebcam(msg: UserUnsharedWebcam) {
     if (msg.recorded) {
       val status = UserStatusChange(msg.meetingID, msg.recorded,
-        msg.userID, "hasStream", "false,stream=" + msg.stream)
+        msg.userID, "hasStream", s"false,{stream:${msg.stream}%s")
       handleUserStatusChange(status)
     }
+  }
 
+  private def handleStreamPermissionChange(msg: StreamPermissionChange) {
+    if (msg.recorded) {
+      val status = UserStatusChange(msg.meetingID, msg.recorded,
+        msg.userID, "hasStream", s"true,{stream:${msg.stream}%s, allowed:${msg.allowed}%s")
+      handleUserStatusChange(status)
+    }
   }
 
   private def handleUserStatusChange(msg: UserStatusChange): Unit = {

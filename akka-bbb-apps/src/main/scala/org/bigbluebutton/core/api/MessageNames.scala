@@ -110,6 +110,7 @@ object MessageNames {
   val USER_EMOJI_STATUS = "user_emoji_status_message"
   val USER_SHARED_WEBCAM = "user_shared_webcam_message"
   val USER_UNSHARED_WEBCAM = "user_unshared_webcam_message"
+  val STREAM_PERMISSION_CHANGE = "stream_permission_change";
   val USER_STATUS_CHANGED = "user_status_changed_message"
   val MUTE_VOICE_USER = "mute_voice_user_request"
   val USER_VOICE_MUTED = "user_voice_muted_message"

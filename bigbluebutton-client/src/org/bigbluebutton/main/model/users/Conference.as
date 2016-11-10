@@ -409,10 +409,10 @@ package org.bigbluebutton.main.model.users {
 			users.refresh();
 		}
 		
-		public function sharedWebcam(userId:String, stream:String):void {
+		public function sharedWebcam(userId:String, stream:String, allowed:Boolean):void {
 			var aUser:BBBUser = getUser(userId);
 			if (aUser != null) {
-				aUser.sharedWebcam(stream)
+				aUser.sharedWebcam(stream, allowed)
 			}
 			users.refresh();
 		}

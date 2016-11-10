@@ -66,6 +66,7 @@ case class TransferUserToMeetingRequest(meetingId: String, targetMeetingId: Stri
 case class LockUser(meetingID: String, userId: String, lock: Boolean) extends InMessage
 case class InitLockSettings(meetingID: String, settings: Permissions) extends InMessage
 case class SetLockSettings(meetingID: String, setByUser: String, settings: Permissions) extends InMessage
+case class StreamPermission(meetindId: String, userId: String, stream: String, allowed: Boolean) extends InMessage
 case class GetLockSettings(meetingID: String, userId: String) extends InMessage
 
 //////////////////////////////////////////////////////////////////////////////////

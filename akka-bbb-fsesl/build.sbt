@@ -6,7 +6,7 @@ organization := "org.bigbluebutton"
 
 version := "0.0.1"
 
-scalaVersion  := "2.11.6"
+scalaVersion  := "2.11.8"
 
 scalacOptions ++= Seq(
   "-unchecked",
@@ -40,18 +40,18 @@ testOptions in Test += Tests.Argument(TestFrameworks.ScalaTest, "-h", "target/sc
 libraryDependencies ++= {
   val akkaVersion  = "2.3.11"
   Seq(
-    "com.typesafe.akka"        %%  "akka-actor"        % akkaVersion,
-    "com.typesafe.akka"        %%  "akka-testkit"      % akkaVersion    % "test",
-    "com.typesafe.akka" 	     %%  "akka-slf4j"        % akkaVersion,
-    "ch.qos.logback"    	      %  "logback-classic"   % "1.0.3",
-    "org.pegdown" 		      %  "pegdown"           % "1.4.0",
-    "junit" 				      %  "junit"             % "4.11",
-    "com.etaty.rediscala"      %%  "rediscala"         % "1.4.0",
-    "commons-codec"             %  "commons-codec"     % "1.10",
-    "joda-time"                 %  "joda-time"         % "2.3",
-    "com.google.code.gson"      %  "gson"              % "1.7.1",
-    "redis.clients"             %  "jedis"             % "2.1.0",
-    "org.apache.commons"        %  "commons-lang3"     % "3.2",
+    "com.typesafe.akka"        %%  "akka-actor"         % akkaVersion,
+    "com.typesafe.akka"        %%  "akka-testkit"       % akkaVersion    % "test",
+    "com.typesafe.akka"        %%  "akka-slf4j"         % akkaVersion,
+    "ch.qos.logback"            %  "logback-classic"    % "1.0.3",
+    "org.pegdown"               %  "pegdown"            % "1.4.0",
+    "junit"                     %  "junit"              % "4.11",
+    "com.etaty.rediscala"      %%  "rediscala"          % "1.4.0",
+    "commons-codec"             %  "commons-codec"      % "1.10",
+    "joda-time"                 %  "joda-time"          % "2.3",
+    "com.google.code.gson"      %  "gson"               % "2.5",
+    "redis.clients"             %  "jedis"              % "2.1.0",
+    "org.apache.commons"        %  "commons-lang3"      % "3.2",
     "org.bigbluebutton"         %  "bbb-common-message" % "0.0.18-SNAPSHOT",
     "org.bigbluebutton"         %  "bbb-fsesl-client"   % "0.0.4"
   )}

@@ -21,10 +21,14 @@ package org.bigbluebutton.main.model.users
 	import com.asfusion.mate.events.Dispatcher;
 	
 	import flash.events.Event;
+	import flash.utils.Dictionary;
 	
 	import org.as3commons.lang.ArrayUtils;
+	import org.as3commons.lang.DictionaryUtils;
+	import org.as3commons.lang.StringUtils;
 	import org.as3commons.logging.api.ILogger;
 	import org.as3commons.logging.api.getClassLogger;
+	import org.as3commons.logging.util.objectify;
 	import org.bigbluebutton.common.Role;
 	import org.bigbluebutton.core.UsersUtil;
 	import org.bigbluebutton.core.events.LockControlEvent;
@@ -58,12 +62,18 @@ package org.bigbluebutton.main.model.users
 		[Bindable] public var disableMyPrivateChat:Boolean = false;
 		[Bindable] public var disableMyPublicChat:Boolean = false;
     	[Bindable] public var lockedLayout:Boolean = false;
-		[Bindable] public var avatarURL:String="";
-    
-		[Bindable]
-		public function get hasStream():Boolean {
-			return streamNames.length > 0;
-		}
+        [Bindable] public var avatarURL:String="";
+
+        [Bindable]
+        public function get hasStream():Boolean {
+            var isEmpty:Boolean = true;
+            for (var n:Object in webcamStreams) {
+                isEmpty = false;
+                break;
+            };
+            return !isEmpty;
+        }
+		
 		public function set hasStream(s:Boolean):void {
 			throw new Error("hasStream cannot be set. It is derived directly from streamName");
 		}
@@ -97,34 +107,36 @@ package org.bigbluebutton.main.model.users
             return _viewingStream.some(function(item:*, index:int, array:Array):Boolean { return item == streamName; });
         }
         public function isViewingAllStreams():Boolean {
-            return _viewingStream.length == streamNames.length;
+            return _viewingStream.length == webcamStreams.length;
         }
 
-		[Bindable] public var streamNames:Array = new Array();
+		[Bindable] public var webcamStreams:Dictionary = new Dictionary();
 
-		[Bindable]
+		[Bindable("streamNameChange")]
 		public function get streamName():String {
 			var streams:String = "";
-			for each(var stream:String in streamNames) {
+			for each(var stream:String in webcamStreams) {
 				streams = streams + stream + "|";
 			}
 			//Remove last |
 			streams = streams.slice(0, streams.length-1);
 			return streams;
-		}
+        }
 
-		private function hasThisStream(streamName:String):Boolean {
-			return streamNames.some(function(item:*, index:int, array:Array):Boolean { return item == streamName; });
-		}
+        public function get streamableWebcams():Array {
+            var result:Array = [];
+            for (var key:String in webcamStreams) {
+                if (webcamStreams[key] == true) {
+                    result.push(key);
+                }
+            }
+            return result;
+        }
 
-		public function set streamName(streamNames:String):void {
-			if(streamNames) {
-				var streamNamesList:Array = streamNames.split("|");
-				for each(var streamName:String in streamNamesList) {
-					sharedWebcam(streamName);
-				}
-			}
-		}
+        public function setWebcamStream(stream:Object):void {
+            sharedWebcam(stream.name, stream.allowed);
+			dispatchEvent(new Event("streamNameChange")); 
+        }
 
 		private var _presenter:Boolean = false;
 		[Bindable] 
@@ -263,9 +275,10 @@ package org.bigbluebutton.main.model.users
       buildStatus();
     }
     
-    public function sharedWebcam(stream: String):void {
-      if(stream && stream != "" && !hasThisStream(stream)) {
-          streamNames.push(stream);
+    public function sharedWebcam(stream: String, allowed:Boolean):void {
+      if(StringUtils.isNotBlank(stream) && !DictionaryUtils.containsKey(webcamStreams, stream)) {
+          webcamStreams[stream] = allowed;
+		  // @todo: check with lock setting and control webcams
           sendStreamStartedEvent(stream);
       }
       buildStatus();
@@ -273,7 +286,7 @@ package org.bigbluebutton.main.model.users
     }
     
     public function unsharedWebcam(stream: String):void {
-      streamNames = streamNames.filter(function(item:*, index:int, array:Array):Boolean { return item != stream });
+      delete webcamStreams[stream];
       buildStatus();
       verifyMedia();
     }
@@ -310,9 +323,8 @@ package org.bigbluebutton.main.model.users
 					 * hasStream = new Boolean(String(streamInfo[0]));
 					 */
 					var streamNameInfo:Array=String(streamInfo[1]).split(/=/);
-					streamName=streamNameInfo[1];
+					setWebcamStream(objectify(streamNameInfo[1]));
 					break;
-				// @FIXME : check the coming status from the server
 				case "emojiStatus":
 					emojiStatus = status.value.toString();
 					if (me) {
@@ -371,7 +383,7 @@ package org.bigbluebutton.main.model.users
 			n.externUserID = user.externUserID;
 			n.name = user.name;
             n._viewingStream = user._viewingStream;
-			n.streamNames = user.streamNames;
+			n.webcamStreams = user.webcamStreams;
 			n.presenter = user.presenter;
 			n.emojiStatus = user.emojiStatus;
 			n.role = user.role;	

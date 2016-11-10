@@ -20,6 +20,8 @@ public class Constants {
   public static final String REQUESTER_ID                    = "requester_id";
   public static final String REPLY_TO                        = "reply_to";
   public static final String STREAM                          = "stream";
+  public static final String STREAM_NAME                     = "stream_name";
+  public static final String ALLOWED                         = "allowed";
   public static final String LOCKED                          = "locked";
   public static final String SETTINGS                        = "settings";
   public static final String LOCK                            = "lock";

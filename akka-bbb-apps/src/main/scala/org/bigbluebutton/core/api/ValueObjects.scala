@@ -1,7 +1,5 @@
 package org.bigbluebutton.core.api
 
-import java.lang.Boolean
-
 object Role extends Enumeration {
   type Role = Value
   val MODERATOR = Value("MODERATOR")
@@ -92,7 +90,7 @@ case class UserVO(
   presenter: Boolean,
   hasStream: Boolean,
   locked: Boolean,
-  webcamStreams: Set[String],
+  webcamStreams: collection.immutable.HashMap[String, Boolean],
   phoneUser: Boolean,
   voiceUser: VoiceUser,
   listenOnly: Boolean,
@@ -111,7 +109,8 @@ case class VoiceUser(
   avatarURL: String,
   listenOnly: Boolean)
 
-case class MeetingConfig(name: String,
+case class MeetingConfig(
+  name: String,
   id: MeetingID,
   passwords: MeetingPasswords,
   welcomeMsg: String,
@@ -122,7 +121,9 @@ case class MeetingConfig(name: String,
   defaultAvatarURL: String,
   defaultConfigToken: String)
 
-case class MeetingName(name: String)
+case class WebcamStream(
+  streamName: String,
+  allowedToStream: Boolean)
 
 case class MeetingID(internal: String, external: String)
 
@@ -130,8 +131,11 @@ case class VoiceConfig(telVoice: String, webVoice: String, dialNumber: String)
 
 case class MeetingPasswords(moderatorPass: String, viewerPass: String)
 
-case class MeetingDuration(duration: Int = 0, createdTime: Long = 0,
-  startTime: Long = 0, endTime: Long = 0)
+case class MeetingDuration(
+  duration: Int = 0,
+  createdTime: Long = 0,
+  startTime: Long = 0,
+  endTime: Long = 0)
 
 case class MeetingInfo(
   meetingID: String,

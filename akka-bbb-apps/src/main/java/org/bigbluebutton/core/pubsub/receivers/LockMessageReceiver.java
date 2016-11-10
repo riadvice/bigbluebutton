@@ -4,6 +4,7 @@ import org.bigbluebutton.common.messages.GetLockSettingsMessage;
 import org.bigbluebutton.common.messages.LockUserMessage;
 import org.bigbluebutton.common.messages.MessagingConstants;
 import org.bigbluebutton.common.messages.SendLockSettingsMessage;
+import org.bigbluebutton.common.messages.SetStreamPermissionMessage;
 import org.bigbluebutton.core.api.IBigBlueButtonInGW;
 
 import com.google.gson.JsonParser;
@@ -37,6 +38,9 @@ public class LockMessageReceiver implements MessageHandler {
 					} else if(SendLockSettingsMessage.SEND_LOCK_SETTINGS.equals(messageName)) {
 						SendLockSettingsMessage msg = SendLockSettingsMessage.fromJson(message);
 						bbbGW.sendLockSettings(msg.meetingId, msg.userId, msg.newSettings);
+					} else if (SetStreamPermissionMessage.SET_STREAM_PERMISSION.equals(messageName)) {
+					    SetStreamPermissionMessage msg = SetStreamPermissionMessage.fromJson(message);
+					    bbbGW.setStreamPermission(msg.meetingId, msg.userId, msg.streamName, msg.allowed);
 					}
 				}
 			}

@@ -4,6 +4,9 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
+import java.util.Map.Entry;
+import java.util.Set;
+
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
@@ -92,8 +95,8 @@ public class Util {
 			String role = user.get(Constants.ROLE).getAsString();
 			String avatarURL = user.get(Constants.AVATAR_URL).getAsString();
 			
-			JsonArray webcamStreamJArray = user.get(Constants.WEBCAM_STREAM).getAsJsonArray();
-			ArrayList<String> webcamStreams = extractWebcamStreams(webcamStreamJArray);
+			JsonObject webcamStreamJArray = user.get(Constants.WEBCAM_STREAM).getAsJsonObject();
+			Map<String, Object> webcamStreams = extractWebcamStreams(webcamStreamJArray);
 			
 			userMap.put("userId", userid);
 			userMap.put("name", username);
@@ -225,18 +228,14 @@ public class Util {
 
 	}
 
-	public ArrayList<String> extractWebcamStreams(JsonArray webcamStreams) {
-		ArrayList<String> collection = new ArrayList<String>();
-
-	    Iterator<JsonElement> webcamStreamsIter = webcamStreams.iterator();
-	    while (webcamStreamsIter.hasNext()){
-			JsonElement stream = webcamStreamsIter.next();
-			collection.add(stream.getAsString());
-	    }
-
-		return collection;
-
-	}
+    public Map<String, Object> extractWebcamStreams(JsonObject webcamStreams) {
+        Map<String, Object> collection = new HashMap<String, Object>();
+        Set<Entry<String, JsonElement>> entrySet = webcamStreams.entrySet();
+        for (Map.Entry<String, JsonElement> entry : entrySet) {
+            collection.put(entry.getKey(), webcamStreams.get(entry.getKey()));
+        }
+        return collection;
+    }
 
 	public ArrayList<String> extractUserids(JsonArray users) {
 		ArrayList<String> collection = new ArrayList<String>();

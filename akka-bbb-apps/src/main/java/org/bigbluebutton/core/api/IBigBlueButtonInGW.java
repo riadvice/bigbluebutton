@@ -28,6 +28,7 @@ public interface IBigBlueButtonInGW {
 	void sendLockSettings(String meetingID, String userId, Map<String, Boolean> settings);
 	void getLockSettings(String meetingId, String userId);
 	void lockUser(String meetingId, String requesterID, boolean lock, String internalUserID);
+	void setStreamPermission(String meetingId, String userId, String streamName, boolean allowed);
 
 	// Users
 	void validateAuthToken(String meetingId, String userId, String token, String correlationId, String sessionId);

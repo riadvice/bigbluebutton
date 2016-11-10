@@ -152,8 +152,8 @@ package org.bigbluebutton.main.api
       var obj:Object = new Object();
       var isUserPublishing:Boolean = false;
       
-      var streamNames:Array = UsersUtil.getWebcamStream(userID);
-      if (streamNames && streamNames.length > 0) {
+      var streamNames:Array = UsersUtil.getViewableWebcamStreams(userID);
+      if (streamNames.length > 0) {
         isUserPublishing = true; 
       }
       

@@ -47,6 +47,11 @@ public class MessagePublisher {
 		SendLockSettingsMessage msg = new SendLockSettingsMessage(meetingID, userId, settings);
 		sender.send(MessagingConstants.TO_MEETING_CHANNEL, msg.toJson());
 	}
+	
+   public void setStreamPermission(String meetingID, String userId, String streamName, Boolean allowed) {
+        SetStreamPermissionMessage msg = new SetStreamPermissionMessage(meetingID, userId, streamName, allowed);
+        sender.send(MessagingConstants.TO_MEETING_CHANNEL, msg.toJson());
+    }
 
 	public void getLockSettings(String meetingId, String userId) {
 		GetLockSettingsMessage msg = new GetLockSettingsMessage(meetingId, userId);

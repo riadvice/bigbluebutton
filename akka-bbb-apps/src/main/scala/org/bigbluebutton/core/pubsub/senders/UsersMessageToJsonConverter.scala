@@ -20,7 +20,7 @@ object UsersMessageToJsonConverter {
     wuser += "presenter" -> user.presenter
     wuser += "has_stream" -> user.hasStream
     wuser += "locked" -> user.locked
-    wuser += "webcam_stream" -> user.webcamStreams.toArray
+    wuser += "webcam_stream" -> mapAsJavaMap(user.webcamStreams)
     wuser += "phone_user" -> user.phoneUser
     wuser += "listenOnly" -> user.listenOnly
     wuser += "avatarURL" -> user.avatarURL
@@ -209,8 +209,21 @@ object UsersMessageToJsonConverter {
     payload.put(Constants.RECORDED, msg.recorded)
     payload.put(Constants.USER_ID, msg.userID)
     payload.put(Constants.STREAM, msg.stream)
+    payload.put(Constants.ALLOWED, msg.allowed)
 
     val header = Util.buildHeader(MessageNames.USER_SHARED_WEBCAM, None)
+    Util.buildJson(header, payload)
+  }
+
+  def streamPermissionChangeToJson(msg: StreamPermissionChange): String = {
+    val payload = new java.util.HashMap[String, Any]()
+    payload.put(Constants.MEETING_ID, msg.meetingID)
+    payload.put(Constants.RECORDED, msg.recorded)
+    payload.put(Constants.USER_ID, msg.userID)
+    payload.put(Constants.STREAM, msg.stream)
+    payload.put(Constants.ALLOWED, msg.allowed)
+
+    val header = Util.buildHeader(MessageNames.STREAM_PERMISSION_CHANGE, None)
     Util.buildJson(header, payload)
   }
 

@@ -26,7 +26,7 @@ sudo cp ~/dev/bigbluebutton/bbb-screenshare/app/target/webapp/WEB-INF/lib/bbb-sc
 #sudo mkdir /usr/share/red5/webapps/screenshare/WEB-INF/classes
 cd /usr/share/red5/webapps/screenshare/WEB-INF/classes/
 sudo jar -xf ../lib/bbb-screenshare-akka_2.11-0.0.1.jar
-sudo rm /usr/share/red5/webapps/screenshare/WEB-INF/lib/bbb-screenshare-akka_2.11-0.0.1.jar
+sudo rm -f /usr/share/red5/webapps/screenshare/WEB-INF/lib/bbb-screenshare-akka*
 
 cd /usr/share/red5/webapps/screenshare
 sudo mkdir lib

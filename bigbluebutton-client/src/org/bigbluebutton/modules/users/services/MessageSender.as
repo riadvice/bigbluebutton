@@ -425,6 +425,24 @@ package org.bigbluebutton.modules.users.services
         },
         newLockSettings
       );      
-    }
+        }
+
+        public function shareStreamPermission(allowed:Boolean, userId:String, streamId:String):void {
+            var message:Object = new Object();
+            message["allowed"] = allowed;
+            message["userId"] = userId;
+            message["streamId"] = streamId;
+
+			var _nc:ConnectionManager = BBB.initConnectionManager();
+			_nc.sendMessage(
+				"lock.setStreamPermission",
+				function(result:String):void { // On successful result
+				},	                   
+				function(status:String):void { // status - On error occurred
+					LOGGER.error(status); 
+				},
+				message
+			);
+        }
   }
 }

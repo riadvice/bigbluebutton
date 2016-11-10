@@ -4,6 +4,8 @@ organization := "org.bigbluebutton"
 
 version := "0.0.18-SNAPSHOT"
 
+scalaVersion  := "2.11.8"
+
 // We want to have our jar files in lib_managed dir.
 // This way we'll have the right path when we import
 // into eclipse.

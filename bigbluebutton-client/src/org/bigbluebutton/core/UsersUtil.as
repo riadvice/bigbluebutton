@@ -91,13 +91,20 @@ package org.bigbluebutton.core
       return false;
     }
     
-    public static function getWebcamStream(userID:String):Array {
+    public static function getViewableWebcamStreams(userID:String):Array {
       var u:BBBUser = getUser(userID);
+	  var streamables:Array = new Array();
       if (u != null && u.hasStream) {
-        return u.streamNames;
+		  for (var key:String in u.webcamStreams)
+		  {
+			  if (u.webcamStreams[key] == true) {
+				  streamables.push(key);
+			  }
+			  break;
+		  }
       }
       
-      return null;
+      return streamables;
     }
     
     public static function getUserIDs():ArrayCollection {

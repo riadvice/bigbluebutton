@@ -1,6 +1,5 @@
 package org.bigbluebutton.core.apps
 
-import scala.collection.mutable.HashMap
 import scala.collection.mutable.ArrayBuffer
 
 object PollType {

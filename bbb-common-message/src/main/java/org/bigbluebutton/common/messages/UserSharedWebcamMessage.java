@@ -12,19 +12,22 @@ public class UserSharedWebcamMessage implements ISubscribedMessage {
 	
 	public final String meetingId;
 	public final String userId;
-	public final String stream;
+    public final String stream;
+    public final Boolean allowed;
 	
-	public UserSharedWebcamMessage(String meetingId, String userId, String stream) {
+	public UserSharedWebcamMessage(String meetingId, String userId, String stream, Boolean allowed) {
 		this.meetingId = meetingId;
 		this.userId = userId;
-		this.stream = stream;
+        this.stream = stream;
+        this.allowed = allowed;
 	}
 	
 	public String toJson() {
 		HashMap<String, Object> payload = new HashMap<String, Object>();
 		payload.put(Constants.MEETING_ID, meetingId); 
 		payload.put(Constants.USER_ID, userId);
-		payload.put(Constants.STREAM, stream);
+        payload.put(Constants.STREAM, stream);
+        payload.put(Constants.STREAM, allowed);
 		
 		java.util.HashMap<String, Object> header = MessageBuilder.buildHeader(USER_SHARED_WEBCAM, VERSION, null);
 
@@ -44,16 +47,17 @@ public class UserSharedWebcamMessage implements ISubscribedMessage {
 				if (USER_SHARED_WEBCAM.equals(messageName)) {
 					if (payload.has(Constants.MEETING_ID) 
 							&& payload.has(Constants.USER_ID)
-							&& payload.has(Constants.STREAM)) {
+							&& payload.has(Constants.STREAM)
+							&& payload.has(Constants.ALLOWED)) {
 						String id = payload.get(Constants.MEETING_ID).getAsString();
 						String userid = payload.get(Constants.USER_ID).getAsString();
 						String stream = payload.get(Constants.STREAM).getAsString();
-						return new UserSharedWebcamMessage(id, userid, stream);					
+						Boolean allowed = payload.get(Constants.ALLOWED).getAsBoolean();
+						return new UserSharedWebcamMessage(id, userid, stream, allowed);					
 					}
 				} 
 			}
 		}
 		return null;
-
 	}
 }
