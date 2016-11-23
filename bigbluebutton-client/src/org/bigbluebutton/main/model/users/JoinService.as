@@ -27,10 +27,10 @@ package org.bigbluebutton.main.model.users
 	import flash.net.URLRequest;
 	import flash.net.URLRequestMethod;
 	import flash.net.URLVariables;
-	import org.bigbluebutton.core.UsersUtil;
+	
 	import org.as3commons.logging.api.ILogger;
 	import org.as3commons.logging.api.getClassLogger;
-	import org.as3commons.logging.util.jsonXify;
+	import org.bigbluebutton.core.UsersUtil;
 	import org.bigbluebutton.core.model.MeBuilder;
 	import org.bigbluebutton.core.model.MeetingBuilder;
 	import org.bigbluebutton.core.model.MeetingModel;
