@@ -320,7 +320,7 @@ class RecorderActor(val recorder: RecorderApplication)
   private def handleUserSharedWebcam(msg: UserSharedWebcam) {
     if (msg.recorded) {
       val status = UserStatusChange(msg.meetingID, msg.recorded,
-        msg.userID, "hasStream", s"true,{stream:${msg.stream}%s, allowed:${msg.allowed}%s")
+        msg.userID, "hasStream", s"true,{stream:${msg.stream}%s, granted:${msg.granted}%s")
       handleUserStatusChange(status)
     }
   }
@@ -336,7 +336,7 @@ class RecorderActor(val recorder: RecorderApplication)
   private def handleStreamPermissionChange(msg: StreamPermissionChange) {
     if (msg.recorded) {
       val status = UserStatusChange(msg.meetingID, msg.recorded,
-        msg.userID, "hasStream", s"true,{stream:${msg.stream}%s, allowed:${msg.allowed}%s")
+        msg.userID, "hasStream", s"true,{stream:${msg.stream}%s, granted:${msg.granted}%s")
       handleUserStatusChange(status)
     }
   }

@@ -134,7 +134,7 @@ package org.bigbluebutton.main.model.users
         }
 
         public function setWebcamStream(stream:Object):void {
-            sharedWebcam(stream.name, stream.allowed);
+            sharedWebcam(stream.name, stream.granted);
 			dispatchEvent(new Event("streamNameChange")); 
         }
 
@@ -275,9 +275,9 @@ package org.bigbluebutton.main.model.users
       buildStatus();
     }
     
-    public function sharedWebcam(stream: String, allowed:Boolean):void {
+    public function sharedWebcam(stream: String, granted:Boolean):void {
       if(StringUtils.isNotBlank(stream) && !DictionaryUtils.containsKey(webcamStreams, stream)) {
-          webcamStreams[stream] = allowed;
+          webcamStreams[stream] = granted;
 		  // @todo: check with lock setting and control webcams
           sendStreamStartedEvent(stream);
       }

@@ -31,14 +31,14 @@ public class StreamPermissionChangeMessage implements ISubscribedMessage {
     public final String meetingId;
     public final String userId;
     public final String stream;
-    public final Boolean allowed;
+    public final Boolean granted;
 
     public StreamPermissionChangeMessage(String meetingId, String userId,
-            String stream, Boolean allowed) {
+            String stream, Boolean granted) {
         this.meetingId = meetingId;
         this.userId = userId;
         this.stream = stream;
-        this.allowed = allowed;
+        this.granted = granted;
     }
 
     public String toJson() {
@@ -46,7 +46,7 @@ public class StreamPermissionChangeMessage implements ISubscribedMessage {
         payload.put(Constants.MEETING_ID, meetingId);
         payload.put(Constants.USER_ID, userId);
         payload.put(Constants.STREAM, stream);
-        payload.put(Constants.STREAM, allowed);
+        payload.put(Constants.GRANTED, granted);
 
         java.util.HashMap<String, Object> header = MessageBuilder.buildHeader(
                 STREAM_PERMISSION_CHANGE, VERSION, null);
@@ -68,17 +68,17 @@ public class StreamPermissionChangeMessage implements ISubscribedMessage {
                     if (payload.has(Constants.MEETING_ID)
                             && payload.has(Constants.USER_ID)
                             && payload.has(Constants.STREAM)
-                            && payload.has(Constants.ALLOWED)) {
+                            && payload.has(Constants.GRANTED)) {
                         String id = payload.get(Constants.MEETING_ID)
                                 .getAsString();
                         String userid = payload.get(Constants.USER_ID)
                                 .getAsString();
                         String stream = payload.get(Constants.STREAM)
                                 .getAsString();
-                        Boolean allowed = payload.get(Constants.ALLOWED)
+                        Boolean granted = payload.get(Constants.GRANTED)
                                 .getAsBoolean();
                         return new StreamPermissionChangeMessage(id, userid,
-                                stream, allowed);
+                                stream, granted);
                     }
                 }
             }

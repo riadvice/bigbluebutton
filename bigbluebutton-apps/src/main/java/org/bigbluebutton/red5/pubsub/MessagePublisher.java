@@ -48,8 +48,8 @@ public class MessagePublisher {
 		sender.send(MessagingConstants.TO_MEETING_CHANNEL, msg.toJson());
 	}
 	
-   public void setStreamPermission(String meetingID, String userId, String streamName, Boolean allowed) {
-        SetStreamPermissionMessage msg = new SetStreamPermissionMessage(meetingID, userId, streamName, allowed);
+   public void setStreamPermission(String meetingID, String userId, String streamName, Boolean granted) {
+        SetStreamPermissionMessage msg = new SetStreamPermissionMessage(meetingID, userId, streamName, granted);
         sender.send(MessagingConstants.TO_MEETING_CHANNEL, msg.toJson());
     }
 

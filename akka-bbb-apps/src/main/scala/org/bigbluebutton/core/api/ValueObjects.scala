@@ -123,7 +123,7 @@ case class MeetingConfig(
 
 case class WebcamStream(
   streamName: String,
-  allowedToStream: Boolean)
+  grantedToStream: Boolean)
 
 case class MeetingID(internal: String, external: String)
 

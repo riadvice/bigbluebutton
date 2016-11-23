@@ -182,7 +182,7 @@ trait UsersApp {
 
   def handleStreamPermission(msg: StreamPermission) {
     usersModel.getUser(msg.userId) foreach { user =>
-      val streams: HashMap[String, Boolean] = user.webcamStreams + (msg.stream -> msg.allowed)
+      val streams: HashMap[String, Boolean] = user.webcamStreams + (msg.stream -> msg.granted)
       val uvo = user.copy(hasStream = true, webcamStreams = streams)
       usersModel.addUser(uvo)
       log.info("User shared webcam. meetingId=" + mProps.meetingID + " userId=" + uvo.userID

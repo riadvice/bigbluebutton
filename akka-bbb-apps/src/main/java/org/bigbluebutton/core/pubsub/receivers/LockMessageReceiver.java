@@ -40,7 +40,7 @@ public class LockMessageReceiver implements MessageHandler {
 						bbbGW.sendLockSettings(msg.meetingId, msg.userId, msg.newSettings);
 					} else if (SetStreamPermissionMessage.SET_STREAM_PERMISSION.equals(messageName)) {
 					    SetStreamPermissionMessage msg = SetStreamPermissionMessage.fromJson(message);
-					    bbbGW.setStreamPermission(msg.meetingId, msg.userId, msg.streamName, msg.allowed);
+					    bbbGW.setStreamPermission(msg.meetingId, msg.userId, msg.streamName, msg.granted);
 					}
 				}
 			}

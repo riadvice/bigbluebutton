@@ -76,9 +76,9 @@ public class LockService {
 
         String userId = (String) msg.get("userId");
         String streamId = (String) msg.get("streamId");
-        Boolean allowed = (Boolean) msg.get("allowed");
+        Boolean granted = (Boolean) msg.get("granted");
 
-        red5BBBInGW.setStreamPermission(meetingId, userId, streamId, allowed);
+        red5BBBInGW.setStreamPermission(meetingId, userId, streamId, granted);
     }
 
 	/**

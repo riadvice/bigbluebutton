@@ -407,7 +407,7 @@ public class UserClientMessageSender {
     Map<String, Object> args = new HashMap<String, Object>();	
     args.put("userId", msg.userId);
     args.put("webcamStream", msg.stream);
-    args.put("allowed", msg.allowed);
+    args.put("granted", msg.granted);
 
     Map<String, Object> message = new HashMap<String, Object>();
     Gson gson = new Gson();
@@ -437,7 +437,7 @@ public class UserClientMessageSender {
       Map<String, Object> args = new HashMap<String, Object>(); 
       args.put("userId", msg.userId);
       args.put("webcamStream", msg.stream);
-      args.put("allowed", msg.allowed);
+      args.put("granted", msg.granted);
 
       Map<String, Object> message = new HashMap<String, Object>();
       Gson gson = new Gson();

@@ -299,7 +299,7 @@ with BigBlueButton; if not, see <http://www.gnu.org/licenses/>.
 
             protected function shareBtn_clickHandler(event:MouseEvent):void {
                 var streamPermissionEvent:StreamPermissionEvent = new StreamPermissionEvent();
-                streamPermissionEvent.allowed = !user.webcamStreams[streamName];
+                streamPermissionEvent.granted = !user.webcamStreams[streamName];
                 streamPermissionEvent.userId = _userId;
                 streamPermissionEvent.streamName = _streamName;
 

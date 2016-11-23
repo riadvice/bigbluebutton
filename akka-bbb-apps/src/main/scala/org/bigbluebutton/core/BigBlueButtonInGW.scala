@@ -170,8 +170,8 @@ class BigBlueButtonInGW(
     eventBus.publish(BigBlueButtonEvent(meetingID, new SetLockSettings(meetingID, userId, permissions)))
   }
   
-  def setStreamPermission(meetingId: String, userId: String, streamName: String, allowed: Boolean) {
-    eventBus.publish(BigBlueButtonEvent(meetingId, new StreamPermission(meetingId, userId, streamName, allowed)))
+  def setStreamPermission(meetingId: String, userId: String, streamName: String, granted: Boolean) {
+    eventBus.publish(BigBlueButtonEvent(meetingId, new StreamPermission(meetingId, userId, streamName, granted)))
   }
 
   def initLockSettings(meetingID: String, settings: java.util.Map[String, java.lang.Boolean]) {

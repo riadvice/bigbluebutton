@@ -22,7 +22,7 @@ package org.bigbluebutton.modules.users.events {
     public class StreamPermissionEvent extends Event {
         public static const MODERATOR_ALLOW_WEBCAM_DISPLAY:String = "MODERATOR_ALLOW_WEBCAM_DISPLAY";
 
-        public var allowed:Boolean;
+        public var granted:Boolean;
 
         public var userId:String;
 

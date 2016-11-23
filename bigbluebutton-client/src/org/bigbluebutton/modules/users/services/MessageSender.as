@@ -488,9 +488,9 @@ package org.bigbluebutton.modules.users.services
       );      
         }
 
-        public function shareStreamPermission(allowed:Boolean, userId:String, streamId:String):void {
+        public function shareStreamPermission(granted:Boolean, userId:String, streamId:String):void {
             var message:Object = new Object();
-            message["allowed"] = allowed;
+            message["granted"] = granted;
             message["userId"] = userId;
             message["streamId"] = streamId;
 

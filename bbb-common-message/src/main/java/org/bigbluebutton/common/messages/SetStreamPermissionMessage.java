@@ -31,14 +31,14 @@ public class SetStreamPermissionMessage implements IBigBlueButtonMessage {
     public final String meetingId;
     public final String userId;
     public final String streamName;
-    public final Boolean allowed;
+    public final Boolean granted;
 
     public SetStreamPermissionMessage(String meetingId, String userId,
-            String streamName, Boolean allowed) {
+            String streamName, Boolean granted) {
         this.meetingId = meetingId;
         this.userId = userId;
         this.streamName = streamName;
-        this.allowed = allowed;
+        this.granted = granted;
     }
 
     public String toJson() {
@@ -47,7 +47,7 @@ public class SetStreamPermissionMessage implements IBigBlueButtonMessage {
         payload.put(Constants.MEETING_ID, meetingId);
         payload.put(Constants.USER_ID, userId);
         payload.put(Constants.STREAM_NAME, streamName);
-        payload.put(Constants.ALLOWED, allowed);
+        payload.put(Constants.GRANTED, granted);
 
         java.util.HashMap<String, Object> header = MessageBuilder.buildHeader(
                 SET_STREAM_PERMISSION, VERSION, null);
@@ -68,18 +68,18 @@ public class SetStreamPermissionMessage implements IBigBlueButtonMessage {
                     if (payload.has(Constants.MEETING_ID)
                             && payload.has(Constants.USER_ID)
                             && payload.has(Constants.STREAM_NAME)
-                            && payload.has(Constants.ALLOWED)) {
+                            && payload.has(Constants.GRANTED)) {
                         String id = payload.get(Constants.MEETING_ID)
                                 .getAsString();
                         String userId = payload.get(Constants.USER_ID)
                                 .getAsString();
                         String streamName = payload.get(Constants.STREAM_NAME)
                                 .getAsString();
-                        Boolean allowed = payload.get(Constants.ALLOWED)
+                        Boolean granted = payload.get(Constants.GRANTED)
                                 .getAsBoolean();
 
                         return new SetStreamPermissionMessage(id, userId,
-                                streamName, allowed);
+                                streamName, granted);
                     }
                 }
             }

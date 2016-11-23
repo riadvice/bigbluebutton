@@ -550,7 +550,7 @@ package org.bigbluebutton.modules.users.services
 			|| UserManager.getInstance().getConference().amIModerator()
 			|| (UserManager.getInstance().getConference().getLockSettings().getModeratorControlWebcams() && map.triggeredByModerator)) {
 			var map:Object = JSON.parse(msg.msg);
-			UserManager.getInstance().getConference().sharedWebcam(map.userId, map.webcamStream, map.allowed);
+			UserManager.getInstance().getConference().sharedWebcam(map.userId, map.webcamStream, map.granted);
         }
     }
 
@@ -572,12 +572,12 @@ package org.bigbluebutton.modules.users.services
 	private function handleStreamPermissionChange(msg: Object):void {
 		// @fixme
 		if (UserManager.getInstance().getConference().getLockSettings().getModeratorControlWebcams() && !UserManager.getInstance().getConference().amIModerator()) {
-			if (msg.allowed == true) {
+			if (msg.granted == true) {
 				UserManager.getInstance().getConference().unsharedWebcam(msg.userId, msg.webcamStream);
 				sendStreamStoppedEvent(msg.userId, msg.webcamStream);
 			} else {
 				var map:Object = JSON.parse(msg.msg);
-				UserManager.getInstance().getConference().sharedWebcam(map.userId, map.webcamStream, map.allowed);
+				UserManager.getInstance().getConference().sharedWebcam(map.userId, map.webcamStream, map.granted);
 			}	
 		}
 	}

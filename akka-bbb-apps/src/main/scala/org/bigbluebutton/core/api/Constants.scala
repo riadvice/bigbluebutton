@@ -22,7 +22,7 @@ object Constants {
   val REQUESTER_ID = "requester_id"
   val REPLY_TO = "reply_to"
   val STREAM = "stream"
-  val ALLOWED = "allowed"
+  val GRANTED = "granted"
   val LOCKED = "locked"
   val SETTINGS = "settings"
   val LOCK = "lock"

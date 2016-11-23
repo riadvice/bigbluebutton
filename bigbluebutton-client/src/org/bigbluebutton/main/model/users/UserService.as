@@ -289,7 +289,7 @@ package org.bigbluebutton.main.model.users {
         }
 		
 		public function shareStreamPermission(command:StreamPermissionEvent):void {
-			sender.shareStreamPermission(command.allowed, command.userId, command.streamName);
+			sender.shareStreamPermission(command.granted, command.userId, command.streamName);
 		}
     }
 }

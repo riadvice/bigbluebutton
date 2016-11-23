@@ -209,7 +209,7 @@ object UsersMessageToJsonConverter {
     payload.put(Constants.RECORDED, msg.recorded)
     payload.put(Constants.USER_ID, msg.userID)
     payload.put(Constants.STREAM, msg.stream)
-    payload.put(Constants.ALLOWED, msg.allowed)
+    payload.put(Constants.GRANTED, msg.granted)
 
     val header = Util.buildHeader(MessageNames.USER_SHARED_WEBCAM, None)
     Util.buildJson(header, payload)
@@ -221,7 +221,7 @@ object UsersMessageToJsonConverter {
     payload.put(Constants.RECORDED, msg.recorded)
     payload.put(Constants.USER_ID, msg.userID)
     payload.put(Constants.STREAM, msg.stream)
-    payload.put(Constants.ALLOWED, msg.allowed)
+    payload.put(Constants.GRANTED, msg.granted)
 
     val header = Util.buildHeader(MessageNames.STREAM_PERMISSION_CHANGE, None)
     Util.buildJson(header, payload)
