@@ -114,19 +114,20 @@ package org.bigbluebutton.main.model.users
 
 		[Bindable("streamNameChange")]
 		public function get streamName():String {
-			var streams:String = "";
-			for each(var stream:String in webcamStreams) {
-				streams = streams + stream + "|";
-			}
-			//Remove last |
-			streams = streams.slice(0, streams.length-1);
-			return streams;
+			return DictionaryUtils.getKeys(webcamStreams).join("|");
         }
+		
+		public function getStreamByName(streamName:String) : WebcamStream {
+			if (DictionaryUtils.containsKey(webcamStreams, streamName)) {
+				return webcamStreams[streamName];
+			}
+			return null;
+		}
 
         public function get streamableWebcams():Array {
             var result:Array = [];
             for (var key:String in webcamStreams) {
-                if (webcamStreams[key] == true) {
+                if (WebcamStream(webcamStreams[key]).granted == true) {
                     result.push(key);
                 }
             }
@@ -277,7 +278,7 @@ package org.bigbluebutton.main.model.users
     
     public function sharedWebcam(stream: String, granted:Boolean):void {
       if(StringUtils.isNotBlank(stream) && !DictionaryUtils.containsKey(webcamStreams, stream)) {
-          webcamStreams[stream] = granted;
+          webcamStreams[stream] = new WebcamStream(stream, granted);
 		  // @todo: check with lock setting and control webcams
           sendStreamStartedEvent(stream);
       }
@@ -286,6 +287,7 @@ package org.bigbluebutton.main.model.users
     }
     
     public function unsharedWebcam(stream: String):void {
+	  webcamStreams[stream] = null;
       delete webcamStreams[stream];
       buildStatus();
       verifyMedia();

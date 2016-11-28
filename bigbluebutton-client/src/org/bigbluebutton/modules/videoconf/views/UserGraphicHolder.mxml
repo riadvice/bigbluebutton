@@ -47,6 +47,7 @@ with BigBlueButton; if not, see <http://www.gnu.org/licenses/>.
 			import org.bigbluebutton.main.events.BBBEvent;
 			import org.bigbluebutton.main.events.PresenterStatusEvent;
 			import org.bigbluebutton.main.model.users.BBBUser;
+			import org.bigbluebutton.main.model.users.WebcamStream;
 			import org.bigbluebutton.modules.users.events.StreamPermissionEvent;
 			import org.bigbluebutton.modules.videoconf.model.VideoConfOptions;
 			import org.bigbluebutton.util.i18n.ResourceUtil;
@@ -299,7 +300,7 @@ with BigBlueButton; if not, see <http://www.gnu.org/licenses/>.
 
             protected function shareBtn_clickHandler(event:MouseEvent):void {
                 var streamPermissionEvent:StreamPermissionEvent = new StreamPermissionEvent();
-                streamPermissionEvent.granted = !user.webcamStreams[streamName];
+                streamPermissionEvent.granted = user.getStreamByName(streamName).granted;
                 streamPermissionEvent.userId = _userId;
                 streamPermissionEvent.streamName = _streamName;
 

@@ -25,5 +25,10 @@ package org.bigbluebutton.main.model.users {
 
         [Bindable]
         public var granted:Boolean;
+
+        public function WebcamStream(streamName:String, granted:Boolean) {
+            this.streamName = streamName;
+            this.granted = granted;
+        }
     }
 }

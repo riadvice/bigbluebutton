@@ -20,8 +20,6 @@ package org.bigbluebutton.modules.users.services
 {
   import com.asfusion.mate.events.Dispatcher;
   
-  import mx.controls.Alert;
-  
   import org.as3commons.lang.StringUtils;
   import org.as3commons.logging.api.ILogger;
   import org.as3commons.logging.api.getClassLogger;
@@ -34,7 +32,6 @@ package org.bigbluebutton.modules.users.services
   import org.bigbluebutton.core.model.MeetingModel;
   import org.bigbluebutton.core.services.UsersService;
   import org.bigbluebutton.core.vo.LockSettingsVO;
-  import org.bigbluebutton.main.api.JSLog;
   import org.bigbluebutton.main.events.BBBEvent;
   import org.bigbluebutton.main.events.BreakoutRoomEvent;
   import org.bigbluebutton.main.events.MadePresenterEvent;
@@ -548,7 +545,7 @@ package org.bigbluebutton.modules.users.services
     private function handleUserSharedWebcam(msg:Object):void {
         if (!UserManager.getInstance().getConference().getLockSettings().getModeratorControlWebcams()
 			|| UserManager.getInstance().getConference().amIModerator()
-			|| (UserManager.getInstance().getConference().getLockSettings().getModeratorControlWebcams() && map.triggeredByModerator)) {
+			|| (UserManager.getInstance().getConference().getLockSettings().getModeratorControlWebcams())) {
 			var map:Object = JSON.parse(msg.msg);
 			UserManager.getInstance().getConference().sharedWebcam(map.userId, map.webcamStream, map.granted);
         }
@@ -570,6 +567,7 @@ package org.bigbluebutton.modules.users.services
     }
 	
 	private function handleStreamPermissionChange(msg: Object):void {
+		LOGGER.info("Received stream permission message {}", msg);
 		// @fixme
 		if (UserManager.getInstance().getConference().getLockSettings().getModeratorControlWebcams() && !UserManager.getInstance().getConference().amIModerator()) {
 			if (msg.granted == true) {
