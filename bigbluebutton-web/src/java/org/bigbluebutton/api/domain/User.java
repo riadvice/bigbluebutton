@@ -116,9 +116,9 @@ public class User {
 		return streams;
 	}
 
-        public Boolean hasVideo() {
-                return this.getStreams().size() > 0;
-        }
+    public Boolean hasVideo() {
+            return this.getStreams().size() > 0;
+    }
 
 	public Boolean isListeningOnly() {
 		return listeningOnly;

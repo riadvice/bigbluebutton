@@ -567,16 +567,29 @@ package org.bigbluebutton.modules.users.services
     }
 	
 	private function handleStreamPermissionChange(msg: Object):void {
-		LOGGER.info("Received stream permission message {}", msg);
+		LOGGER.info("Received stream permission message {}", [msg]);
 		// @fixme
-		if (UserManager.getInstance().getConference().getLockSettings().getModeratorControlWebcams() && !UserManager.getInstance().getConference().amIModerator()) {
-			if (msg.granted == true) {
-				UserManager.getInstance().getConference().unsharedWebcam(msg.userId, msg.webcamStream);
-				sendStreamStoppedEvent(msg.userId, msg.webcamStream);
+		var webcamControlled : Boolean = UserManager.getInstance().getConference().getLockSettings().getModeratorControlWebcams();
+		
+		if (!webcamControlled) {
+			LOGGER.warn("Cannot process stream permission message as the webcam control feature is disabled");
+			return;
+		}
+		var map:Object = JSON.parse(msg.msg);
+		var amIModerator : Boolean = UserManager.getInstance().getConference().amIModerator();
+		
+		if ( webcamControlled && !amIModerator ) {
+			if (map.granted == true) {
+				UserManager.getInstance().getConference().unsharedWebcam(map.userId, map.webcamStream);
+				sendStreamStoppedEvent(map.userId, map.webcamStream);
 			} else {
-				var map:Object = JSON.parse(msg.msg);
 				UserManager.getInstance().getConference().sharedWebcam(map.userId, map.webcamStream, map.granted);
 			}	
+		} else if (webcamControlled && amIModerator ){
+			var user : BBBUser = UserManager.getInstance().getConference().getUser(map.userId);
+			if (user) {
+				user.setWebcamStreamStatus(map);
+			}
 		}
 	}
 	

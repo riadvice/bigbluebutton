@@ -112,11 +112,6 @@ package org.bigbluebutton.main.model.users
 
 		[Bindable] public var webcamStreams:Dictionary = new Dictionary();
 
-		[Bindable("streamNameChange")]
-		public function get streamName():String {
-			return DictionaryUtils.getKeys(webcamStreams).join("|");
-        }
-		
 		public function getStreamByName(streamName:String) : WebcamStream {
 			if (DictionaryUtils.containsKey(webcamStreams, streamName)) {
 				return webcamStreams[streamName];
@@ -138,6 +133,11 @@ package org.bigbluebutton.main.model.users
             sharedWebcam(stream.name, stream.granted);
 			dispatchEvent(new Event("streamNameChange")); 
         }
+		
+		public function setWebcamStreamStatus(stream:Object): void {
+			// @fixme: do we need to rebuild the user status?
+			webcamStreams[stream] = new WebcamStream(stream.name, stream.granted);
+		}
 
 		private var _presenter:Boolean = false;
 		[Bindable] 
