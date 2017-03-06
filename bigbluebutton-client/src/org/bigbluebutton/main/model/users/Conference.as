@@ -55,6 +55,8 @@ package org.bigbluebutton.main.model.users {
 		
 		public var isBreakout:Boolean;
 		
+		public var skipEchoTest:Boolean
+		
 		public var iAskedToLogout:Boolean
 		
 		[Bindable]

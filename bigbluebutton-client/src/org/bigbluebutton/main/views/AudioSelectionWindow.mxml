@@ -23,7 +23,9 @@ with BigBlueButton; if not, see <http://www.gnu.org/licenses/>.
 				xmlns:mate="http://mate.asfusion.com/"
 				xmlns:common="org.bigbluebutton.common.*"
 				width="700" height="350" 
-				initialize="init()" 
+				initialize="init()"
+				keyDown="shiftKeyDownHandler(event)"
+				keyUp="shiftKeyUpHandler(event)"
 				styleName="micSettingsWindowStyle"
 				showCloseButton="false">
 	
@@ -52,6 +54,8 @@ with BigBlueButton; if not, see <http://www.gnu.org/licenses/>.
 
 			private var phoneOptions:PhoneOptions = new PhoneOptions;
 			private var browserInfo:Array;
+			
+			private var shiftPressed:Boolean;
 			
 			private function init():void {
 				browserInfo = JSAPI.getInstance().getBrowserInfo();
@@ -87,6 +91,11 @@ with BigBlueButton; if not, see <http://www.gnu.org/licenses/>.
 			}
 			
 			private function onMicClick():void {
+				if (shiftPressed) {
+					UserManager.getInstance().getConference().skipEchoTest = true;
+				} else {
+					UserManager.getInstance().getConference().skipEchoTest = false;
+				}
 				LOGGER.debug("AudioSelectionWindow - Share Microphone Clicked");
 				var dispatcher:Dispatcher = new Dispatcher();
 				if (browserInfo[0] == "Puffin" && String(browserInfo[2]).substr(0, 3) >= "4.6") {
@@ -126,6 +135,21 @@ with BigBlueButton; if not, see <http://www.gnu.org/licenses/>.
 			private function handleBecomeViewer(e:MadePresenterEvent):void {
 				if (phoneOptions.presenterShareOnly && !UsersUtil.amIModerator()) btnMicrophone.enabled = false;
 			}
+			
+			protected function shiftKeyDownHandler(event:KeyboardEvent):void
+			{
+				if (event.keyCode == 16) {
+					shiftPressed = true;
+				}
+			}
+			
+			protected function shiftKeyUpHandler(event:KeyboardEvent):void
+			{
+				if (event.keyCode == 16) {
+					shiftPressed = false;
+				}
+			}
+			
 		]]>
 	</mx:Script>
 	

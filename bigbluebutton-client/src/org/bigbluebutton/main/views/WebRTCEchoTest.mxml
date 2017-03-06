@@ -40,11 +40,14 @@ with BigBlueButton; if not, see <http://www.gnu.org/licenses/>.
 		<![CDATA[
 			import com.asfusion.mate.events.Dispatcher;
 			
+			import flash.utils.setTimeout;
+			
 			import org.as3commons.logging.api.ILogger;
 			import org.as3commons.logging.api.getClassLogger;
 			import org.bigbluebutton.core.BBB;
 			import org.bigbluebutton.core.PopUpUtil;
 			import org.bigbluebutton.core.UsersUtil;
+			import org.bigbluebutton.core.managers.UserManager;
 			import org.bigbluebutton.modules.phone.PhoneModel;
 			import org.bigbluebutton.modules.phone.events.WebRTCCallEvent;
 			import org.bigbluebutton.modules.phone.events.WebRTCEchoTestEvent;
@@ -124,14 +127,17 @@ with BigBlueButton; if not, see <http://www.gnu.org/licenses/>.
 			private function handleWebRTCEchoTestStartedEvent(e:WebRTCEchoTestStartedEvent):void {
                 webRTCEchoTestStarted();
 			}
-			
-      private function webRTCEchoTestStarted():void {
-        setCurrentState("started");
-        dotTimer.stop();        
-      }
-      
-			private function handleWebRTCEchoTestEndedEvent(e:WebRTCEchoTestEvent):void {
-        webRTCEchoTestEnded();
+
+            private function webRTCEchoTestStarted():void {
+                setCurrentState("started");
+                dotTimer.stop();
+                if (UserManager.getInstance().getConference().skipEchoTest) {
+                    setTimeout(yesButtonClicked, 50);
+                }
+            }
+
+            private function handleWebRTCEchoTestEndedEvent(e:WebRTCEchoTestEvent):void {
+                webRTCEchoTestEnded();
 			}
       
       private function webRTCEchoTestEnded():void {
