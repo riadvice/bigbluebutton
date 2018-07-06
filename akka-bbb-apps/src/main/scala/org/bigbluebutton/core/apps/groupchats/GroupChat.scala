@@ -18,13 +18,12 @@ object GroupChatApp {
   def toGroupChatMessage(sender: GroupChatUser, msg: GroupChatMsgFromUser): GroupChatMessage = {
     val now = System.currentTimeMillis()
     val id = GroupChatFactory.genId()
-    GroupChatMessage(id, now, msg.correlationId, now, now, sender, msg.font,
-      msg.size, msg.color, msg.message)
+    GroupChatMessage(id, now, msg.correlationId, now, now, sender, msg.color, msg.message)
   }
 
   def toMessageToUser(msg: GroupChatMessage): GroupChatMsgToUser = {
     GroupChatMsgToUser(id = msg.id, timestamp = msg.timestamp, correlationId = msg.correlationId,
-      sender = msg.sender, font = msg.font, size = msg.size, color = msg.color, message = msg.message)
+      sender = msg.sender, color = msg.color, message = msg.message)
   }
 
   def addGroupChatMessage(chat: GroupChat, chats: GroupChats,
@@ -45,12 +44,9 @@ object GroupChatApp {
     }
   }
 
-  def createDefaultPublicGroupChat(chatId: String, state: MeetingState2x): MeetingState2x = {
+  def createDefaultPublicGroupChat(): GroupChat = {
     val createBy = GroupChatUser(SystemUser.ID, SystemUser.ID)
-    val defaultPubGroupChat = GroupChatFactory.create(chatId, chatId,
-      GroupChatAccess.PUBLIC, createBy, Vector.empty, Vector.empty)
-    val groupChats = state.groupChats.add(defaultPubGroupChat)
-    state.update(groupChats)
+    GroupChatFactory.create(MAIN_PUBLIC_CHAT, MAIN_PUBLIC_CHAT, GroupChatAccess.PUBLIC, createBy, Vector.empty, Vector.empty)
   }
 
   def createTestPublicGroupChat(state: MeetingState2x): MeetingState2x = {
@@ -59,6 +55,10 @@ object GroupChatApp {
       GroupChatAccess.PUBLIC, createBy, Vector.empty, Vector.empty)
     val groupChats = state.groupChats.add(defaultPubGroupChat)
     state.update(groupChats)
+  }
+
+  def getAllGroupChatsInMeeting(state: MeetingState2x): Vector[GroupChat] = {
+    state.groupChats.getAllGroupChatsInMeeting()
   }
 
   def genTestChatMsgHistory(chatId: String, state: MeetingState2x, userId: String, liveMeeting: LiveMeeting): MeetingState2x = {
@@ -81,11 +81,11 @@ object GroupChatApp {
 
     val sender = GroupChatUser(SystemUser.ID, SystemUser.ID)
     val h1 = GroupChatMsgFromUser(correlationId = "cor1", sender = sender,
-      font = "arial", size = 12, color = "red", message = "Hello Foo!")
+      color = "red", message = "Hello Foo!")
     val h2 = GroupChatMsgFromUser(correlationId = "cor2", sender = sender,
-      font = "arial", size = 12, color = "red", message = "Hello Bar!")
+      color = "red", message = "Hello Bar!")
     val h3 = GroupChatMsgFromUser(correlationId = "cor3", sender = sender,
-      font = "arial", size = 12, color = "red", message = "Hello Baz!")
+      color = "red", message = "Hello Baz!")
     val state1 = addH(state, SystemUser.ID, liveMeeting, h1)
     val state2 = addH(state1, SystemUser.ID, liveMeeting, h2)
     val state3 = addH(state2, SystemUser.ID, liveMeeting, h3)

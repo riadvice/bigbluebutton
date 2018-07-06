@@ -1,10 +1,10 @@
-
+/* eslint prefer-promise-reject-errors: 0 */
 import { Tracker } from 'meteor/tracker';
 
 import Storage from '/imports/ui/services/storage/session';
 
 import Users from '/imports/api/users';
-import { makeCall, log } from '/imports/ui/services/api';
+import { makeCall } from '/imports/ui/services/api';
 
 const CONNECTION_TIMEOUT = Meteor.settings.public.app.connectionTimeout;
 
@@ -111,109 +111,66 @@ class Auth {
     }
 
     return new Promise((resolve) => {
-      const credentialsSnapshot = {
-        meetingId: this.meetingID,
-        requesterUserId: this.userID,
-        requesterToken: this.token,
-      };
-
-      // make sure users who did not connect are not added to the meeting
-      // do **not** use the custom call - it relies on expired data
-      Meteor.call('userLogout', credentialsSnapshot, (error) => {
-        if (error) {
-          log('error', error, { credentials: credentialsSnapshot });
-        } else {
-          this.fetchLogoutUrl()
-            .then(this.clearCredentials)
-            .then(resolve);
-        }
-      });
+      resolve(this._logoutURL);
     });
   }
 
   authenticate(force) {
     if (this.loggedIn && !force) return Promise.resolve();
 
-    return this._subscribeToCurrentUser()
-      .then(this._addObserverToValidatedField.bind(this));
-  }
-
-  _subscribeToCurrentUser() {
-    const credentials = this.credentials;
-
-    return new Promise((resolve, reject) => {
-      Tracker.autorun((c) => {
-        if (!(credentials.meetingId && credentials.requesterToken && credentials.requesterUserId)) {
-          reject({
-            error: 500,
-            description: 'Authentication subscription failed due to missing credentials.',
-          });
-        }
-
-        setTimeout(() => {
-          c.stop();
-          reject({
-            error: 500,
-            description: 'Authentication subscription timeout.',
-          });
-        }, 5000);
-
-        const subscription = Meteor.subscribe('current-user', credentials);
-        if (!subscription.ready()) return;
-
-        resolve(c);
+    if (!(this.meetingID && this.userID && this.token)) {
+      return Promise.reject({
+        error: 401,
+        description: 'Authentication failed due to missing credentials.',
       });
-    });
+    }
+
+    this.loggedIn = false;
+    return this.validateAuthToken()
+      .then(() => { this.loggedIn = true; });
   }
 
-  _addObserverToValidatedField(prevComp) {
+  validateAuthToken() {
     return new Promise((resolve, reject) => {
+      Meteor.connection.setUserId(`${this.meetingID}-${this.userID}`);
+      let computation = null;
+
       const validationTimeout = setTimeout(() => {
-        clearTimeout(validationTimeout);
-        prevComp.stop();
-        this.clearCredentials();
+        computation.stop();
         reject({
-          error: 500,
+          error: 401,
           description: 'Authentication timeout.',
         });
       }, CONNECTION_TIMEOUT);
 
-      const didValidate = () => {
-        this.loggedIn = true;
-        clearTimeout(validationTimeout);
-        prevComp.stop();
-        resolve();
-      };
-
       Tracker.autorun((c) => {
+        computation = c;
+        Meteor.subscribe('current-user', this.credentials);
+
         const selector = { meetingId: this.meetingID, userId: this.userID };
-        const query = Users.find(selector);
+        const User = Users.findOne(selector);
 
-        query.observeChanges({
-          changed: (id, fields) => {
-            if (fields.validated === true) {
-              c.stop();
-              didValidate();
-            }
+        // Skip in case the user is not in the collection yet or is a dummy user
+        if (!User || !('intId' in User)) return;
 
-            if (fields.validated === false) {
-              c.stop();
-              this.clearCredentials();
-              reject({
-                error: 401,
-                description: 'Authentication failed.',
-              });
-            }
-          },
-        });
+        if (User.ejected) {
+          reject({
+            error: 401,
+            description: 'User has been ejected.',
+          });
+          return;
+        }
+
+        if (User.validated === true && User.connectionStatus === 'online') {
+          computation.stop();
+          clearTimeout(validationTimeout);
+          // setTimeout to prevent race-conditions with subscription
+          setTimeout(resolve, 100);
+        }
       });
 
       makeCall('validateAuthToken');
     });
-  }
-
-  fetchLogoutUrl() {
-    return Promise.resolve(this._logoutURL);
   }
 }
 

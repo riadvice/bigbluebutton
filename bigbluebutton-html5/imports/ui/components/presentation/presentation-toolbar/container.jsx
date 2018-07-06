@@ -1,6 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { createContainer } from 'meteor/react-meteor-data';
+import { withTracker } from 'meteor/react-meteor-data';
 import PresentationToolbarService from './service';
 import PresentationToolbar from './component';
 
@@ -25,11 +25,10 @@ const PresentationToolbarContainer = (props) => {
   return null;
 };
 
-export default createContainer((params) => {
-  const data = PresentationToolbarService.getSlideData(params);
+export default withTracker(({ presentationId, userIsPresenter, currentSlideNum }) => {
+  const data = PresentationToolbarService.getSlideData(presentationId);
 
   const {
-    userIsPresenter,
     numberOfSlides,
   } = data;
 
@@ -38,21 +37,18 @@ export default createContainer((params) => {
     numberOfSlides,
     actions: {
       nextSlideHandler: () =>
-        PresentationToolbarService.nextSlide(params.currentSlideNum, numberOfSlides),
+        PresentationToolbarService.nextSlide(currentSlideNum, numberOfSlides),
       previousSlideHandler: () =>
-        PresentationToolbarService.previousSlide(params.currentSlideNum, numberOfSlides),
+        PresentationToolbarService.previousSlide(currentSlideNum, numberOfSlides),
       skipToSlideHandler: event =>
         PresentationToolbarService.skipToSlide(event),
     },
   };
-}, PresentationToolbarContainer);
+})(PresentationToolbarContainer);
 
 PresentationToolbarContainer.propTypes = {
   // Number of current slide being displayed
   currentSlideNum: PropTypes.number.isRequired,
-
-  // PresentationId of the current presentation
-  presentationId: PropTypes.string.isRequired,
 
   // Is the user a presenter
   userIsPresenter: PropTypes.bool.isRequired,

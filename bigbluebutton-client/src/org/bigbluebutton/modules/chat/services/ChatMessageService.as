@@ -46,25 +46,6 @@ package org.bigbluebutton.modules.chat.services
     public function sendPublicMessageFromApi(event:SendGroupChatMessageEvent):void
     {
       //sendPublicMessage(event.chatId, msgVO);
-    }    
-    
-    public function sendPrivateMessageFromApi(message:Object):void
-    {
-      LOGGER.debug("sendPrivateMessageFromApi");
-      var msgVO:ChatMessageVO = new ChatMessageVO();
-      msgVO.fromUserId = message.fromUserID;
-      msgVO.fromUsername = message.fromUsername;
-      msgVO.fromColor = message.fromColor;
-      msgVO.fromTime = message.fromTime;
-      msgVO.fromTimezoneOffset = message.fromTimezoneOffset;
-      
-      msgVO.toUserId = message.toUserID;
-      msgVO.toUsername = message.toUsername;
-      
-      msgVO.message = message.message;
-      
-      sendPrivateMessage(msgVO);
-      
     }
     
     public function sendPublicMessage(event:SendGroupChatMessageEvent):void {
@@ -73,15 +54,9 @@ package org.bigbluebutton.modules.chat.services
       msgVO.fromUserId = event.chatMessage.fromUserId;
       msgVO.fromUsername = event.chatMessage.fromUsername;
       msgVO.fromColor = event.chatMessage.fromColor;
-      msgVO.fromTime = event.chatMessage.fromTime;
-      msgVO.fromTimezoneOffset = event.chatMessage.fromTimezoneOffset;
       
       msgVO.message = event.chatMessage.message;
       sender.sendPublicMessage(event.chatId, msgVO);
-    }
-    
-    public function sendPrivateMessage(message:ChatMessageVO):void {
-      sender.sendPrivateMessage(message);
     }
     
     public function handleCreateGCReqEvent(event:CreateGroupChatReqEvent):void {
@@ -119,52 +94,6 @@ package org.bigbluebutton.modules.chat.services
     
     public function clearPublicChatMessages():void {
       sender.clearPublicChatMessages();
-    }
-    
-    private static const SPACE:String = " ";
-    
-    public function sendWelcomeMessage(chatId:String):void {
-      LOGGER.debug("sendWelcomeMessage");
-      var welcome:String = LiveMeeting.inst().me.welcome;
-      if (welcome != "") {
-        var welcomeMsg:ChatMessageVO = new ChatMessageVO();
-        welcomeMsg.fromUserId = SPACE;
-        welcomeMsg.fromUsername = SPACE;
-        welcomeMsg.fromColor = "86187";
-        welcomeMsg.fromTime = new Date().getTime();
-        welcomeMsg.fromTimezoneOffset = new Date().getTimezoneOffset();
-        welcomeMsg.toUserId = SPACE;
-        welcomeMsg.toUsername = SPACE;
-        welcomeMsg.message = welcome;
-        
-        var groupChat: GroupChat = LiveMeeting.inst().chats.getGroupChat(chatId);
-        if (groupChat != null) {
-          groupChat.addMessage(welcomeMsg);
-        }
-        
-        //Say that client is ready when sending the welcome message
-        ExternalInterface.call("clientReady", ResourceUtil.getInstance().getString('bbb.accessibility.clientReady'));
-      }	
-      
-      if (UsersUtil.amIModerator()) {
-        if (LiveMeeting.inst().meeting.modOnlyMessage != null) {
-          var moderatorOnlyMsg:ChatMessageVO = new ChatMessageVO();
-          moderatorOnlyMsg.fromUserId = SPACE;
-          moderatorOnlyMsg.fromUsername = SPACE;
-          moderatorOnlyMsg.fromColor = "86187";
-          moderatorOnlyMsg.fromTime = new Date().getTime();
-          moderatorOnlyMsg.fromTimezoneOffset = new Date().getTimezoneOffset();
-          moderatorOnlyMsg.toUserId = SPACE;
-          moderatorOnlyMsg.toUsername = SPACE;
-          moderatorOnlyMsg.message = LiveMeeting.inst().meeting.modOnlyMessage;
-          
-          var groupChat2: GroupChat = LiveMeeting.inst().chats.getGroupChat(chatId);
-          if (groupChat2 != null) {
-            groupChat2.addMessage(moderatorOnlyMsg);
-          }
-          
-        }
-      }
     }
   }
 }

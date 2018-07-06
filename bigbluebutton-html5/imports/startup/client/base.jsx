@@ -1,24 +1,32 @@
 import React, { Component } from 'react';
-import { createContainer } from 'meteor/react-meteor-data';
+import { withTracker } from 'meteor/react-meteor-data';
+import { withRouter } from 'react-router';
 import PropTypes from 'prop-types';
 import Auth from '/imports/ui/services/auth';
 import AppContainer from '/imports/ui/components/app/container';
 import ErrorScreen from '/imports/ui/components/error-screen/component';
+import MeetingEnded from '/imports/ui/components/meeting-ended/component';
 import LoadingScreen from '/imports/ui/components/loading-screen/component';
 import Settings from '/imports/ui/services/settings';
+import AudioManager from '/imports/ui/services/audio-manager';
 import IntlStartup from './intl';
+
+import Annotations from '/imports/api/annotations';
+import AnnotationsLocal from '/imports/ui/components/whiteboard/service';
 
 const propTypes = {
   error: PropTypes.object,
   errorCode: PropTypes.number,
   subscriptionsReady: PropTypes.bool.isRequired,
   locale: PropTypes.string,
+  endedCode: PropTypes.string,
 };
 
 const defaultProps = {
   error: undefined,
   errorCode: undefined,
   locale: undefined,
+  endedCode: undefined,
 };
 
 class Base extends Component {
@@ -53,6 +61,12 @@ class Base extends Component {
     const { loading, error } = this.state;
 
     const { subscriptionsReady, errorCode } = this.props;
+    const { endedCode } = this.props.params;
+
+    if (endedCode) {
+      AudioManager.exitAudio();
+      return (<MeetingEnded code={endedCode} />);
+    }
 
     if (error || errorCode) {
       return (<ErrorScreen code={errorCode}>{error}</ErrorScreen>);
@@ -61,6 +75,8 @@ class Base extends Component {
     if (loading || !subscriptionsReady) {
       return (<LoadingScreen>{loading}</LoadingScreen>);
     }
+
+    // this.props.annotationsHandler.stop();
 
     return (<AppContainer {...this.props} baseControls={stateControls} />);
   }
@@ -82,26 +98,54 @@ Base.propTypes = propTypes;
 Base.defaultProps = defaultProps;
 
 const SUBSCRIPTIONS_NAME = [
-  'users', 'chat', 'cursor', 'meetings', 'polls', 'presentations', 'annotations',
-  'slides', 'captions', 'breakouts', 'voiceUsers', 'whiteboard-multi-user',
+  'users', 'chat', 'meetings', 'polls', 'presentations',
+  'slides', 'captions', 'breakouts', 'voiceUsers', 'whiteboard-multi-user', 'screenshare',
 ];
 
-const BaseContainer = createContainer(({ params }) => {
+const BaseContainer = withRouter(withTracker(({ params, router }) => {
   if (params.errorCode) return params;
 
-  if (!Auth.loggedIn) {
+  const { locale } = Settings.application;
+  const { credentials, loggedIn } = Auth;
+
+  if (!loggedIn) {
     return {
-      errorCode: 401,
-      error: 'You are unauthorized to access this meeting',
+      locale,
+      subscriptionsReady: false,
     };
   }
 
-  const credentials = Auth.credentials;
-  const subscriptionsHandlers = SUBSCRIPTIONS_NAME.map(name => Meteor.subscribe(name, credentials));
-  return {
-    locale: Settings.application.locale,
-    subscriptionsReady: subscriptionsHandlers.every(handler => handler.ready()),
+  const subscriptionErrorHandler = {
+    onError: (error) => {
+      console.error(error);
+      return router.push('/logout');
+    },
   };
-}, Base);
+
+  const subscriptionsHandlers = SUBSCRIPTIONS_NAME.map(name =>
+    Meteor.subscribe(name, credentials, subscriptionErrorHandler));
+
+  const annotationsHandler = Meteor.subscribe('annotations', credentials, {
+    onReady: () => {
+      AnnotationsLocal.remove({});
+      Annotations.find({}, { reactive: false }).forEach((a) => {
+        try {
+          AnnotationsLocal.insert(a);
+        } catch (e) {
+          // who cares.
+        }
+      });
+      annotationsHandler.stop();
+    },
+    ...subscriptionErrorHandler,
+  });
+
+  const subscriptionsReady = subscriptionsHandlers.every(handler => handler.ready());
+  return {
+    locale,
+    subscriptionsReady,
+    annotationsHandler,
+  };
+})(Base));
 
 export default BaseContainer;

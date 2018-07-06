@@ -36,7 +36,9 @@ import java.util.Set;
 import org.apache.commons.io.FileUtils;
 import org.bigbluebutton.api.domain.Recording;
 import org.bigbluebutton.api.domain.RecordingMetadata;
+import org.bigbluebutton.api.messaging.messages.MakePresentationDownloadableMsg;
 import org.bigbluebutton.api.util.RecordingMetadataReaderHelper;
+import org.bigbluebutton.api2.domain.UploadedTrack;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -49,6 +51,42 @@ public class RecordingService {
     private String deletedDir = "/var/bigbluebutton/deleted";
     private RecordingMetadataReaderHelper recordingServiceHelper;
     private String recordStatusDir;
+    private String captionsDir;
+    private String presentationBaseDir;
+
+    private void copyPresentationFile(File presFile, File dlownloadableFile) {
+        try {
+            FileUtils.copyFile(presFile, dlownloadableFile);
+        } catch (IOException ex) {
+            log.error("Failed to copy file: " + ex);
+        }
+    }
+
+    public void processMakePresentationDownloadableMsg(MakePresentationDownloadableMsg msg) {
+        File presDir = Util.getPresentationDir(presentationBaseDir, msg.meetingId, msg.presId);
+        File downloadableFile = new File(presDir.getAbsolutePath() + File.separatorChar + msg.presFilename);
+
+        if (presDir != null) {
+            if (msg.downloadable) {
+                File presFile = new File(presDir.getAbsolutePath() + File.separatorChar + msg.presId + ".pdf");
+                copyPresentationFile(presFile, downloadableFile);
+            } else {
+                if (downloadableFile.exists()) {
+                    if(downloadableFile.delete()) {
+                        log.info("File deleted. {}", downloadableFile.getAbsolutePath());
+                    } else {
+                        log.warn("Failed to delete. {}", downloadableFile.getAbsolutePath());
+                    }
+                }
+            }
+        }
+    }
+
+    public File getDownloadablePresentationFile(String meetingId, String presId, String presFilename) {
+        File presDir = Util.getPresentationDir(presentationBaseDir, meetingId, presId);
+        File downloadableFile = new File(presDir.getAbsolutePath() + File.separatorChar + presFilename);
+        return downloadableFile;
+    }
 
     public void kickOffRecordingChapterBreak(String meetingId, Long timestamp) {
         String done = recordStatusDir + File.separatorChar + meetingId + "-" + timestamp + ".done";
@@ -109,6 +147,14 @@ public class RecordingService {
         return recs;
     }
 
+    public String getRecordingTextTracks(String recordId) {
+        return recordingServiceHelper.getRecordingTextTracks(recordId, captionsDir);
+    }
+
+    public String putRecordingTextTrack(UploadedTrack track) {
+        return recordingServiceHelper.putRecordingTextTrack(track);
+    }
+
     public String getRecordings2x(ArrayList<String> idList, ArrayList<String> states, Map<String, String> metadataFilters) {
         List<RecordingMetadata> recsList = getRecordingsMetadata(idList, states);
         ArrayList<RecordingMetadata> recs = filterRecordingsByMetadata(recsList, metadataFilters);
@@ -159,6 +205,21 @@ public class RecordingService {
                 resultRecordings.add(entry);
         }
         return resultRecordings;
+    }
+
+    private ArrayList<File> getAllRecordingsFor(String recordId) {
+        String[] format = getPlaybackFormats(publishedDir);
+        ArrayList<File> ids = new ArrayList<File>();
+
+        for (int i = 0; i < format.length; i++) {
+            List<File> recordings = getDirectories(publishedDir + File.separatorChar + format[i]);
+            for (int f = 0; f < recordings.size(); f++) {
+                if (recordId.equals(recordings.get(f).getName()))
+                    ids.add(recordings.get(f));
+            }
+        }
+
+        return ids;
     }
 
     public boolean existAnyRecording(List<String> idList) {
@@ -270,10 +331,12 @@ public class RecordingService {
     }
 
     private static String[] getPlaybackFormats(String path) {
+        System.out.println("Getting playback formats at " + path);
         List<File> dirs = getDirectories(path);
         String[] formats = new String[dirs.size()];
 
         for (int i = 0; i < dirs.size(); i++) {
+            System.out.println("Playback format = " + dirs.get(i).getName());
             formats[i] = dirs.get(i).getName();
         }
         return formats;
@@ -287,8 +350,16 @@ public class RecordingService {
         unpublishedDir = dir;
     }
 
+    public void setPresentationBaseDir(String dir) {
+        presentationBaseDir = dir;
+    }
+
     public void setPublishedDir(String dir) {
         publishedDir = dir;
+    }
+
+    public void setCaptionsDir(String dir) {
+        captionsDir = dir;
     }
 
     public void setRecordingServiceHelper(RecordingMetadataReaderHelper r) {
@@ -493,11 +564,10 @@ public class RecordingService {
         for (String recordID : recordIDs) {
             for (Map.Entry<String, List<File>> entry : allDirectories.entrySet()) {
                 List<File> recs = getRecordingsForPath(recordID, entry.getValue());
-                // Lookup the target recording
-                Map<String,File> recsIndexed = indexRecordings(recs);
-                if ( recsIndexed.containsKey(recordID) ) {
-                    File recFile = recsIndexed.get(recordID);
-                    File metadataXml = recordingServiceHelper.getMetadataXmlLocation(recFile.getPath());
+
+                // Go through all recordings of all formats
+                for (File rec : recs) {
+                    File metadataXml = recordingServiceHelper.getMetadataXmlLocation(rec.getPath());
                     updateRecordingMetadata(metadataXml, metaParams, metadataXml);
                 }
             }
@@ -564,4 +634,8 @@ public class RecordingService {
 
         return baseDir;
     }
+
+		public String getCaptionTrackInboxDir() {
+			return captionsDir + File.separatorChar + "inbox";
+		}
 }

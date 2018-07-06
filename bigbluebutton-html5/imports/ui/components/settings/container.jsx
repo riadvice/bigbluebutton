@@ -1,27 +1,23 @@
-import React, { Component } from 'react';
-import PropTypes from 'prop-types';
-import { createContainer } from 'meteor/react-meteor-data';
-import Settings from './component';
+import React from 'react';
+import { withTracker } from 'meteor/react-meteor-data';
+import { withRouter } from 'react-router';
 import SettingsService from '/imports/ui/services/settings';
+import Settings from './component';
 
 import {
-    getClosedCaptionLocales,
-    getUserRoles,
-    updateSettings,
-    getAvailableLocales,
-  } from './service';
+  getClosedCaptionLocales,
+  getUserRoles,
+  updateSettings,
+  getAvailableLocales,
+} from './service';
 
-class SettingsContainer extends Component {
-  render() {
-    return (
-      <Settings {...this.props} />
-    );
-  }
-}
+const SettingsContainer = props => (
+  <Settings {...props} />
+);
 
-export default createContainer(() => ({
+export default withRouter(withTracker(() => ({
   audio: SettingsService.audio,
-  video: SettingsService.video,
+  dataSaving: SettingsService.dataSaving,
   application: SettingsService.application,
   cc: SettingsService.cc,
   participants: SettingsService.participants,
@@ -29,4 +25,4 @@ export default createContainer(() => ({
   locales: getClosedCaptionLocales(),
   availableLocales: getAvailableLocales(),
   isModerator: getUserRoles() === 'MODERATOR',
-}), SettingsContainer);
+}))(SettingsContainer));

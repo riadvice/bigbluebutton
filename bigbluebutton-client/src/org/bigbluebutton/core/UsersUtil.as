@@ -33,7 +33,6 @@ package org.bigbluebutton.core
   import org.bigbluebutton.core.vo.LockSettingsVO;
   import org.bigbluebutton.main.model.options.LockOptions;
   import org.bigbluebutton.main.model.users.BreakoutRoom;
-  import org.bigbluebutton.util.SessionTokenUtil;
   
   public class UsersUtil
   {
@@ -266,7 +265,8 @@ package org.bigbluebutton.core
       }
       var logData:Object = UsersUtil.initLogData();
       logData.tags = ["user-util"];
-      logData.message = "Could not find externUserID for userID:".concat(userID);
+			logData.userId = userID;
+      logData.logCode = "ext_userid_not_found";
       LOGGER.warn(JSON.stringify(logData));
       return "";
     }
@@ -278,7 +278,8 @@ package org.bigbluebutton.core
       }
       var logData:Object = UsersUtil.initLogData();
       logData.tags = ["user-util"];
-      logData.message = "Could not find userID for externUserID:".concat(externUserID);
+			logData.extUserId = externUserID;
+			logData.logCode = "int_userid_not_found";
       LOGGER.warn(JSON.stringify(logData));
       return null;
     }    
@@ -313,12 +314,16 @@ package org.bigbluebutton.core
             logData.user = UsersUtil.getUserData();
         }
         logData.sessionToken = getUserSession();
+				logData.connections = BBB.initConnectionManager().getConnectionIds();
+				
+				var now:Date = new Date();
+				logData.utcTime = now.getTime();
+				logData.tzOffsetMin = now.getTimezoneOffset();
         return logData;
     }
     
     public static function getUserSession():String {
-        var sessionUtil:SessionTokenUtil = new SessionTokenUtil()
-        return sessionUtil.getSessionToken();
+        return BBB.getQueryStringParameters().getSessionToken();
     }
     
     public static function applyLockSettings():void {

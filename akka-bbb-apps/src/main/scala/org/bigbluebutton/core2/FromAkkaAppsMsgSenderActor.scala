@@ -22,9 +22,11 @@ class FromAkkaAppsMsgSenderActor(msgSender: MessageSender)
     val json = JsonUtil.toJson(msg)
 
     msg.envelope.name match {
-      case SyncGetPresentationInfoRespMsg.NAME => msgSender.send(toHTML5RedisChannel, json)
+      case SyncGetPresentationPodsRespMsg.NAME => msgSender.send(toHTML5RedisChannel, json)
       case SyncGetMeetingInfoRespMsg.NAME      => msgSender.send(toHTML5RedisChannel, json)
       case SyncGetUsersMeetingRespMsg.NAME     => msgSender.send(toHTML5RedisChannel, json)
+      case SyncGetGroupChatsRespMsg.NAME       => msgSender.send(toHTML5RedisChannel, json)
+      case SyncGetGroupChatMsgsRespMsg.NAME    => msgSender.send(toHTML5RedisChannel, json)
 
       // Sent to FreeSWITCH
       case ScreenshareStartRtmpBroadcastVoiceConfMsg.NAME =>
@@ -74,8 +76,6 @@ class FromAkkaAppsMsgSenderActor(msgSender: MessageSender)
       case ResizeAndMovePageEvtMsg.NAME =>
         msgSender.send(fromAkkaAppsPresRedisChannel, json)
       case RemovePresentationEvtMsg.NAME =>
-        msgSender.send(fromAkkaAppsPresRedisChannel, json)
-      case SetPresentationDownloadableEvtMsg.NAME =>
         msgSender.send(fromAkkaAppsPresRedisChannel, json)
       case SetCurrentPresentationEvtMsg.NAME =>
         msgSender.send(fromAkkaAppsPresRedisChannel, json)

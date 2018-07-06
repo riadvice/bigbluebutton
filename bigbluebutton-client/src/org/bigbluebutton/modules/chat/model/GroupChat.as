@@ -97,13 +97,14 @@ package org.bigbluebutton.modules.chat.model
     }
     
     public function addMessageHistory(messageVOs:Array):void {
-      if (messageVOs.length > 0) {        
+      if (messageVOs.length > 0) { 
+        _messages = new ArrayCollection();
         for (var i:int = 0; i < messageVOs.length; i++) {
           var newCM: ChatMessageVO = messageVOs[i] as ChatMessageVO
           _messages.addItemAt(newCM, i);
         }
       }
-      
+			
       var chEvent:ChatHistoryEvent = new ChatHistoryEvent(ChatHistoryEvent.RECEIVED_HISTORY);
       chEvent.chatId = id;
       _dispatcher.dispatchEvent(chEvent);
@@ -160,7 +161,6 @@ package org.bigbluebutton.modules.chat.model
       // Welcome message will skip time
       if (msgVO.fromTime != -1) {
         cm.fromTime = msgVO.fromTime;
-        cm.fromTimezoneOffset = msgVO.fromTimezoneOffset;
         cm.time = convertTimeNumberToString(msgVO.fromTime);
       }
       return cm

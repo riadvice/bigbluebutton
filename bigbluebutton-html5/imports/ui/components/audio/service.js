@@ -2,13 +2,13 @@ import Users from '/imports/api/users';
 import Auth from '/imports/ui/services/auth';
 import AudioManager from '/imports/ui/services/audio-manager';
 import Meetings from '/imports/api/meetings';
-import VoiceUsers from '/imports/api/voice-users';
 
 const init = (messages) => {
+  AudioManager.setAudioMessages(messages);
   if (AudioManager.initialized) return;
   const meetingId = Auth.meetingID;
   const userId = Auth.userID;
-  const sessionToken = Auth.sessionToken;
+  const { sessionToken } = Auth;
   const User = Users.findOne({ userId });
   const username = User.name;
   const Meeting = Meetings.findOne({ meetingId: User.meetingId });
@@ -26,25 +26,23 @@ const init = (messages) => {
     microphoneLockEnforced,
   };
 
-  AudioManager.init(userData, messages);
+  AudioManager.init(userData);
 };
-
-const isVoiceUserTalking = () =>
-  VoiceUsers.findOne({ intId: Auth.userID }).talking;
 
 export default {
   init,
   exitAudio: () => AudioManager.exitAudio(),
   transferCall: () => AudioManager.transferCall(),
-  joinListenOnly: () => AudioManager.joinAudio({ isListenOnly: true }),
-  joinMicrophone: () => AudioManager.joinAudio(),
-  joinEchoTest: () => AudioManager.joinAudio({ isEchoTest: true }),
+  joinListenOnly: () => AudioManager.joinListenOnly(),
+  joinMicrophone: () => AudioManager.joinMicrophone(),
+  joinEchoTest: () => AudioManager.joinEchoTest(),
   toggleMuteMicrophone: () => AudioManager.toggleMuteMicrophone(),
   changeInputDevice: inputDeviceId => AudioManager.changeInputDevice(inputDeviceId),
   changeOutputDevice: outputDeviceId => AudioManager.changeOutputDevice(outputDeviceId),
   isConnected: () => AudioManager.isConnected,
-  isTalking: () => isVoiceUserTalking(),
+  isTalking: () => AudioManager.isTalking,
   isHangingUp: () => AudioManager.isHangingUp,
+  isUsingAudio: () => AudioManager.isUsingAudio(),
   isWaitingPermissions: () => AudioManager.isWaitingPermissions,
   isMuted: () => AudioManager.isMuted,
   isConnecting: () => AudioManager.isConnecting,
@@ -53,4 +51,5 @@ export default {
   outputDeviceId: () => AudioManager.outputDeviceId,
   isEchoTest: () => AudioManager.isEchoTest,
   error: () => AudioManager.error,
+  isUserModerator: () => Users.findOne({ userId: Auth.userID }).moderator,
 };

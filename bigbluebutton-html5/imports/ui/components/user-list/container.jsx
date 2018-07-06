@@ -1,62 +1,38 @@
 import React from 'react';
-import { createContainer } from 'meteor/react-meteor-data';
+import PropTypes from 'prop-types';
+import { withTracker } from 'meteor/react-meteor-data';
 import { meetingIsBreakout } from '/imports/ui/components/app/service';
 import Meetings from '/imports/api/meetings';
 import Service from './service';
 import UserList from './component';
 
-const UserListContainer = (props) => {
-  const {
-    users,
-    currentUser,
-    openChats,
-    openChat,
-    userActions,
-    isBreakoutRoom,
-    children,
-    meeting,
-    getAvailableActions,
-    normalizeEmojiName,
-    isMeetingLocked,
-    isPublicChat,
-    setEmojiStatus,
-    assignPresenter,
-    kickUser,
-    toggleVoice,
-    changeRole,
-    } = props;
-
-  return (
-    <UserList
-      users={users}
-      meeting={meeting}
-      currentUser={currentUser}
-      openChats={openChats}
-      openChat={openChat}
-      isBreakoutRoom={isBreakoutRoom}
-      setEmojiStatus={setEmojiStatus}
-      assignPresenter={assignPresenter}
-      kickUser={kickUser}
-      toggleVoice={toggleVoice}
-      changeRole={changeRole}
-      userActions={userActions}
-      getAvailableActions={getAvailableActions}
-      normalizeEmojiName={normalizeEmojiName}
-      isMeetingLocked={isMeetingLocked}
-      isPublicChat={isPublicChat}
-    >
-      {children}
-    </UserList>
-  );
+const propTypes = {
+  openChats: PropTypes.arrayOf(String).isRequired,
+  users: PropTypes.arrayOf(Object).isRequired,
+  currentUser: PropTypes.shape({}).isRequired,
+  meeting: PropTypes.shape({}).isRequired,
+  isBreakoutRoom: PropTypes.bool.isRequired,
+  getAvailableActions: PropTypes.func.isRequired,
+  normalizeEmojiName: PropTypes.func.isRequired,
+  isMeetingLocked: PropTypes.func.isRequired,
+  isPublicChat: PropTypes.func.isRequired,
+  setEmojiStatus: PropTypes.func.isRequired,
+  assignPresenter: PropTypes.func.isRequired,
+  removeUser: PropTypes.func.isRequired,
+  toggleVoice: PropTypes.func.isRequired,
+  changeRole: PropTypes.func.isRequired,
+  roving: PropTypes.func.isRequired,
 };
 
-export default createContainer(({ params }) => ({
+const UserListContainer = props => <UserList {...props} />;
+
+UserListContainer.propTypes = propTypes;
+
+export default withTracker(({ chatID, compact }) => ({
   users: Service.getUsers(),
   meeting: Meetings.findOne({}),
   currentUser: Service.getCurrentUser(),
-  openChats: Service.getOpenChats(params.chatID),
-  openChat: params.chatID,
-  userActions: Service.userActions,
+  openChats: Service.getOpenChats(chatID),
   isBreakoutRoom: meetingIsBreakout(),
   getAvailableActions: Service.getAvailableActions,
   normalizeEmojiName: Service.normalizeEmojiName,
@@ -64,7 +40,10 @@ export default createContainer(({ params }) => ({
   isPublicChat: Service.isPublicChat,
   setEmojiStatus: Service.setEmojiStatus,
   assignPresenter: Service.assignPresenter,
-  kickUser: Service.kickUser,
+  removeUser: Service.removeUser,
   toggleVoice: Service.toggleVoice,
   changeRole: Service.changeRole,
-}), UserListContainer);
+  roving: Service.roving,
+  CustomLogoUrl: Service.getCustomLogoUrl(),
+  compact,
+}))(UserListContainer);

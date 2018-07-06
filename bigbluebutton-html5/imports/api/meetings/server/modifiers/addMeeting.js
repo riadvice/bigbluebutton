@@ -10,6 +10,7 @@ export default function addMeeting(meeting) {
   check(meeting, {
     breakoutProps: {
       sequence: Number,
+      freeJoin: Boolean,
       breakoutRooms: Array,
       parentId: String,
     },
@@ -51,6 +52,7 @@ export default function addMeeting(meeting) {
       voiceConf: String,
       dialNumber: String,
       telVoice: String,
+      muteOnStart: Boolean,
     },
     screenshareProps: {
       red5ScreenshareIp: String,

@@ -3,7 +3,7 @@ import PropTypes from 'prop-types';
 import { defineMessages, injectIntl, FormattedMessage } from 'react-intl';
 import injectWbResizeEvent from '/imports/ui/components/presentation/resize-wrapper/component';
 import Button from '/imports/ui/components/button/component';
-import styles from './styles.scss';
+import { styles } from './styles.scss';
 
 const intlMessages = defineMessages({
   previousSlideLabel: {
@@ -193,7 +193,7 @@ class PresentationToolbar extends Component {
           aria-relevant="all"
           value={currentSlideNum}
           onChange={actions.skipToSlideHandler}
-          className={styles.skipSlide}
+          className={styles.skipSlideSelect}
         >
           {this.renderSkipSlideOpts(numberOfSlides)}
         </select>
@@ -208,6 +208,7 @@ class PresentationToolbar extends Component {
           onClick={actions.nextSlideHandler}
           label={intl.formatMessage(intlMessages.nextSlideLabel)}
           hideLabel
+          className={styles.skipSlide}
         />
 
         {/* Fit to width button

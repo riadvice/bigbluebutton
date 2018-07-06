@@ -8,7 +8,7 @@ warnMinutesBeforeMax:     Int, meetingExpireIfNoUserJoinedInMinutes: Int,
 
 case class MeetingProp(name: String, extId: String, intId: String, isBreakout: Boolean)
 
-case class BreakoutProps(parentId: String, sequence: Int, breakoutRooms: Vector[String])
+case class BreakoutProps(parentId: String, sequence: Int, freeJoin: Boolean, breakoutRooms: Vector[String])
 
 case class PasswordProp(moderatorPass: String, viewerPass: String)
 
@@ -16,7 +16,7 @@ case class RecordProp(record: Boolean, autoStartRecording: Boolean, allowStartSt
 
 case class WelcomeProp(welcomeMsgTemplate: String, welcomeMsg: String, modOnlyMessage: String)
 
-case class VoiceProp(telVoice: String, voiceConf: String, dialNumber: String)
+case class VoiceProp(telVoice: String, voiceConf: String, dialNumber: String, muteOnStart: Boolean)
 
 case class UsersProp(maxUsers: Int, webcamsOnlyForModerator: Boolean, guestPolicy: String)
 

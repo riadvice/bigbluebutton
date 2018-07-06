@@ -39,11 +39,11 @@ package org.bigbluebutton.main.views
 
         public function VideoWithWarnings() {
             super();
-
-            this.addEventListener(FlexEvent.CREATION_COMPLETE , creationCompleteHandler);
         }
 
-        private function creationCompleteHandler(e:FlexEvent):void {
+        override protected function creationCompleteHandler(e:FlexEvent):void {
+			super.creationCompleteHandler(e);
+
             _video.smoothing = true;
             _videoHolder.addChild(_video);
 
@@ -168,7 +168,6 @@ package org.bigbluebutton.main.views
         }
 
         private function displayVideoPreview():void {
-            LOGGER.debug("Using this video profile:: {0}", [_videoProfile.toString()]);
             _camera.setMotionLevel(5, 1000);
             _camera.setKeyFrameInterval(_videoProfile.keyFrameInterval);
             _camera.setMode(_videoProfile.width, _videoProfile.height, _videoProfile.modeFps);

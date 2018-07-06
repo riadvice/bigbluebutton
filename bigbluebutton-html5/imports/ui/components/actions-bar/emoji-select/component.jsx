@@ -9,7 +9,7 @@ import DropdownContent from '/imports/ui/components/dropdown/content/component';
 import DropdownList from '/imports/ui/components/dropdown/list/component';
 import DropdownListItem from '/imports/ui/components/dropdown/list/item/component';
 import DropdownListSeparator from '/imports/ui/components/dropdown/list/separator/component';
-import styles from '../styles';
+import { styles } from '../styles';
 
 const intlMessages = defineMessages({
   statusTriggerLabel: {
@@ -33,6 +33,9 @@ const propTypes = {
   onChange: PropTypes.func.isRequired,
 };
 
+const SHORTCUTS_CONFIG = Meteor.settings.public.app.shortcuts;
+const OPEN_STATUS_AK = SHORTCUTS_CONFIG.openStatus.accesskey;
+
 const EmojiSelect = ({
   intl,
   options,
@@ -42,21 +45,24 @@ const EmojiSelect = ({
   const statuses = Object.keys(options);
   const lastStatus = statuses.pop();
 
+  const statusLabel = intl.formatMessage(intlMessages.statusTriggerLabel);
+
   return (
     <Dropdown autoFocus>
       <DropdownTrigger tabIndex={0}>
         <Button
           className={styles.button}
-          label={intl.formatMessage(intlMessages.statusTriggerLabel)}
-          aria-label={intl.formatMessage(intlMessages.changeStatusLabel)}
+          label={statusLabel}
+          aria-label={statusLabel}
           aria-describedby="currentStatus"
           icon={options[selected !== lastStatus ? selected : statuses[1]]}
           ghost={false}
-          hideLabel={false}
+          hideLabel
           circle
           size="lg"
           color="primary"
           onClick={() => null}
+          accessKey={OPEN_STATUS_AK}
         >
           <div id="currentStatus" hidden>
             { intl.formatMessage(intlMessages.currentStatusDesc, { 0: selected }) }

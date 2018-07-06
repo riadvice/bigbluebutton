@@ -40,6 +40,7 @@ class AnalyticsActor extends Actor with ActorLogging {
       case m: ValidateAuthTokenRespMsg => logMessage(msg)
       case m: UserJoinedMeetingEvtMsg => logMessage(msg)
       case m: RecordingStatusChangedEvtMsg => logMessage(msg)
+      case m: WebcamsOnlyForModeratorChangedEvtMsg => logMessage(msg)
       case m: UserLeftMeetingEvtMsg => logMessage(msg)
       case m: PresenterUnassignedEvtMsg => logMessage(msg)
       case m: PresenterAssignedEvtMsg => logMessage(msg)
@@ -73,7 +74,16 @@ class AnalyticsActor extends Actor with ActorLogging {
       case m: MeetingInactivityWarningEvtMsg => logMessage(msg)
       case m: StartRecordingVoiceConfSysMsg => logMessage(msg)
       case m: StopRecordingVoiceConfSysMsg => logMessage(msg)
+      //case m: UpdateRecordingTimerEvtMsg => logMessage(msg)
+      case m: RecordAndClearPreviousMarkersCmdMsg => logMessage(msg)
       case m: TransferUserToVoiceConfSysMsg => logMessage(msg)
+      case m: UserBroadcastCamStartMsg => logMessage(msg)
+      case m: UserBroadcastCamStopMsg => logMessage(msg)
+      case m: UserBroadcastCamStoppedEvtMsg => logMessage(msg)
+      case m: UserBroadcastCamStartedEvtMsg => logMessage(msg)
+      case m: EjectUserFromMeetingSysMsg => logMessage(msg)
+
+      case m: ChangeUserRoleCmdMsg => logMessage(msg)
 
       // Breakout
       case m: BreakoutRoomEndedEvtMsg => logMessage(msg)
@@ -102,8 +112,11 @@ class AnalyticsActor extends Actor with ActorLogging {
       case m: SetGuestPolicyCmdMsg => logMessage(msg)
       case m: GuestPolicyChangedEvtMsg => logMessage(msg)
 
+      // System
       case m: ClientToServerLatencyTracerMsg => traceMessage(msg)
       case m: ServerToClientLatencyTracerMsg => traceMessage(msg)
+      case m: ValidateConnAuthTokenSysMsg => traceMessage(msg)
+      case m: ValidateConnAuthTokenSysRespMsg => traceMessage(msg)
 
       // Recording
       case m: RecordingChapterBreakSysMsg => logMessage(msg)

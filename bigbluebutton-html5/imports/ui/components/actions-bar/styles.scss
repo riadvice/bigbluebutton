@@ -13,16 +13,26 @@
   justify-content: center;
 
   > * {
-    margin: 0 $line-height-computed;
+    margin: 0 $sm-padding-x;
+
+    @include mq($small-only) {
+      margin: 0 $sm-padding-y;
+    }
   }
 }
 
-.left{
+.left {
   position: absolute;
+  @include mq($small-only) {
+    bottom: $sm-padding-x;
+    left: $sm-padding-x;
+  }
 }
 
-.center {
-  align-items: center;
+.centerWithActions {
+  @include mq($xsmall-only) {
+    justify-content: flex-end;
+  }
 }
 
 .button {
@@ -36,7 +46,7 @@
 }
 
 .emojiSelected {
-  span, i::before{
+  span, i {
     color: $color-primary;
   }
 }

@@ -12,10 +12,11 @@ import org.bigbluebutton.presentation.messages._
 
 import scala.concurrent.duration._
 
-class BbbWebApiGWApp(val oldMessageReceivedGW: OldMessageReceivedGW,
-                    val screenshareRtmpServer: String,
-                    val screenshareRtmpBroadcastApp: String,
-                    val screenshareConfSuffix: String) extends IBbbWebApiGWApp with SystemConfiguration{
+class BbbWebApiGWApp(
+  val oldMessageReceivedGW:        OldMessageReceivedGW,
+  val screenshareRtmpServer:       String,
+  val screenshareRtmpBroadcastApp: String,
+  val screenshareConfSuffix:       String) extends IBbbWebApiGWApp with SystemConfiguration {
 
   implicit val system = ActorSystem("bbb-web-common")
 
@@ -38,15 +39,14 @@ class BbbWebApiGWApp(val oldMessageReceivedGW: OldMessageReceivedGW,
   private val msgToAkkaAppsEventBus = new MsgToAkkaAppsEventBus
 
   /**
-    * Not used for now as we will still user MeetingService for 2.0 (ralam july 4, 2017)
-    */
+   * Not used for now as we will still user MeetingService for 2.0 (ralam july 4, 2017)
+   */
   //private val meetingManagerActorRef = system.actorOf(
   //  MeetingsManagerActor.props(msgToAkkaAppsEventBus), "meetingManagerActor")
   //msgFromAkkaAppsEventBus.subscribe(meetingManagerActorRef, fromAkkaAppsChannel)
 
   private val oldMeetingMsgHdlrActor = system.actorOf(
-    OldMeetingMsgHdlrActor.props(oldMessageReceivedGW), "oldMeetingMsgHdlrActor"
-  )
+    OldMeetingMsgHdlrActor.props(oldMessageReceivedGW), "oldMeetingMsgHdlrActor")
   msgFromAkkaAppsEventBus.subscribe(oldMeetingMsgHdlrActor, fromAkkaAppsChannel)
 
   private val msgToAkkaAppsToJsonActor = system.actorOf(
@@ -55,7 +55,7 @@ class BbbWebApiGWApp(val oldMessageReceivedGW: OldMessageReceivedGW,
   msgToAkkaAppsEventBus.subscribe(msgToAkkaAppsToJsonActor, toAkkaAppsChannel)
 
   private val appsRedisSubscriberActor = system.actorOf(
-    AppsRedisSubscriberActor.props(receivedJsonMsgBus,oldMessageEventBus), "appsRedisSubscriberActor")
+    AppsRedisSubscriberActor.props(receivedJsonMsgBus, oldMessageEventBus), "appsRedisSubscriberActor")
 
   private val receivedJsonMsgHdlrActor = system.actorOf(
     ReceivedJsonMsgHdlrActor.props(msgFromAkkaAppsEventBus), "receivedJsonMsgHdlrActor")
@@ -67,7 +67,7 @@ class BbbWebApiGWApp(val oldMessageReceivedGW: OldMessageReceivedGW,
 
   oldMessageEventBus.subscribe(oldMessageJsonReceiverActor, fromAkkaAppsOldJsonChannel)
 
-  /*****
+/*****
     * External APIs for Gateway
     */
   def send(channel: String, json: String): Unit = {
@@ -77,20 +77,23 @@ class BbbWebApiGWApp(val oldMessageReceivedGW: OldMessageReceivedGW,
 
   def createMeeting(meetingId: String, extMeetingId: String, parentMeetingId: String, meetingName: String,
                     recorded: java.lang.Boolean, voiceBridge: String, duration: java.lang.Integer,
-                    autoStartRecording: java.lang.Boolean,
+                    autoStartRecording:      java.lang.Boolean,
                     allowStartStopRecording: java.lang.Boolean, webcamsOnlyForModerator: java.lang.Boolean, moderatorPass: String,
                     viewerPass: String, createTime: java.lang.Long, createDate: String, isBreakout: java.lang.Boolean,
                     sequence: java.lang.Integer,
+                    freeJoin: java.lang.Boolean,
                     metadata: java.util.Map[String, String], guestPolicy: String,
                     welcomeMsgTemplate: String, welcomeMsg: String, modOnlyMessage: String,
-                   dialNumber: String, maxUsers: java.lang.Integer, maxInactivityTimeoutMinutes: java.lang.Integer,
-                    warnMinutesBeforeMax: java.lang.Integer,
-                    meetingExpireIfNoUserJoinedInMinutes: java.lang.Integer,
-                    meetingExpireWhenLastUserLeftInMinutes: java.lang.Integer): Unit = {
+                    dialNumber: String, maxUsers: java.lang.Integer, maxInactivityTimeoutMinutes: java.lang.Integer,
+                    warnMinutesBeforeMax:                   java.lang.Integer,
+                    meetingExpireIfNoUserJoinedInMinutes:   java.lang.Integer,
+                    meetingExpireWhenLastUserLeftInMinutes: java.lang.Integer,
+                    muteOnStart:                            java.lang.Boolean): Unit = {
 
     val meetingProp = MeetingProp(name = meetingName, extId = extMeetingId, intId = meetingId,
       isBreakout = isBreakout.booleanValue())
-    val durationProps = DurationProps(duration = duration.intValue(),
+    val durationProps = DurationProps(
+      duration = duration.intValue(),
       createdTime = createTime.longValue(), createDate,
       maxInactivityTimeoutMinutes = maxInactivityTimeoutMinutes.intValue(),
       warnMinutesBeforeMax = warnMinutesBeforeMax.intValue(),
@@ -100,14 +103,15 @@ class BbbWebApiGWApp(val oldMessageReceivedGW: OldMessageReceivedGW,
     val password = PasswordProp(moderatorPass = moderatorPass, viewerPass = viewerPass)
     val recordProp = RecordProp(record = recorded.booleanValue(), autoStartRecording = autoStartRecording.booleanValue(),
       allowStartStopRecording = allowStartStopRecording.booleanValue())
-    val breakoutProps = BreakoutProps(parentId = parentMeetingId, sequence = sequence.intValue(), breakoutRooms = Vector())
+    val breakoutProps = BreakoutProps(parentId = parentMeetingId, sequence = sequence.intValue(), freeJoin = freeJoin.booleanValue(), breakoutRooms = Vector())
     val welcomeProp = WelcomeProp(welcomeMsgTemplate = welcomeMsgTemplate, welcomeMsg = welcomeMsg,
       modOnlyMessage = modOnlyMessage)
-    val voiceProp = VoiceProp(telVoice = voiceBridge, voiceConf = voiceBridge, dialNumber = dialNumber)
+    val voiceProp = VoiceProp(telVoice = voiceBridge, voiceConf = voiceBridge, dialNumber = dialNumber, muteOnStart = muteOnStart.booleanValue())
     val usersProp = UsersProp(maxUsers = maxUsers.intValue(), webcamsOnlyForModerator = webcamsOnlyForModerator.booleanValue(),
       guestPolicy = guestPolicy)
     val metadataProp = MetadataProp(mapAsScalaMap(metadata).toMap)
-    val screenshareProps = ScreenshareProps(screenshareConf = voiceBridge + screenshareConfSuffix,
+    val screenshareProps = ScreenshareProps(
+      screenshareConf = voiceBridge + screenshareConfSuffix,
       red5ScreenshareIp = screenshareRtmpServer,
       red5ScreenshareApp = screenshareRtmpBroadcastApp)
 
@@ -143,7 +147,7 @@ class BbbWebApiGWApp(val oldMessageReceivedGW: OldMessageReceivedGW,
     msgToAkkaAppsEventBus.publish(MsgToAkkaApps(toAkkaAppsChannel, event))
   }
 
-  def destroyMeeting (msg: DestroyMeetingMessage): Unit = {
+  def destroyMeeting(msg: DestroyMeetingMessage): Unit = {
     val event = MsgBuilder.buildDestroyMeetingSysCmdMsg(msg)
     msgToAkkaAppsEventBus.publish(MsgToAkkaApps(toAkkaAppsChannel, event))
   }
@@ -172,7 +176,7 @@ class BbbWebApiGWApp(val oldMessageReceivedGW: OldMessageReceivedGW,
   }
 
   def sendDocConversionMsg(msg: IDocConversionMsg): Unit = {
-   if (msg.isInstanceOf[DocPageGeneratedProgress]) {
+    if (msg.isInstanceOf[DocPageGeneratedProgress]) {
       val event = MsgBuilder.buildPresentationPageGeneratedPubMsg(msg.asInstanceOf[DocPageGeneratedProgress])
       msgToAkkaAppsEventBus.publish(MsgToAkkaApps(toAkkaAppsChannel, event))
     } else if (msg.isInstanceOf[OfficeDocConversionProgress]) {

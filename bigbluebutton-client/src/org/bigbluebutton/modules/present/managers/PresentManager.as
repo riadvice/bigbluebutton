@@ -19,25 +19,20 @@
 package org.bigbluebutton.modules.present.managers
 {
 	import com.asfusion.mate.events.Dispatcher;
-	
 	import flash.display.DisplayObject;
 	import flash.geom.Point;
-	
 	import mx.collections.ArrayCollection;
 	import mx.core.FlexGlobals;
-	
 	import org.bigbluebutton.common.events.CloseWindowEvent;
 	import org.bigbluebutton.common.events.OpenWindowEvent;
 	import org.bigbluebutton.core.Options;
 	import org.bigbluebutton.core.PopUpUtil;
-	import org.bigbluebutton.main.model.users.events.RequestPresenterGroupEvent;
 	import org.bigbluebutton.modules.present.events.DownloadEvent;
 	import org.bigbluebutton.modules.present.events.ExportEvent;
 	import org.bigbluebutton.modules.present.events.GetAllPodsRespEvent;
 	import org.bigbluebutton.modules.present.events.NewPresentationPodCreated;
 	import org.bigbluebutton.modules.present.events.PresentModuleEvent;
 	import org.bigbluebutton.modules.present.events.PresentationPodRemoved;
-	import org.bigbluebutton.modules.present.events.RequestAllPodsEvent;
 	import org.bigbluebutton.modules.present.events.UploadEvent;
 	import org.bigbluebutton.modules.present.model.PresentOptions;
 	import org.bigbluebutton.modules.present.model.PresentationPodManager;
@@ -68,12 +63,6 @@ package org.bigbluebutton.modules.present.managers
 			presentOptions = Options.getOptions(PresentOptions) as PresentOptions;
 
 			winManager.initCollection(presentOptions.maxNumWindows);
-			
-			var requestAllPodsEvent:RequestAllPodsEvent = new RequestAllPodsEvent(RequestAllPodsEvent.REQUEST_ALL_PODS);
-			globalDispatcher.dispatchEvent(requestAllPodsEvent);
-
-			var requestPresenterGroupEvent:RequestPresenterGroupEvent = new RequestPresenterGroupEvent(RequestPresenterGroupEvent.REQUEST_PRESENTER_GROUP);
-			globalDispatcher.dispatchEvent(requestPresenterGroupEvent);
 		}
 
 		public function handleAddPresentationPod(e: NewPresentationPodCreated): void {
@@ -122,6 +111,15 @@ package org.bigbluebutton.modules.present.managers
 
 		public function handleGetAllPodsRespEvent(e: GetAllPodsRespEvent): void {
 			var podsAC:ArrayCollection = e.pods as ArrayCollection;
+			
+			// For now the best option for cleaning up old pods is to just delete everything we
+			// know about. In the future we'll want to update existing pods to a new state
+			// rather than recreating.
+			var activePodIds:Array = podsManager.getAllPodIds();
+			for (var i:int=0; i<activePodIds.length; i++) {
+				handlePresentationPodRemovedHelper(activePodIds[i]);
+			}
+			
 			podsManager.handleGetAllPodsResp(podsAC);
 		}
 

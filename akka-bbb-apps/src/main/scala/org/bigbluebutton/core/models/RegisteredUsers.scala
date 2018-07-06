@@ -56,6 +56,13 @@ object RegisteredUsers {
     u
   }
 
+  def updateUserRole(users: RegisteredUsers, user: RegisteredUser,
+                     role: String): RegisteredUser = {
+    val u = user.modify(_.role).setTo(role)
+    users.save(u)
+    u
+  }
+
 }
 
 class RegisteredUsers {
@@ -69,8 +76,10 @@ class RegisteredUsers {
   }
 
   private def delete(id: String): Option[RegisteredUser] = {
-    val ru = regUsers.get(id)
-    ru foreach { u => regUsers -= u.authToken }
+    val ru = regUsers.values.find(p => p.id == id)
+    ru foreach { u =>
+      regUsers -= u.authToken
+    }
     ru
   }
 }

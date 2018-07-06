@@ -1,8 +1,9 @@
 import React, { Component } from 'react';
 import { defineMessages, injectIntl } from 'react-intl';
 import cx from 'classnames';
-
+import _ from 'lodash';
 import { withModalMounter } from '/imports/ui/components/modal/service';
+
 
 import LogoutConfirmationContainer from '/imports/ui/components/logout-confirmation/container';
 import AboutContainer from '/imports/ui/components/about/container';
@@ -15,8 +16,9 @@ import DropdownContent from '/imports/ui/components/dropdown/content/component';
 import DropdownList from '/imports/ui/components/dropdown/list/component';
 import DropdownListItem from '/imports/ui/components/dropdown/list/item/component';
 import DropdownListSeparator from '/imports/ui/components/dropdown/list/separator/component';
+import ShortcutHelpComponent from '/imports/ui/components/shortcut-help/component';
 
-import styles from '../styles';
+import { styles } from '../styles';
 
 const intlMessages = defineMessages({
   optionsLabel: {
@@ -63,7 +65,18 @@ const intlMessages = defineMessages({
     id: 'app.navBar.settingsDropdown.exitFullscreenLabel',
     description: 'Exit fullscreen option label',
   },
+  hotkeysLabel: {
+    id: 'app.navBar.settingsDropdown.hotkeysLabel',
+    description: 'Hotkeys options label',
+  },
+  hotkeysDesc: {
+    id: 'app.navBar.settingsDropdown.hotkeysDesc',
+    description: 'Describes hotkeys option',
+  },
 });
+
+const SHORTCUTS_CONFIG = Meteor.settings.public.app.shortcuts;
+const OPEN_OPTIONS_AK = SHORTCUTS_CONFIG.openOptions.accesskey;
 
 class SettingsDropdown extends Component {
   constructor(props) {
@@ -75,6 +88,61 @@ class SettingsDropdown extends Component {
 
     this.onActionsShow = this.onActionsShow.bind(this);
     this.onActionsHide = this.onActionsHide.bind(this);
+  }
+
+  componentWillMount() {
+    const { intl, mountModal, isAndroid } = this.props;
+    const { fullscreenLabel, fullscreenDesc, fullscreenIcon } = this.checkFullscreen(this.props);
+
+    this.menuItems = [(<DropdownListItem
+      key={_.uniqueId('list-item-')}
+      icon={fullscreenIcon}
+      label={fullscreenLabel}
+      description={fullscreenDesc}
+      onClick={this.props.handleToggleFullscreen}
+    />),
+      (<DropdownListItem
+        key={_.uniqueId('list-item-')}
+        icon="settings"
+        label={intl.formatMessage(intlMessages.settingsLabel)}
+        description={intl.formatMessage(intlMessages.settingsDesc)}
+        onClick={() => mountModal(<SettingsMenuContainer />)}
+      />),
+      (<DropdownListItem
+        key={_.uniqueId('list-item-')}
+        icon="about"
+        label={intl.formatMessage(intlMessages.aboutLabel)}
+        description={intl.formatMessage(intlMessages.aboutDesc)}
+        onClick={() => mountModal(<AboutContainer />)}
+      />),
+      (<DropdownListItem
+        key={_.uniqueId('list-item-')}
+        icon="about"
+        label={intl.formatMessage(intlMessages.hotkeysLabel)}
+        description={intl.formatMessage(intlMessages.hotkeysDesc)}
+        onClick={() => mountModal(<ShortcutHelpComponent />)}
+      />),
+      (<DropdownListSeparator key={_.uniqueId('list-separator-')} />),
+      (<DropdownListItem
+        key={_.uniqueId('list-item-')}
+        icon="logout"
+        label={intl.formatMessage(intlMessages.leaveSessionLabel)}
+        description={intl.formatMessage(intlMessages.leaveSessionDesc)}
+        onClick={() => mountModal(<LogoutConfirmationContainer />)}
+      />),
+    ];
+
+    // Removes fullscreen button if not on Android
+    if (!isAndroid) {
+      this.menuItems.shift();
+    }
+  }
+
+  componentWillReceiveProps(nextProps) {
+    // Alters fullscreen button's label
+    if (this.props.isAndroid) {
+      this.alterMenu(nextProps);
+    }
   }
 
   onActionsShow() {
@@ -89,8 +157,8 @@ class SettingsDropdown extends Component {
     });
   }
 
-  render() {
-    const { intl, mountModal, isFullScreen } = this.props;
+  checkFullscreen(nextProps) {
+    const { intl, isFullScreen } = nextProps;
 
     let fullscreenLabel = intl.formatMessage(intlMessages.fullscreenLabel);
     let fullscreenDesc = intl.formatMessage(intlMessages.fullscreenDesc);
@@ -101,6 +169,29 @@ class SettingsDropdown extends Component {
       fullscreenDesc = intl.formatMessage(intlMessages.exitFullscreenDesc);
       fullscreenIcon = 'exit_fullscreen';
     }
+    return {
+      fullscreenLabel,
+      fullscreenDesc,
+      fullscreenIcon,
+    };
+  }
+
+  alterMenu(props) {
+    const { fullscreenLabel, fullscreenDesc, fullscreenIcon } = this.checkFullscreen(props);
+
+    const newFullScreenButton = (<DropdownListItem
+      key={_.uniqueId('list-item-')}
+      icon={fullscreenIcon}
+      label={fullscreenLabel}
+      description={fullscreenDesc}
+      onClick={this.props.handleToggleFullscreen}
+    />);
+    this.menuItems = this.menuItems.slice(1);
+    this.menuItems.unshift(newFullScreenButton);
+  }
+
+  render() {
+    const { intl } = this.props;
 
     return (
       <Dropdown
@@ -109,7 +200,7 @@ class SettingsDropdown extends Component {
         onShow={this.onActionsShow}
         onHide={this.onActionsHide}
       >
-        <DropdownTrigger tabIndex={0}>
+        <DropdownTrigger tabIndex={0} accessKey={OPEN_OPTIONS_AK}>
           <Button
             label={intl.formatMessage(intlMessages.optionsLabel)}
             icon="more"
@@ -125,31 +216,9 @@ class SettingsDropdown extends Component {
         </DropdownTrigger>
         <DropdownContent placement="bottom right">
           <DropdownList>
-            <DropdownListItem
-              icon={fullscreenIcon}
-              label={fullscreenLabel}
-              description={fullscreenDesc}
-              onClick={this.props.handleToggleFullscreen}
-            />
-            <DropdownListItem
-              icon="settings"
-              label={intl.formatMessage(intlMessages.settingsLabel)}
-              description={intl.formatMessage(intlMessages.settingsDesc)}
-              onClick={() => mountModal(<SettingsMenuContainer />)}
-            />
-            <DropdownListItem
-              icon="about"
-              label={intl.formatMessage(intlMessages.aboutLabel)}
-              description={intl.formatMessage(intlMessages.aboutDesc)}
-              onClick={() => mountModal(<AboutContainer />)}
-            />
-            <DropdownListSeparator />
-            <DropdownListItem
-              icon="logout"
-              label={intl.formatMessage(intlMessages.leaveSessionLabel)}
-              description={intl.formatMessage(intlMessages.leaveSessionDesc)}
-              onClick={() => mountModal(<LogoutConfirmationContainer />)}
-            />
+            {
+              this.menuItems
+            }
           </DropdownList>
         </DropdownContent>
       </Dropdown>

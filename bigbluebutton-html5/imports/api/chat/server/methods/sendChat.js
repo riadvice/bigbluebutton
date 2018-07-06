@@ -27,7 +27,7 @@ const parseMessage = (message) => {
 };
 
 export default function sendChat(credentials, message) {
-  const REDIS_CONFIG = Meteor.settings.redis;
+  const REDIS_CONFIG = Meteor.settings.private.redis;
   const CHANNEL = REDIS_CONFIG.channels.toAkkaApps;
 
   const CHAT_CONFIG = Meteor.settings.public.chat;
@@ -40,6 +40,8 @@ export default function sendChat(credentials, message) {
   check(requesterToken, String);
   check(message, Object);
 
+  message.fromTime = Date.now(); // server time
+
   let eventName = 'SendPrivateMessagePubMsg';
 
   const parsedMessage = message;
@@ -50,6 +52,8 @@ export default function sendChat(credentials, message) {
     eventName = 'SendPublicMessagePubMsg';
   }
 
-  return RedisPubSub.publishUserMessage(CHANNEL, eventName, meetingId, requesterUserId,
-   { message: parsedMessage });
+  return RedisPubSub.publishUserMessage(
+    CHANNEL, eventName, meetingId, requesterUserId,
+    { message: parsedMessage },
+  );
 }
