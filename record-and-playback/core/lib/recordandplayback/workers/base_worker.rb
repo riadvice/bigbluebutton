@@ -48,6 +48,14 @@ module BigBlueButton
         ::Resque.workers.first.prune_dead_workers
       end
 
+      def self.before_perform_error_tracking(*_args)
+        BigBlueButton::ErrorTracking.tag(job: name.split('::').last)
+      end
+
+      def self.on_failure_error_tracking(error, *_args)
+        BigBlueButton::ErrorTracking.capture(error)
+      end
+
       def perform
         @logger.info("Started worker #{@step_name} for #{@meeting_id}")
         success = yield

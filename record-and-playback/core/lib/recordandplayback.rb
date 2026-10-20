@@ -21,6 +21,7 @@
 
 require_relative 'boot'
 
+require 'recordandplayback/error_tracking'
 require 'recordandplayback/events_archiver'
 require 'recordandplayback/generators/events'
 require 'recordandplayback/generators/audio'
@@ -75,7 +76,7 @@ module BigBlueButton
   # @param [Logger] log your own logger
   # @return [Logger] the logger you set
   def self.logger=(log)
-    @logger = log
+    @logger = ErrorTracking.watch(log)
   end
 
   # Get BigBlueButton logger.
@@ -86,7 +87,7 @@ module BigBlueButton
 
     logger = Journald::Logger.new('bbb-rap')
     logger.level = Logger::INFO
-    @logger = logger
+    @logger = ErrorTracking.watch(logger)
   end
 
   def self.redis_publisher=(publisher)
@@ -268,3 +269,5 @@ module BigBlueButton
     BigBlueButton.redis_publisher = BigBlueButton::RedisWrapper.new(redis_host, redis_port, redis_password)
   end
 end
+
+BigBlueButton::ErrorTracking.init('bbb-record-core')
