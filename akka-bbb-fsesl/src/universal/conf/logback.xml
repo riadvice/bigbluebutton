@@ -18,6 +18,8 @@
     </layout>
   </appender>
       
+    <appender name="SENTRY" class="org.bigbluebutton.common2.errortracking.ErrorTrackingAppender" />
+
     <logger name="akka" level="INFO" />
     <logger name="org.bigbluebutton" level="DEBUG" />
     <logger name="org.freeswitch.esl" level="WARN" />
@@ -26,5 +28,6 @@
     <root level="DEBUG">
         <appender-ref ref="STDOUT"/>
         <appender-ref ref="FILE" />
+        <appender-ref ref="SENTRY" />
     </root>
 </configuration>

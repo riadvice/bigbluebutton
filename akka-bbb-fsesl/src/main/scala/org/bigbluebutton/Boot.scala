@@ -1,6 +1,9 @@
 package org.bigbluebutton
 
 import org.bigbluebutton.common2.bus.IncomingJsonMessageBus
+import org.bigbluebutton.common2.errortracking.ErrorTracking
+
+import scala.util.Try
 import org.bigbluebutton.common2.redis.{ RedisConfig, RedisPublisher }
 import org.bigbluebutton.endpoint.redis.FSESLRedisSubscriberActor
 import org.bigbluebutton.freeswitch.{ RxJsonMsgHdlrActor, VoiceConferenceService }
@@ -15,6 +18,8 @@ import org.bigbluebutton.service.HealthzService
 import scala.concurrent.ExecutionContext
 
 object Boot extends App with SystemConfiguration with WebApi {
+
+  ErrorTracking.init("bbb-fsesl-akka", (key: String) => Try(config.getString("sentry." + key)).getOrElse(null))
 
   override implicit val system = ActorSystem("bigbluebutton-fsesl-system")
   override implicit val executor: ExecutionContext = system.dispatcher

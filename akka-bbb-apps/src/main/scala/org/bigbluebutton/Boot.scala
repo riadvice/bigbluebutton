@@ -12,9 +12,14 @@ import org.bigbluebutton.core2.AnalyticsActor
 import org.bigbluebutton.core2.FromAkkaAppsMsgSenderActor
 import org.bigbluebutton.endpoint.redis.{AppsRedisSubscriberActor, ExportAnnotationsActor, GraphqlConnectionsActor, LearningDashboardActor, RedisRecorderActor}
 import org.bigbluebutton.common2.bus.IncomingJsonMessageBus
+import org.bigbluebutton.common2.errortracking.ErrorTracking
+
+import scala.util.Try
 import org.bigbluebutton.service.{HealthzService, MeetingInfoActor, MeetingInfoService, UserInfoService}
 
 object Boot extends App with SystemConfiguration {
+
+  ErrorTracking.init("bbb-apps-akka", (key: String) => Try(config.getString("sentry." + key)).getOrElse(null))
 
   implicit val system = ActorSystem("bigbluebutton-apps-system")
   implicit val materializer: ActorMaterializer = ActorMaterializer()
