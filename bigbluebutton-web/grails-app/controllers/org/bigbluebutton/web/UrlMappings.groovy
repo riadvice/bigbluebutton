@@ -19,6 +19,10 @@ class UrlMappings {
       action = [GET: 'testConversion']
     }
 
+    "/bigbluebutton/client-errors/$app"(controller: "clientErrors") {
+      action = [POST: 'report']
+    }
+
     "/bigbluebutton/presentation/$conference/$room/$presentation_name/slides"(controller: "presentation") {
       action = [GET: 'numberOfSlides']
     }

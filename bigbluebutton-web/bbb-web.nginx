@@ -9,6 +9,36 @@ location /bigbluebutton {
 	add_header         P3P 'CP="No P3P policy available"';
 }
 
+# Browser error reports, forwarded to Sentry by bbb-web (ClientErrorsController). Limited here
+# per HTML5 session token, then per address; zones in /etc/nginx/conf.d/bbb-client-errors.conf
+location /bigbluebutton/client-errors/ {
+	limit_except POST { deny all; }
+	limit_req zone=bbb_client_errors_session burst=10 nodelay;
+	limit_req zone=bbb_client_errors_addr burst=60 nodelay;
+	limit_req_status 429;
+	error_page 429 = @bbb_client_errors_limited;
+	client_max_body_size 64k;
+	access_log off;
+
+	proxy_http_version 1.1;
+	proxy_pass         http://127.0.0.1:8090;
+	proxy_set_header   X-Forwarded-For $proxy_add_x_forwarded_for;
+	proxy_connect_timeout 3s;
+	proxy_read_timeout    10s;
+	# bbb-web down or restarting: drop the report quietly rather than make every tab retry
+	proxy_intercept_errors on;
+	error_page 502 503 504 = @bbb_client_errors_dropped;
+}
+
+location @bbb_client_errors_limited {
+	add_header Retry-After 60 always;
+	return 429;
+}
+
+location @bbb_client_errors_dropped {
+	return 204;
+}
+
 location ~ "^\/bigbluebutton\/presentation\/(?<prestoken>[a-zA-Z0-9_-]+)/upload$" {
 	proxy_http_version 1.1;
 	proxy_pass         http://127.0.0.1:8090;

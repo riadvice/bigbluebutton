@@ -94,6 +94,9 @@ pwd
 mkdir -p "$STAGING"/usr/share/bigbluebutton/nginx
 cp bbb-web.nginx "$STAGING"/usr/share/bigbluebutton/nginx/web
 cp loadbalancer.nginx "$STAGING"/usr/share/bigbluebutton/nginx/loadbalancer.nginx
+# Rate-limit zones of the browser error reports (used by the 'web' file above)
+mkdir -p "$STAGING"/etc/nginx/conf.d
+cp nginx-confs/bbb-client-errors.conf "$STAGING"/etc/nginx/conf.d/
 
 # Copy script to run commands through `system-run --user`
 cp run-in-systemd.sh "$STAGING"/usr/share/bbb-web
