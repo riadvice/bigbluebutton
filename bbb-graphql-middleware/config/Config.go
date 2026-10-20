@@ -8,6 +8,8 @@ import (
 	"slices"
 	"sync"
 
+	"bbb-graphql-middleware/internal/errortracking"
+
 	"dario.cat/mergo"
 	log "github.com/sirupsen/logrus"
 	"gopkg.in/yaml.v3"
@@ -62,6 +64,8 @@ type Config struct {
 	LogLevel                         string `yaml:"log_level"`
 	PrometheusAdvancedMetricsEnabled bool   `yaml:"prometheus_advanced_metrics_enabled"`
 	DumpQueriesDir                   string `yaml:"dump_queries_dir"`
+
+	Sentry errortracking.Config `yaml:"sentry"`
 }
 
 func GetConfig() *Config {

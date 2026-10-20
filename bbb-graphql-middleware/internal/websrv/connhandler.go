@@ -16,6 +16,7 @@ import (
 	"bbb-graphql-middleware/internal/akka_apps"
 	"bbb-graphql-middleware/internal/bbb_web"
 	"bbb-graphql-middleware/internal/common"
+	"bbb-graphql-middleware/internal/errortracking"
 	"bbb-graphql-middleware/internal/gql_actions"
 	"bbb-graphql-middleware/internal/hasura"
 	streamingserver "bbb-graphql-middleware/internal/streaming_server"
@@ -54,6 +55,7 @@ func ConnectionHandler(w http.ResponseWriter, r *http.Request) {
 		newLogger.SetLevel(logrus.InfoLevel)
 	}
 	newLogger.SetFormatter(&logrus.JSONFormatter{})
+	errortracking.AddHook(newLogger)
 
 	// Obtain id for this connection
 	browserId := lastBrowserConnectionId.Add(1)

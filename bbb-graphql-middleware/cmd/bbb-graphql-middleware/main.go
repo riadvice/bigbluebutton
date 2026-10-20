@@ -9,6 +9,7 @@ import (
 
 	"bbb-graphql-middleware/config"
 	"bbb-graphql-middleware/internal/common"
+	"bbb-graphql-middleware/internal/errortracking"
 	"bbb-graphql-middleware/internal/websrv"
 
 	"github.com/prometheus/client_golang/prometheus/promhttp"
@@ -18,6 +19,9 @@ import (
 
 func main() {
 	cfg := config.GetConfig()
+
+	errortracking.Init("bbb-graphql-middleware", cfg.Sentry)
+	defer errortracking.Close()
 
 	// Configure logger
 	if logLevelFromConfig, err := log.ParseLevel(cfg.LogLevel); err == nil {

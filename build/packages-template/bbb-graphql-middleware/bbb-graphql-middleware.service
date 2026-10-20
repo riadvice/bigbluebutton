@@ -9,6 +9,7 @@ PartOf=bigbluebutton.target
 Type=simple
 User=bigbluebutton
 Group=bigbluebutton
+EnvironmentFile=-/etc/bigbluebutton/bigbluebutton.env
 WorkingDirectory=/usr/bin
 ExecStart=/usr/bin/bbb-graphql-middleware
 ExecReload=/bin/kill -HUP $MAINPID
