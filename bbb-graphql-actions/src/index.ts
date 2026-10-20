@@ -1,9 +1,24 @@
+import { init as initErrorTracking, report, Level } from './imports/errorTracking';
 import express, { Request, Response } from 'express';
 import util from 'util';
 import { redisMessageFactory } from './imports/redisMessageFactory';
 import { DEBUG, SERVER_HOST, SERVER_PORT, MAX_BODY_SIZE } from './config';
 import { createRedisClient } from './imports/redis';
 import { ValidationError } from './types/ValidationError';
+
+// The console is this component's logger: its records are reported as well.
+if (initErrorTracking('bbb-graphql-actions', { hasFatal: false })) {
+  const levels: [ 'debug' | 'log' | 'info' | 'warn' | 'error', Level ][] = [
+    ['debug', 'debug'], ['log', 'info'], ['info', 'info'], ['warn', 'warn'], ['error', 'error'],
+  ];
+  for (const [method, level] of levels) {
+    const write = console[method];
+    console[method] = (...args: unknown[]) => {
+      write(...args);
+      report(level, args);
+    };
+  }
+}
 
 // Initialize Express Application
 const app = express();

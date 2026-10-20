@@ -7,6 +7,7 @@ StartLimitIntervalSec=0
 
 [Service]
 WorkingDirectory=/usr/local/bigbluebutton/bbb-graphql-actions
+EnvironmentFile=-/etc/bigbluebutton/bigbluebutton.env
 ExecStart=/usr/bin/node bbb-graphql-actions.js
 Restart=always
 SyslogIdentifier=bbb-graphql-actions
