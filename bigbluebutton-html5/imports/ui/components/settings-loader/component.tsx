@@ -17,6 +17,7 @@ import LoadingScreen from '/imports/ui/components/common/loading-screen/componen
 import Session from '/imports/ui/services/storage/in-memory';
 import Auth from '/imports/ui/services/auth';
 import BBBWeb from '/imports/api/bbb-web-api';
+import { configureErrorReporting, relayUrl } from '/imports/startup/client/logger/errorReporting';
 import MeetingStaticDataStore from '/imports/ui/core/singletons/meetingStaticData';
 import { MeetingStaticData } from '/imports/ui/Types/meetingStaticData';
 
@@ -98,6 +99,10 @@ const SettingsLoader: React.FC<SettingsLoaderProps> = (props) => {
             } = meeting;
             const settings = clientSettings.clientSettingsJson;
             window.meetingClientSettings = JSON.parse(JSON.stringify(settings));
+            configureErrorReporting(
+              settings?.public?.clientLog?.sentry,
+              () => relayUrl(Auth.sessionToken as string | null),
+            );
             MeetingStaticDataStore.setMeetingData(staticData);
             setMeetingSettings(settings);
             setLoading(false);

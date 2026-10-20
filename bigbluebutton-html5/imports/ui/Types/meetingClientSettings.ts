@@ -872,6 +872,8 @@ export interface FontSize {
 export interface ClientLog {
   console: Console
   external: External
+  // optional: plugin loggers have none
+  sentry?: ClientLogSentry
 }
 
 export interface Console {
@@ -887,6 +889,11 @@ export interface External {
   throttleInterval: number
   flushOnClose: boolean
   logTag: string
+}
+
+export interface ClientLogSentry {
+  enabled: boolean
+  level: string
 }
 
 export interface VirtualBackgrounds {

@@ -6,6 +6,7 @@ import { ConsoleRawStream } from '@browser-bunyan/console-raw-stream';
 import { ClientLog } from '/imports/ui/Types/meetingClientSettings';
 import ServerLoggerStream from './ServerStream';
 import ConsoleStream from './consoleStream';
+import { ErrorReportingStream, streamLevel } from './errorReporting';
 import meetingClientSettingsInitialValues from '/imports/ui/core/initial-values/meetingClientSettings';
 import { LoggerSettings } from '/imports/ui/components/plugins-engine/types';
 import { overridePluginSettingsToDefault } from '/imports/ui/components/plugins-engine/utils';
@@ -19,6 +20,7 @@ import { overridePluginSettingsToDefault } from '/imports/ui/components/plugins-
 // "url": "","method": ""}
 // externalURL is the end-point that logs will be sent to
 // Call the logger by doing a function call with the level name, I.e, logger.warn('Hi on warn')
+// "sentry" sends records to Sentry through bbb-web, see ./errorReporting.ts
 const FALLBACK_CONFIG = meetingClientSettingsInitialValues.public.clientLog;
 
 const PLUGIN_LOGGER_NAME = 'pluginLogger';
@@ -40,6 +42,8 @@ export function createStreamForTarget(
   const TARGET_CONSOLE = 'console';
   let Stream;
   switch (target) {
+    case 'sentry':
+      return new ErrorReportingStream();
     case TARGET_EXTERNAL:
       Stream = ServerLoggerStream;
       break;
@@ -53,8 +57,8 @@ export function createStreamForTarget(
 
 export function generateLoggerStreams(config: ClientLog) {
   let result: {
-    level: string;
-    stream: ConsoleRawStream | ServerLoggerStream,
+    level: string | number;
+    stream: ConsoleRawStream | ServerLoggerStream | ErrorReportingStream,
   }[] = [];
   Object.keys(config).forEach((key) => {
     const logOption = config[key as keyof ClientLog];
@@ -62,7 +66,11 @@ export function generateLoggerStreams(config: ClientLog) {
       const { level, ...streamOptions } = logOption;
       result = result
         .concat(
-          { level, stream: createStreamForTarget(key as keyof ClientLog, { ...streamOptions, logByLevel: true }) },
+          {
+            // sentry also takes the records below `level`, from info up, as breadcrumbs
+            level: key === 'sentry' ? streamLevel(level) : level,
+            stream: createStreamForTarget(key as keyof ClientLog, { ...streamOptions, logByLevel: true }),
+          },
         );
     }
   });

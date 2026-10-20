@@ -1339,6 +1339,10 @@ public:
       throttleInterval: 400
       flushOnClose: true
       logTag: ''
+    # Send browser errors from `level` up to Sentry through bbb-web
+    sentry:
+      enabled: false
+      level: error
   virtualBackgrounds:
     enabled: true
     enableVirtualBackgroundUpload: true

@@ -1,6 +1,7 @@
 import React from 'react';
 import { FormattedMessage } from 'react-intl';
 import ErrorMessage from './ErrorMessage';
+import { reportError } from '../utils/errorReporting';
 
 class ErrorBoundary extends React.Component {
   constructor(props) {
@@ -15,6 +16,7 @@ class ErrorBoundary extends React.Component {
   componentDidCatch(error, errorInfo) {
     // eslint-disable-next-line no-console
     console.error('Learning Dashboard render failed', error, errorInfo);
+    reportError(error, { context: { source: 'ErrorBoundary' } });
   }
 
   render() {

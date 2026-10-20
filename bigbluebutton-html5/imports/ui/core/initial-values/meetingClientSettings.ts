@@ -972,6 +972,10 @@ export const meetingClientSettingsInitialValues: MeetingClientSettings = {
         flushOnClose: true,
         logTag: '',
       },
+      sentry: {
+        enabled: false,
+        level: 'error',
+      },
     },
     virtualBackgrounds: {
       enabled: true,

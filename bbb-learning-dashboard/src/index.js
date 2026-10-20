@@ -5,6 +5,9 @@ import { IntlProvider } from 'react-intl';
 import App from './App';
 import ErrorBoundary from './components/ErrorBoundary';
 import { UserDetailsProvider } from './components/UserDetails/context';
+import { installErrorReporting } from './utils/errorReporting';
+
+installErrorReporting();
 
 const RTL_LANGUAGES = ['ar', 'dv', 'fa', 'he'];
 
