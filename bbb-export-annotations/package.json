@@ -8,6 +8,7 @@
     "lint": "eslint '**/*.js' --ignore-pattern 'node_modules/'"
   },
   "dependencies": {
+    "@sentry/node": "^10.76.2",
     "@svgdotjs/svg.js": "^3.2.4",
     "axios": "^1.20.0",
     "form-data": "^4.0.4",

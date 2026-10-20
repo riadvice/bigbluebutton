@@ -1,4 +1,5 @@
 import Logger from './lib/utils/logger.js';
+import {init as initErrorTracking} from './lib/utils/error-tracking.js';
 import WorkerStarter from './lib/utils/worker-starter.js';
 import fs from 'fs';
 import redis, {commandOptions} from 'redis';
@@ -6,6 +7,7 @@ import path from 'path';
 
 const logger = new Logger('presAnn Master');
 const config = JSON.parse(fs.readFileSync('./config/settings.json', 'utf8'));
+initErrorTracking('bbb-export-annotations', {logger, config: config.sentry});
 
 logger.info('Running bbb-export-annotations');
 

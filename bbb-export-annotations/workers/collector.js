@@ -1,4 +1,5 @@
 import Logger from '../lib/utils/logger.js';
+import {init as initErrorTracking} from '../lib/utils/error-tracking.js';
 import fs from 'fs';
 import path from 'path';
 import redis from 'redis';
@@ -11,6 +12,7 @@ const logger = new Logger('presAnn Collector');
 logger.info(`Collecting job ${jobId}`);
 
 const config = JSON.parse(fs.readFileSync('./config/settings.json', 'utf8'));
+initErrorTracking('bbb-export-annotations', {logger, config: config.sentry});
 const dropbox = path.join(config.shared.presAnnDropboxDir, jobId);
 
 // Takes the Job from the dropbox

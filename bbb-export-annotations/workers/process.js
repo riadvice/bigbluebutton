@@ -1,4 +1,5 @@
 import Logger from '../lib/utils/logger.js';
+import {init as initErrorTracking} from '../lib/utils/error-tracking.js';
 import fs from 'fs';
 import {createSVGWindow} from 'svgdom';
 import {SVG as svgCanvas, registerWindow} from '@svgdotjs/svg.js';
@@ -26,6 +27,7 @@ import {Poll} from '../shapes/Poll.js';
 const jobId = workerData.jobId;
 const logger = new Logger('presAnn Process Worker');
 const config = JSON.parse(fs.readFileSync('./config/settings.json', 'utf8'));
+initErrorTracking('bbb-export-annotations', {logger, config: config.sentry});
 
 logger.info('Processing PDF for job ' + jobId);
 

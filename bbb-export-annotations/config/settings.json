@@ -38,5 +38,13 @@
     "sans": "/usr/local/share/fonts/IBMPlexSans-Medium.woff2",
     "serif": "/usr/local/share/fonts/IBMPlexSerif-Medium.woff2",
     "mono": "/usr/local/share/fonts/IBMPlexMono-Medium.woff2"
+  },
+  "sentry": {
+    "dsn": "",
+    "level": "error",
+    "breadcrumbLevel": "info",
+    "anonymise": "mask",
+    "environment": "production",
+    "sampleRate": 1.0
   }
 }

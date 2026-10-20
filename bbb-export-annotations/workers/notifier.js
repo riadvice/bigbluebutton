@@ -1,4 +1,5 @@
 import Logger from '../lib/utils/logger.js';
+import {init as initErrorTracking} from '../lib/utils/error-tracking.js';
 import fs from 'fs';
 import FormData from 'form-data';
 import redis from 'redis';
@@ -12,6 +13,7 @@ const [jobType, jobId, serverSideFilename] = [workerData.jobType,
 
 const logger = new Logger('presAnn Notifier Worker');
 const config = JSON.parse(fs.readFileSync('./config/settings.json', 'utf8'));
+initErrorTracking('bbb-export-annotations', {logger, config: config.sentry});
 
 const dropbox = `${config.shared.presAnnDropboxDir}/${jobId}`;
 const job = fs.readFileSync(path.join(dropbox, 'job'));
