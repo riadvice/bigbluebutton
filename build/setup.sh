@@ -40,11 +40,17 @@ fi
 DOCKER_CONTAINER_ID_FILE=$(mktemp)
 rm $DOCKER_CONTAINER_ID_FILE
 
+# Pass the SENTRY_* variables (source map upload, see build/sentry-sourcemaps.js) to the build
+# container in a file: sudo would drop them, and the token stays off the command line
+SENTRY_ENV_FILE=$(mktemp)
+env | grep '^SENTRY_' > $SENTRY_ENV_FILE || true
+
 kill_docker() {
    if [[ -r $DOCKER_CONTAINER_ID_FILE ]]; then
       sudo docker kill $(cat $DOCKER_CONTAINER_ID_FILE)
       sudo rm $DOCKER_CONTAINER_ID_FILE
    fi
+   rm -f $SENTRY_ENV_FILE
    tput cnorm
    exit 1
 }
@@ -77,6 +83,7 @@ done
 # -v "$CACHE_DIR/dev":/root/dev
 sudo docker run --rm --detach --cidfile $DOCKER_CONTAINER_ID_FILE \
         --env GIT_REV=$GIT_REV --env COMMIT_DATE=$COMMIT_DATE --env LOCAL_BUILD=$LOCAL_BUILD \
+        --env-file $SENTRY_ENV_FILE \
         --mount type=bind,src="$PWD",dst=/mnt \
         --mount type=bind,src="${PWD}/artifacts,dst=/artifacts" \
         -t "$DOCKER_IMAGE" /mnt/build/setup-inside-docker.sh "$PACKAGE_TO_BUILD"
@@ -89,5 +96,6 @@ sudo docker run --rm --detach --cidfile $DOCKER_CONTAINER_ID_FILE \
 
 sudo docker attach --no-stdin $(sudo cat $DOCKER_CONTAINER_ID_FILE)
 sudo rm $DOCKER_CONTAINER_ID_FILE
+rm -f $SENTRY_ENV_FILE
 
 find artifacts

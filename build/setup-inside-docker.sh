@@ -76,6 +76,8 @@ build_package() {
 
     # global fpm options for all packages
     cp opts-global.sh "$TMP/$TARGET"
+    # Used by the build.sh of the browser apps (source maps for Sentry)
+    cp sentry-sourcemaps.js "$TMP/$TARGET"
 
     # prepend deb-helper.sh to all pre/post-install/remove scripts
     for file in before-install.sh after-install.sh after-remove.sh before-remove.sh; do
@@ -89,7 +91,10 @@ build_package() {
 
     pushd "$TMP/$TARGET"
     echo "starting build.sh: -----------------------------------------"
-    VERSION="$VERSION" EPOCH="$EPOCH" COMMIT_DATE="$COMMIT_DATE" ./build.sh $BUILD_NUMBER
+    # BIGBLUEBUTTON_RELEASE: the version the uploaded source maps belong to
+    VERSION="$VERSION" EPOCH="$EPOCH" COMMIT_DATE="$COMMIT_DATE" \
+        BIGBLUEBUTTON_RELEASE="$(sed -n 's/^BIGBLUEBUTTON_RELEASE=//p' "$SOURCE/bigbluebutton-config/bigbluebutton-release")" \
+        ./build.sh $BUILD_NUMBER
     popd
 }
 

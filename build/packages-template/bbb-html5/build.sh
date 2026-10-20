@@ -67,6 +67,10 @@ else
 fi
 cd ..
 
+# Source maps for Sentry: add debug IDs to the built JS, move the .map files out of the package and
+# upload them when SENTRY_* is set. Arguments: app name, build folder, URL path the app is served from
+node sentry-sourcemaps.js bbb-html5 dist /html5client
+
 # replace v=VERSION with build identifier in head and css files
 if [ -f dist/index.html ] || [ -f dist/stylesheets/fonts.css ]; then
   sed -i "s/?v=VERSION/?v=${CLIENT_BUILD}/g" dist/index.html

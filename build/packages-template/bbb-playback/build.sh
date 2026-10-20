@@ -29,6 +29,9 @@ export REACT_APP_BBB_PLAYBACK_BUILD=$(git rev-parse --short HEAD)
 
 npm install
 npm run-script build
+# Source maps for Sentry: add debug IDs to the built JS, move the .map files out of the package and
+# upload them when SENTRY_* is set. Arguments: app name, build folder, URL path the app is served from
+node sentry-sourcemaps.js bbb-playback build /$BBB_PLAYBACK_HOMEPAGE/$BBB_PLAYBACK_VERSION
 grep \"version\"\: package.json | sed -e 's|.*\ \"||g' -e 's|\".*||g' > bbb-playback-version
 mkdir -p $BBB_PLAYBACK
 cp -r ./build/* bbb-playback-version $BBB_PLAYBACK

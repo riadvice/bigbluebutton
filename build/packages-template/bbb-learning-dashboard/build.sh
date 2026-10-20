@@ -31,6 +31,9 @@ cp learning-dashboard.nginx staging/usr/share/bigbluebutton/nginx
 # create build, copy build over to destination
 npm ci
 npm run build
+# Source maps for Sentry: add debug IDs to the built JS, move the .map files out of the package and
+# upload them when SENTRY_* is set. Arguments: app name, build folder, URL path the app is served from
+node sentry-sourcemaps.js bbb-learning-dashboard build /learning-analytics-dashboard
 cp -r build/* staging/var/bigbluebutton/learning-dashboard
 
 ##
