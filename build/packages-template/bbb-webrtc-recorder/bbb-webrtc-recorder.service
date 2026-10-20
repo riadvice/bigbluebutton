@@ -5,6 +5,7 @@ After=syslog.target network.target redis-server.service
 PartOf=bigbluebutton.target
 
 [Service]
+EnvironmentFile=-/etc/bigbluebutton/bigbluebutton.env
 EnvironmentFile=-/etc/default/bbb-webrtc-recorder
 ExecStart=/usr/bin/bbb-webrtc-recorder $ARGS
 SyslogIdentifier=bbb-webrtc-recorder
