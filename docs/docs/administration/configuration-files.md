@@ -87,6 +87,48 @@ $ sudo bbb-conf --restart
 $ sudo bash -c 'f=/etc/bigbluebutton/bigbluebutton.env; BBBCTL_SERVER=$(grep "^BBB_URL=" $f | cut -d= -f2-) BBBCTL_SECRET=$(grep "^BBB_SECRET=" $f | cut -d= -f2-) bbbctl meeting list'
 ```
 
+### Error reporting (Sentry)
+
+BigBlueButton can send its errors to a [Sentry](https://sentry.io) server. It is off until a DSN is set. To turn it on for every component, add this line to `/etc/bigbluebutton/bigbluebutton.env` and restart BigBlueButton:
+
+```
+BBB_SENTRY_DSN=https://<key>@sentry.example.com/<project-id>
+```
+
+| Variable | Default | Meaning |
+| :-- | :-- | :-- |
+| `BBB_SENTRY_DSN` | empty | Sentry project. Empty or `off`: nothing is sent. |
+| `BBB_SENTRY_LEVEL` | `error` | Lowest log level sent: `debug`, `info`, `warning`, `error` or `fatal`. |
+| `BBB_SENTRY_BREADCRUMB_LEVEL` | `info` | Lowest log level sent as context with an error. |
+| `BBB_SENTRY_ANONYMISE` | `mask` | `mask` hides personal data (names, e-mail and IP addresses, chat text); `off` sends it. Passwords, tokens and checksums are always hidden. |
+| `BBB_SENTRY_ENVIRONMENT` | `production` | Environment name shown in Sentry. |
+| `BBB_SENTRY_SAMPLE_RATE` | `1.0` | Share of errors sent, from `0.0` to `1.0`. |
+
+To change a setting for one component, add the component's name in capitals, for example `BBB_SENTRY_DSN_BBB_WEB=off` or `BBB_SENTRY_LEVEL_BBB_APPS_AKKA=warning`.
+
+Without `bigbluebutton.env`, each component reads the same settings from a `sentry` block in its own configuration (`dsn`, `level`, `breadcrumbLevel`, `anonymise`, `environment`, `sampleRate`). `bigbluebutton.env` wins when both are set.
+
+| Component | Configuration file |
+| :-- | :-- |
+| bbb-web | `/etc/bigbluebutton/bbb-web.properties` (`sentry.dsn=…`) |
+| bbb-apps-akka, bbb-fsesl-akka | `/etc/bigbluebutton/bbb-apps-akka.conf`, `bbb-fsesl-akka.conf` (`sentry { dsn = "…" }`) |
+| bbb-graphql-middleware, bbb-shared-notes-server | `/etc/bigbluebutton/<component>.yml` |
+| bbb-webrtc-recorder | `/etc/bigbluebutton/bbb-webrtc-recorder.yml` (a full copy of the shipped file) |
+| bbb-webrtc-sfu, bbb-webhooks, bbb-transcription-controller | `/etc/bigbluebutton/<component>/production.yml` |
+| bbb-export-annotations | `/usr/local/bigbluebutton/bbb-export-annotations/config/settings.json` |
+| recording scripts, bbb-presentation-video | `/etc/bigbluebutton/recording/recording.yml` |
+| bbb-graphql-actions | `bigbluebutton.env` only |
+
+The HTML5 client, the learning dashboard and the recording playback send their errors through bbb-web, using its settings. The HTML5 client does so only when enabled in `/etc/bigbluebutton/bbb-html5.yml`:
+
+```yaml
+public:
+  clientLog:
+    sentry:
+      enabled: true
+      level: error
+```
+
 For `bbb-apps-akka` and `bbb-fsesl-akka`, the settings file are formatted as shown below. For example, the file `bbb-apps-akka.conf` overrides the settings for `/usr/share/bbb-apps-akka/conf/application.conf`.
 
 ```

@@ -334,6 +334,10 @@ The `layouts` option has been removed from `disabledFeatures`.
 
 You can now set the server URL and the API shared secret once, in the optional `/etc/bigbluebutton/bigbluebutton.env` file (`BBB_URL` and `BBB_SECRET`). Values set there take precedence over the settings of bbb-web, bbb-apps-akka, bbb-webhooks and bbb-webrtc-sfu, and are also used by `bbb-conf`, the recording callbacks and `bbb-install.sh`. The file is never written by the packages or by `bbb-install.sh`, so updates never change these values. See [Server URL and shared secret](/administration/configuration-files#server-url-and-shared-secret-etcbigbluebuttonbigbluebuttonenv).
 
+#### Error reporting to Sentry
+
+BigBlueButton components can now report their errors to a server that speaks the Sentry protocol. Reporting is off until a DSN is set, in each component's configuration or once in `/etc/bigbluebutton/bigbluebutton.env`, which overrides them; secrets are always masked and personal data is anonymised by default. See [Error reporting (Sentry)](/administration/configuration-files#error-reporting-sentry).
+
 #### Removed REST endpoint
 
 The deprecated REST endpoint `/api/rest/clientSettings` has been removed. Client settings are now served through the GraphQL stack. Any integration that fetched client settings from that endpoint should be updated.
