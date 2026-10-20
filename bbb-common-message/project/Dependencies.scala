@@ -20,6 +20,8 @@ object Dependencies {
     val pool = "2.11.1"
     val codec = "1.15"
     val jacksonDataFormat = "2.22.3"
+    val sentry = "8.61.0"
+    val logback = "1.6.3"
 
     // Redis
     val lettuce = "7.7.0.RELEASE"
@@ -59,6 +61,11 @@ object Dependencies {
     val nettyResolverDns = "io.netty" % "netty-resolver-dns" % Versions.netty
     val reactorCore = "io.projectreactor" % "reactor-core" % Versions.reactor
     val jacksonDataFormat = "com.fasterxml.jackson.dataformat" % "jackson-dataformat-yaml" % Versions.jacksonDataFormat
+
+    // Error reporting (ErrorTracking). sentry-logback leaves logback to the
+    // application, which every JVM component already ships.
+    val sentryLogback = "io.sentry" % "sentry-logback" % Versions.sentry
+    val logbackProvided = "ch.qos.logback" % "logback-classic" % Versions.logback % "provided"
   }
 
   object Test {
@@ -89,5 +96,7 @@ object Dependencies {
     Compile.nettyCodecDns,
     Compile.nettyResolverDns,
     Compile.reactorCore,
-    Compile.jacksonDataFormat) ++ testing
+    Compile.jacksonDataFormat,
+    Compile.sentryLogback,
+    Compile.logbackProvided) ++ testing
 }
