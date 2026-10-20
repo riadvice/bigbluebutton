@@ -7,6 +7,7 @@ StartLimitIntervalSec=0
 
 [Service]
 WorkingDirectory=/usr/share/bbb-shared-notes-server
+EnvironmentFile=-/etc/bigbluebutton/bigbluebutton.env
 ExecStart=/usr/bin/node bbb-shared-notes-server.js
 EnvironmentFile=-/etc/bigbluebutton/bbb-shared-notes-server.env
 Restart=always

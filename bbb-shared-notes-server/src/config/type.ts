@@ -53,6 +53,15 @@ export interface RateLimit {
   maxRequestsPerWindow: number;
 }
 
+export interface SentryConfig {
+  dsn?: string;
+  level?: string;
+  breadcrumbLevel?: string;
+  anonymise?: string;
+  environment?: string;
+  sampleRate?: number | string;
+}
+
 export interface AppSettings {
   expressServer: ExpressServerConfig;
   hocuspocusServer: HocuspocusServerConfig;
@@ -62,4 +71,5 @@ export interface AppSettings {
   log: LogConfig;
   redis: RedisConfig;
   postgres: PostgresConfig;
+  sentry?: SentryConfig;
 }

@@ -1,4 +1,5 @@
 import config from '../config';
+import { report } from './error-tracking';
 
 const { level } = config.log;
 const trace = level.toLowerCase() === 'trace';
@@ -30,24 +31,29 @@ export class Logger {
   debug(...messages: (object | string)[]) {
     if (debug) {
       console.log(date(), 'DEBUG\t', `[${this.context}]`, ...parse(messages));
+      report('debug', messages, this.context);
     }
   }
 
   info(...messages: (object | string)[]) {
     console.log(date(), 'INFO\t', `[${this.context}]`, ...parse(messages));
+    report('info', messages, this.context);
   }
 
   warn(...messages: (object | string)[]) {
     if (debug) {
       console.log(date(), 'WARN\t', `[${this.context}]`, ...parse(messages));
+      report('warn', messages, this.context);
     }
   }
 
   error(...messages: (object | string)[]) {
     console.log(date(), 'ERROR\t', `[${this.context}]`, ...parse(messages));
+    report('error', messages, this.context);
   }
 
   fatal(...messages: (object | string)[]) {
     console.log(date(), 'FATAL\t', `[${this.context}]`, ...parse(messages));
+    report('fatal', messages, this.context);
   }
 };
